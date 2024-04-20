@@ -42,6 +42,7 @@ import cz.chrastecky.aiwallpaperchanger.dto.Upscaler;
 import cz.chrastecky.aiwallpaperchanger.dto.response.ActiveModel;
 import cz.chrastecky.aiwallpaperchanger.helper.AlarmManagerHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.SharedPreferencesHelper;
+import cz.chrastecky.aiwallpaperchanger.helper.ValueWrapper;
 import cz.chrastecky.aiwallpaperchanger.horde.AiHorde;
 
 public class MainActivity extends AppCompatActivity {
@@ -109,7 +110,8 @@ public class MainActivity extends AppCompatActivity {
             TextView progressText = findViewById(R.id.progress_info);
 
             AtomicBoolean hasBeenAboveZero = new AtomicBoolean(false);
-            horde.generateImage(createGenerateRequest(), progress -> {
+
+            AiHorde.OnProgress onProgress = progress -> {
                 if (progress.getWaitTime() > 0) {
                     hasBeenAboveZero.set(true);
                 }
@@ -121,7 +123,9 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
                 Log.d("HordeRequestProgress", "Remaining: " + progress.getWaitTime());
-            }, response -> {
+            };
+
+            AiHorde.OnResponse<Bitmap> onResponse = response -> {
                 try {
                     File imageFile = new File(getFilesDir(), "currentImage.webp");
                     if (imageFile.exists()) {
@@ -142,11 +146,20 @@ public class MainActivity extends AppCompatActivity {
 
                 rootView.setVisibility(View.VISIBLE);
                 loader.setVisibility(View.INVISIBLE);
-            }, error -> {
+            };
+
+            ValueWrapper<AiHorde.OnError> onError = new ValueWrapper<>();
+            onError.value = error -> {
+                if (error.getCause() instanceof RetryGenerationException) {
+                    horde.generateImage(createGenerateRequest(), onProgress, onResponse, onError.value);
+                    return;
+                }
                 Toast.makeText(this, R.string.app_error_generating_failed, Toast.LENGTH_LONG).show();
                 rootView.setVisibility(View.VISIBLE);
                 loader.setVisibility(View.INVISIBLE);
-            });
+            };
+
+            horde.generateImage(createGenerateRequest(), onProgress, onResponse, onError.value);
 
             rootView.setVisibility(View.INVISIBLE);
             loader.setVisibility(View.VISIBLE);

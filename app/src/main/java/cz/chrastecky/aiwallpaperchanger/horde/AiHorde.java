@@ -6,7 +6,6 @@ import android.widget.ImageView;
 
 import androidx.annotation.Nullable;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -14,9 +13,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.ImageRequest;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.JsonRequest;
-import com.android.volley.toolbox.StringRequest;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -28,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import cz.chrastecky.aiwallpaperchanger.RetryGenerationException;
 import cz.chrastecky.aiwallpaperchanger.dto.GenerateRequest;
 import cz.chrastecky.aiwallpaperchanger.dto.response.ActiveModel;
 import cz.chrastecky.aiwallpaperchanger.dto.response.AsyncRequestFullStatus;
@@ -36,6 +34,7 @@ import cz.chrastecky.aiwallpaperchanger.dto.response.GenerationDetail;
 import cz.chrastecky.aiwallpaperchanger.dto.response.GenerationQueued;
 import cz.chrastecky.aiwallpaperchanger.dto.response.HordeWarning;
 import cz.chrastecky.aiwallpaperchanger.dto.response.ModelType;
+import cz.chrastecky.aiwallpaperchanger.helper.ValueWrapper;
 
 public class AiHorde {
     private static final String API_KEY = "f3b3ef57-0cd5-408f-a6b4-d59fa9628c74";
@@ -248,6 +247,10 @@ public class AiHorde {
                 baseUrl + "/generate/status/" + id,
                 null,
                 asyncRequestFullStatus -> {
+                    if (asyncRequestFullStatus.getGenerations().isEmpty()) {
+                        onError.onError(new VolleyError(new RetryGenerationException()));
+                        return;
+                    }
                     onResponse.onResponse(asyncRequestFullStatus.getGenerations().get(0).getImg());
                 },
                 onError::onError
