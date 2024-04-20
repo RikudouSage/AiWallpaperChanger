@@ -9,12 +9,16 @@ import android.os.Build;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.concurrent.futures.CallbackToFutureAdapter;
 import androidx.core.app.NotificationCompat;
 import androidx.work.ForegroundInfo;
+import androidx.work.ListenableWorker;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
+import androidx.work.impl.utils.futures.SettableFuture;
 
 import com.android.volley.toolbox.Volley;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.google.gson.Gson;
 
 import java.io.IOException;
@@ -25,7 +29,7 @@ import cz.chrastecky.aiwallpaperchanger.helper.ChannelHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.SharedPreferencesHelper;
 import cz.chrastecky.aiwallpaperchanger.horde.AiHorde;
 
-public class GenerateAndSetBackgroundWorker extends Worker {
+public class GenerateAndSetBackgroundWorker extends ListenableWorker {
     private static final int NOTIFICATION_ID = 611;
 
     public GenerateAndSetBackgroundWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
@@ -34,31 +38,40 @@ public class GenerateAndSetBackgroundWorker extends Worker {
 
     @NonNull
     @Override
-    public Result doWork() {
-        Log.d("WorkerJob", "Inside doWork()");
-        AiHorde aiHorde = new AiHorde(Volley.newRequestQueue(getApplicationContext()));
-        SharedPreferences preferences = new SharedPreferencesHelper().get(getApplicationContext());
+    public ListenableFuture<Result> startWork() {
+        return CallbackToFutureAdapter.getFuture(completer -> {
+            Log.d("WorkerJob", "Inside doWork()");
+            AiHorde aiHorde = new AiHorde(Volley.newRequestQueue(getApplicationContext()));
+            SharedPreferences preferences = new SharedPreferencesHelper().get(getApplicationContext());
 
-        if (!preferences.contains("generationParameters")) {
-            return Result.failure();
-        }
-
-        setForegroundAsync(createForegroundInfo());
-        GenerateRequest request = new Gson().fromJson(preferences.getString("generationParameters", ""), GenerateRequest.class);
-        aiHorde.generateImage(request, status -> {
-            setForegroundAsync(createForegroundInfo());
-        }, response -> {
-            WallpaperManager wallpaperManager = WallpaperManager.getInstance(getApplicationContext());
-            try {
-                wallpaperManager.setBitmap(response);
-            } catch (IOException e) {
-                Log.e("AIWallpaperError", "Failed setting new wallpaper", e);
+            if (!preferences.contains("generationParameters")) {
+                completer.set(Result.failure());
+                return "GenerationParametersNotFound";
             }
-        }, error -> {
-            Log.e("AIWallpaperError", "Failed generating AI image", error);
-        });
 
-        return Result.success();
+            setForegroundAsync(createForegroundInfo());
+            String requestJson = preferences.getString("generationParameters", "");
+            Log.d("WorkerJob", "Request: " + requestJson);
+            GenerateRequest request = new Gson().fromJson(preferences.getString("generationParameters", ""), GenerateRequest.class);
+            aiHorde.generateImage(request, status -> {
+                Log.d("WorkerJob", "OnProgress");
+            }, response -> {
+                Log.d("WorkerJob", "Finished");
+                WallpaperManager wallpaperManager = WallpaperManager.getInstance(getApplicationContext());
+                try {
+                    wallpaperManager.setBitmap(response);
+                    completer.set(Result.success());
+                } catch (IOException e) {
+                    Log.e("AIWallpaperError", "Failed setting new wallpaper", e);
+                    completer.setException(e);
+                }
+            }, error -> {
+                Log.e("AIWallpaperError", "Failed generating AI image", error);
+                completer.setException(error);
+            });
+
+            return "JobCompleted";
+        });
     }
 
     private ForegroundInfo createForegroundInfo() {
