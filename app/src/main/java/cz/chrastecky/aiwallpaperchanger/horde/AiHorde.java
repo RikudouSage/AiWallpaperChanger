@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import cz.chrastecky.aiwallpaperchanger.RetryGenerationException;
+import cz.chrastecky.aiwallpaperchanger.exception.RetryGenerationException;
 import cz.chrastecky.aiwallpaperchanger.dto.GenerateRequest;
 import cz.chrastecky.aiwallpaperchanger.dto.response.ActiveModel;
 import cz.chrastecky.aiwallpaperchanger.dto.response.AsyncRequestFullStatus;
@@ -34,7 +34,6 @@ import cz.chrastecky.aiwallpaperchanger.dto.response.GenerationDetail;
 import cz.chrastecky.aiwallpaperchanger.dto.response.GenerationQueued;
 import cz.chrastecky.aiwallpaperchanger.dto.response.HordeWarning;
 import cz.chrastecky.aiwallpaperchanger.dto.response.ModelType;
-import cz.chrastecky.aiwallpaperchanger.helper.ValueWrapper;
 
 public class AiHorde {
     private static final String API_KEY = "f3b3ef57-0cd5-408f-a6b4-d59fa9628c74";

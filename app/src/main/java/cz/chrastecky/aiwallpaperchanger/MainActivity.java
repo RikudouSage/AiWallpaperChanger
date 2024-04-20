@@ -40,6 +40,7 @@ import cz.chrastecky.aiwallpaperchanger.dto.GenerateRequest;
 import cz.chrastecky.aiwallpaperchanger.dto.Sampler;
 import cz.chrastecky.aiwallpaperchanger.dto.Upscaler;
 import cz.chrastecky.aiwallpaperchanger.dto.response.ActiveModel;
+import cz.chrastecky.aiwallpaperchanger.exception.RetryGenerationException;
 import cz.chrastecky.aiwallpaperchanger.helper.AlarmManagerHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.SharedPreferencesHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.ValueWrapper;

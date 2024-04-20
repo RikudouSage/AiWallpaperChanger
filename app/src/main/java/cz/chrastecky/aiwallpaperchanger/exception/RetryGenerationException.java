@@ -1,4 +1,4 @@
-package cz.chrastecky.aiwallpaperchanger;
+package cz.chrastecky.aiwallpaperchanger.exception;
 
 public class RetryGenerationException extends RuntimeException {
 }
