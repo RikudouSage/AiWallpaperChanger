@@ -1,4 +1,4 @@
-package cz.chrastecky.aiwallpaperchanger;
+package cz.chrastecky.aiwallpaperchanger.activity;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
+import cz.chrastecky.aiwallpaperchanger.R;
 import cz.chrastecky.aiwallpaperchanger.activity.PreviewActivity;
 import cz.chrastecky.aiwallpaperchanger.databinding.ActivityMainBinding;
 import cz.chrastecky.aiwallpaperchanger.dto.GenerateRequest;
