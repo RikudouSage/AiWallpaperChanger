@@ -100,56 +100,57 @@ public class MainActivity extends AppCompatActivity {
                 inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
             }
 
-            File imageFile = new File(getFilesDir(), "currentImage.webp");
-            Intent intent = new Intent(this, PreviewActivity.class);
-            intent.putExtra("imagePath", imageFile.getAbsolutePath());
-            intent.putExtra("generationParameters", new Gson().toJson(createGenerateRequest()));
-            startActivity(intent);
+//            File imageFile = new File(getFilesDir(), "currentImage.webp");
+//            Intent intent = new Intent(this, PreviewActivity.class);
+//            intent.putExtra("imagePath", imageFile.getAbsolutePath());
+//            intent.putExtra("generationParameters", new Gson().toJson(createGenerateRequest()));
+//            startActivity(intent);
 
-//            TextView progressText = findViewById(R.id.progress_info);
-//
-//            AtomicBoolean hasBeenAboveZero = new AtomicBoolean(false);
-//            horde.generateImage(createGenerateRequest(), progress -> {
-//                if (progress.getWaitTime() > 0) {
-//                    hasBeenAboveZero.set(true);
-//                }
-//                if (hasBeenAboveZero.get()) {
-//                    if (progress.getWaitTime() > 0) {
-//                        progressText.setText(getString(R.string.app_generate_estimated_time, progress.getWaitTime()));
-//                    } else {
-//                        progressText.setText(R.string.app_generate_estimated_time_too_long);
-//                    }
-//                }
-//                Log.d("HordeRequestProgress", "Remaining: " + progress.getWaitTime());
-//            }, response -> {
-//                try {
-//                    File imageFile = new File(getFilesDir(), "currentImage.webp");
-//                    if (imageFile.exists()) {
-//                        imageFile.delete();
-//                    }
-//                    imageFile.createNewFile();
-//                    FileOutputStream imageOutputStream = new FileOutputStream(imageFile, false);
-//                    response.compress(Bitmap.CompressFormat.WEBP, 100, imageOutputStream);
-//                    imageOutputStream.close();
-//
-//                    Intent intent = new Intent(this, PreviewActivity.class);
-//                    intent.putExtra("imagePath", imageFile.getAbsolutePath());
-//                    intent.putExtra("generationParameters", new Gson().toJson(createGenerateRequest()));
-//                    startActivity(intent);
-//                } catch (IOException e) {
-//                    Toast.makeText(this, R.string.app_error_create_tmp_file, Toast.LENGTH_LONG).show();
-//                }
-//
-//                rootView.setVisibility(View.VISIBLE);
-//                loader.setVisibility(View.INVISIBLE);
-//            }, error -> {
-//                Toast.makeText(this, R.string.app_error_generating_failed, Toast.LENGTH_LONG).show();
-//                rootView.setVisibility(View.VISIBLE);
-//                loader.setVisibility(View.INVISIBLE);
-//            });
-//
-//            rootView.setVisibility(View.INVISIBLE);
-//            loader.setVisibility(View.VISIBLE);
+            TextView progressText = findViewById(R.id.progress_info);
+
+            AtomicBoolean hasBeenAboveZero = new AtomicBoolean(false);
+            horde.generateImage(createGenerateRequest(), progress -> {
+                if (progress.getWaitTime() > 0) {
+                    hasBeenAboveZero.set(true);
+                }
+                if (hasBeenAboveZero.get()) {
+                    if (progress.getWaitTime() > 0) {
+                        progressText.setText(getString(R.string.app_generate_estimated_time, progress.getWaitTime()));
+                    } else {
+                        progressText.setText(R.string.app_generate_estimated_time_too_long);
+                    }
+                }
+                Log.d("HordeRequestProgress", "Remaining: " + progress.getWaitTime());
+            }, response -> {
+                try {
+                    File imageFile = new File(getFilesDir(), "currentImage.webp");
+                    if (imageFile.exists()) {
+                        imageFile.delete();
+                    }
+                    imageFile.createNewFile();
+                    FileOutputStream imageOutputStream = new FileOutputStream(imageFile, false);
+                    response.compress(Bitmap.CompressFormat.WEBP, 100, imageOutputStream);
+                    imageOutputStream.close();
+
+                    Intent intent = new Intent(this, PreviewActivity.class);
+                    intent.putExtra("imagePath", imageFile.getAbsolutePath());
+                    intent.putExtra("generationParameters", new Gson().toJson(createGenerateRequest()));
+                    startActivity(intent);
+                } catch (IOException e) {
+                    Toast.makeText(this, R.string.app_error_create_tmp_file, Toast.LENGTH_LONG).show();
+                }
+
+                rootView.setVisibility(View.VISIBLE);
+                loader.setVisibility(View.INVISIBLE);
+            }, error -> {
+                Toast.makeText(this, R.string.app_error_generating_failed, Toast.LENGTH_LONG).show();
+                rootView.setVisibility(View.VISIBLE);
+                loader.setVisibility(View.INVISIBLE);
+            });
+
+            rootView.setVisibility(View.INVISIBLE);
+            loader.setVisibility(View.VISIBLE);
+            progressText.setText(R.string.app_generate_estimated_time_pre_start);
         });
     }
 
@@ -164,6 +165,11 @@ public class MainActivity extends AppCompatActivity {
                 alarmManager.cancel(pendingIntent);
                 pendingIntent.cancel();
                 cancelButton.setVisibility(View.INVISIBLE);
+
+                SharedPreferences.Editor sharedPreferences = new SharedPreferencesHelper().get(this).edit();
+                sharedPreferences.remove("selectedInterval");
+                sharedPreferences.apply();
+
                 Toast.makeText(this, R.string.app_succes_cancelled, Toast.LENGTH_LONG).show();
             });
             cancelButton.setVisibility(View.VISIBLE);

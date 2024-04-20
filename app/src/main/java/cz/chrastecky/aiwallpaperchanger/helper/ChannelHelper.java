@@ -13,7 +13,7 @@ public class ChannelHelper {
             NotificationChannel channel = new NotificationChannel(
                     context.getString(R.string.notification_channel_background_work_id),
                     context.getString(R.string.notification_channel_background_work_title),
-                    NotificationManager.IMPORTANCE_HIGH
+                    NotificationManager.IMPORTANCE_LOW
             );
             channel.setDescription(context.getString(R.string.notification_channel_background_work_description));
             NotificationManager notificationManager = context.getSystemService(NotificationManager.class);

@@ -97,24 +97,12 @@ public class ConfigureScheduleActivity extends AppCompatActivity {
     private void schedule() {
         Spinner timesSelect = findViewById(R.id.times_select);
 
-        Calendar calendar = Calendar.getInstance();
-//        calendar.set(Calendar.HOUR_OF_DAY, 0);
-//        calendar.set(Calendar.MINUTE, 0);
-        calendar.setTimeInMillis(calendar.getTimeInMillis() + 60_000);
+        SharedPreferences.Editor sharedPreferences = new SharedPreferencesHelper().get(this).edit();
+        sharedPreferences.putInt("selectedInterval", (Integer) timesSelect.getSelectedItem());
+        sharedPreferences.apply();
 
-        Log.d("Schedule", "Should run at " + calendar.getTime());
+        AlarmManagerHelper.scheduleAlarm(this);
 
-        PendingIntent intent = AlarmManagerHelper.getAlarmIntent(this);
-
-        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-        alarmManager.cancel(AlarmManagerHelper.getAlarmIntent(this, PendingIntent.FLAG_NO_CREATE | PendingIntent.FLAG_IMMUTABLE));
-//        alarmManager.setRepeating(
-//                AlarmManager.RTC,
-//                calendar.getTimeInMillis(),
-//                (long) ((24.0 / (Integer) timesSelect.getSelectedItem()) * 60 * 60 * 1_000),
-//                intent
-//        );
-        alarmManager.set(AlarmManager.RTC, calendar.getTimeInMillis(), intent);
         Toast.makeText(this, R.string.app_success_scheduled, Toast.LENGTH_LONG).show();
         setResult(RESULT_OK);
         finish();
