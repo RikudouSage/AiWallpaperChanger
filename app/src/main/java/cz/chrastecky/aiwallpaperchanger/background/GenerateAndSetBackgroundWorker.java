@@ -22,6 +22,8 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.google.gson.Gson;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.util.Calendar;
 
 import cz.chrastecky.aiwallpaperchanger.R;
 import cz.chrastecky.aiwallpaperchanger.dto.GenerateRequest;
@@ -60,6 +62,9 @@ public class GenerateAndSetBackgroundWorker extends ListenableWorker {
                 WallpaperManager wallpaperManager = WallpaperManager.getInstance(getApplicationContext());
                 try {
                     wallpaperManager.setBitmap(response);
+                    SharedPreferences.Editor editor = preferences.edit();
+                    editor.putString("lastChanged", DateFormat.getInstance().format(Calendar.getInstance().getTime()));
+                    editor.commit();
                     completer.set(Result.success());
                 } catch (IOException e) {
                     Log.e("AIWallpaperError", "Failed setting new wallpaper", e);

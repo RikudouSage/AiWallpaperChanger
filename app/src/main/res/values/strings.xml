@@ -26,4 +26,5 @@
     <string name="app.generate.estimated_time">Estimated wait time: %ss</string>
     <string name="app.generate.estimated_time.too_long">We\'re still working on it.</string>
     <string name="app.generate.estimated_time.pre_start">We\'ll get to generating your image soon.</string>
+    <string name="app.generate.last_generated">Wallpaper last changed: %s</string>
 </resources>

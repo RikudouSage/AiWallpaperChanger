@@ -189,6 +189,14 @@ public class MainActivity extends AppCompatActivity {
             });
             cancelButton.setVisibility(View.VISIBLE);
         }
+
+        SharedPreferences sharedPreferences = new SharedPreferencesHelper().get(this);
+        if (sharedPreferences.contains("lastChanged")) {
+            TextView lastChanged = findViewById(R.id.last_changed);
+            String lastChangedTime = sharedPreferences.getString("lastChanged", "");
+            lastChanged.setText(getString(R.string.app_generate_last_generated, lastChangedTime));
+            lastChanged.setVisibility(View.VISIBLE);
+        }
     }
 
     private String getUpscaler(int[] widthAndHeight) {

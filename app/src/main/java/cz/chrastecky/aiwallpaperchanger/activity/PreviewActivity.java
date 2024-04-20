@@ -15,6 +15,8 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.util.Calendar;
 import java.util.Objects;
 
 import cz.chrastecky.aiwallpaperchanger.R;
@@ -59,6 +61,8 @@ public class PreviewActivity extends AppCompatActivity {
                 try {
                     WallpaperManager wallpaperManager = WallpaperManager.getInstance(this);
                     wallpaperManager.setBitmap(image);
+                    editor.putString("lastChanged", DateFormat.getInstance().format(Calendar.getInstance().getTime()));
+                    editor.apply();
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
