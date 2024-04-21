@@ -51,7 +51,7 @@ public class GenerateAndSetBackgroundWorker extends ListenableWorker {
                 return "GenerationParametersNotFound";
             }
 
-            setForegroundAsync(createForegroundInfo());
+//            setForegroundAsync(createForegroundInfo());
             String requestJson = preferences.getString("generationParameters", "");
             Log.d("WorkerJob", "Request: " + requestJson);
             GenerateRequest request = new Gson().fromJson(preferences.getString("generationParameters", ""), GenerateRequest.class);

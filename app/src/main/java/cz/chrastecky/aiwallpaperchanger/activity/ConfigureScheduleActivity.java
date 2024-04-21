@@ -50,28 +50,29 @@ public class ConfigureScheduleActivity extends AppCompatActivity {
 
         Button scheduleButton = findViewById(R.id.schedule_button);
         scheduleButton.setOnClickListener(view -> {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
-                    ChannelHelper.createChannels(this);
-                    schedule();
-                } else {
-                    SharedPreferences sharedPreferences = new SharedPreferencesHelper().get(this);
-                    int deniedCount = sharedPreferences.getInt("deniedCount", 0);
-
-                    if (deniedCount >= 2) {
-                        Toast.makeText(this, R.string.app_error_notification_permission, Toast.LENGTH_LONG).show();
-                        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                        Uri uri = Uri.fromParts("package", getPackageName(), null);
-                        intent.setData(uri);
-                        startActivity(intent);
-                    } else {
-                        requestPermissions(new String[] {Manifest.permission.POST_NOTIFICATIONS}, PERMISSION_REQUEST_CODE);
-                    }
-                }
-            } else {
-                ChannelHelper.createChannels(this);
-                schedule();
-            }
+            schedule();
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+//                if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
+//                    ChannelHelper.createChannels(this);
+//                    schedule();
+//                } else {
+//                    SharedPreferences sharedPreferences = new SharedPreferencesHelper().get(this);
+//                    int deniedCount = sharedPreferences.getInt("deniedCount", 0);
+//
+//                    if (deniedCount >= 2) {
+//                        Toast.makeText(this, R.string.app_error_notification_permission, Toast.LENGTH_LONG).show();
+//                        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+//                        Uri uri = Uri.fromParts("package", getPackageName(), null);
+//                        intent.setData(uri);
+//                        startActivity(intent);
+//                    } else {
+//                        requestPermissions(new String[] {Manifest.permission.POST_NOTIFICATIONS}, PERMISSION_REQUEST_CODE);
+//                    }
+//                }
+//            } else {
+//                ChannelHelper.createChannels(this);
+//                schedule();
+//            }
         });
     }
 
