@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import androidx.work.Constraints;
+import androidx.work.NetworkType;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 
@@ -19,7 +21,13 @@ public class AlarmReceiver extends BroadcastReceiver {
 
         Log.d("AlarmReceiver", "Alarm intent received");
         WorkManager manager = WorkManager.getInstance(context);
-        manager.enqueue(new OneTimeWorkRequest.Builder(GenerateAndSetBackgroundWorker.class).build());
+        Constraints constraints = new Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build();
+        OneTimeWorkRequest request = new OneTimeWorkRequest.Builder(GenerateAndSetBackgroundWorker.class)
+                .setConstraints(constraints)
+                .build();
+        manager.enqueue(request);
         Log.d("AlarmReceiver", "Worker enqueued");
     }
 }
