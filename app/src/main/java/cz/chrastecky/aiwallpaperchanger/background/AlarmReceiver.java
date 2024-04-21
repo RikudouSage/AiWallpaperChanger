@@ -23,6 +23,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         WorkManager manager = WorkManager.getInstance(context);
         Constraints constraints = new Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
+                .setRequiresBatteryNotLow(true)
                 .build();
         OneTimeWorkRequest request = new OneTimeWorkRequest.Builder(GenerateAndSetBackgroundWorker.class)
                 .setConstraints(constraints)
