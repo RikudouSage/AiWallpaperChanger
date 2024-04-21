@@ -151,6 +151,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 android:layout_marginStart="8dp"
                 tools:text="Steps (25)"
+                android:labelFor="@id/steps_slider"
                 android:text="@string/app.generate.steps" />
 
             <com.google.android.material.slider.Slider
