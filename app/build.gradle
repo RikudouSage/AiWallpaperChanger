@@ -52,12 +52,11 @@ android {
 
         nsfwEnabled {
             dimension 'nsfw'
-            applicationIdSuffix '.nsfw'
-            versionNameSuffix 'N'
             buildConfigField "boolean", "NSFW_ENABLED", "true"
         }
         nsfwDisabled {
             dimension 'nsfw'
+            versionNameSuffix 'P'
             buildConfigField "boolean", "NSFW_ENABLED", "false"
         }
         prodKey {
