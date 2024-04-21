@@ -33,8 +33,6 @@ import cz.chrastecky.aiwallpaperchanger.helper.SharedPreferencesHelper;
 import cz.chrastecky.aiwallpaperchanger.horde.AiHorde;
 
 public class GenerateAndSetBackgroundWorker extends ListenableWorker {
-    private static final int NOTIFICATION_ID = 611;
-
     public GenerateAndSetBackgroundWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
     }
@@ -52,7 +50,6 @@ public class GenerateAndSetBackgroundWorker extends ListenableWorker {
                 return "GenerationParametersNotFound";
             }
 
-//            setForegroundAsync(createForegroundInfo());
             String requestJson = preferences.getString("generationParameters", "");
             Log.d("WorkerJob", "Request: " + requestJson);
             GenerateRequest request = new Gson().fromJson(preferences.getString("generationParameters", ""), GenerateRequest.class);
@@ -100,25 +97,5 @@ public class GenerateAndSetBackgroundWorker extends ListenableWorker {
 
             return "JobCompleted";
         });
-    }
-
-    private ForegroundInfo createForegroundInfo() {
-        Context context = getApplicationContext();
-        String id = context.getString(R.string.notification_channel_background_work_id);
-
-        ChannelHelper.createChannels(getApplicationContext());
-
-        Notification notification = new NotificationCompat.Builder(context, id)
-                .setContentTitle(context.getString(R.string.notification_background_work_title))
-                .setTicker(context.getString(R.string.notification_background_work_title))
-                .setSmallIcon(R.drawable.ic_notification_icon)
-                .setOngoing(true)
-                .build();
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            return new ForegroundInfo(NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC);
-        } else {
-            return new ForegroundInfo(NOTIFICATION_ID, notification);
-        }
     }
 }
