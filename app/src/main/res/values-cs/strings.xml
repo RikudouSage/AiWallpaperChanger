@@ -29,4 +29,5 @@
     <string name="app.generate.last_generated">Tapeta naposledy změněna: %s</string>
     <string name="app.generate.advanced_toggle">Pokročilé</string>
     <string name="app.generate.sampler">Sampler</string>
+    <string name="app.generate.clip_skip">CLIP skip (%d)</string>
 </resources>

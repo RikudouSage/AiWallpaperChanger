@@ -251,6 +251,8 @@ public class MainActivity extends AppCompatActivity {
         Spinner samplerField = findViewById(R.id.sampler_field);
         Slider stepsField = findViewById(R.id.steps_slider);
         TextView stepsTitle = findViewById(R.id.steps_title);
+        Slider clipSkipField = findViewById(R.id.clip_skip_slider);
+        TextView clipSkipTitle = findViewById(R.id.clip_skip_title);
 
         SharedPreferences preferences = new SharedPreferencesHelper().get(this);
 
@@ -276,6 +278,10 @@ public class MainActivity extends AppCompatActivity {
             stepsTitle.setText(getString(R.string.app_generate_steps, (int) value));
         });
         stepsTitle.setText(getString(R.string.app_generate_steps, 25));
+        clipSkipField.addOnChangeListener((slider, value, fromUser) ->  {
+            clipSkipTitle.setText(getString(R.string.app_generate_clip_skip, (int) value));
+        });
+        clipSkipTitle.setText(getString(R.string.app_generate_clip_skip, 1));
 
         if (request != null) {
             TextInputEditText prompt = findViewById(R.id.promp_field);
@@ -285,6 +291,7 @@ public class MainActivity extends AppCompatActivity {
             negativePrompt.setText(request.getNegativePrompt());
             samplerField.setSelection(samplers.indexOf(request.getSampler().name()));
             stepsField.setValue(request.getSteps());
+            clipSkipField.setValue(request.getClipSkip());
         }
 
         horde.getModels(response -> {
@@ -312,6 +319,7 @@ public class MainActivity extends AppCompatActivity {
         Spinner model = findViewById(R.id.model_field);
         Spinner sampler = findViewById(R.id.sampler_field);
         Slider steps = findViewById(R.id.steps_slider);
+        Slider clipSkip = findViewById(R.id.clip_skip_slider);
 
         boolean advanced = ((SwitchCompat) findViewById(R.id.advanced_switch)).isChecked();
 
@@ -324,7 +332,7 @@ public class MainActivity extends AppCompatActivity {
                 (String) model.getSelectedItem(),
                 advanced ? Sampler.valueOf((String) sampler.getSelectedItem()) : Sampler.k_dpmpp_sde,
                 advanced ? (int) steps.getValue() : 25,
-                1,
+                advanced ? (int) clipSkip.getValue() : 1,
                 widthAndHeight[0],
                 widthAndHeight[1],
                 null,

@@ -29,4 +29,5 @@
     <string name="app.generate.last_generated">Wallpaper last changed: %s</string>
     <string name="app.generate.advanced_toggle">Advanced</string>
     <string name="app.generate.sampler">Sampler</string>
+    <string name="app.generate.clip_skip">CLIP skip (%d)</string>
 </resources>
