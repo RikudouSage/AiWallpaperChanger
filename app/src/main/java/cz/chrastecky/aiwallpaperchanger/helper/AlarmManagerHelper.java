@@ -35,16 +35,23 @@ public class AlarmManagerHelper {
 
         PendingIntent intent = getAlarmIntent(context);
 
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-//        calendar.setTimeInMillis(calendar.getTimeInMillis() + 60_000);
+        Calendar target = Calendar.getInstance();
+        double howOften = 24.0 / interval;
+        target.set(Calendar.HOUR_OF_DAY, 0);
+        target.set(Calendar.MINUTE, 0);
+        target.set(Calendar.SECOND, 0);
+        int howOftenMilliseconds = (int) (howOften * 60 * 60 * 1_000);
+
+        Calendar now = Calendar.getInstance();
+        while (!target.after(now)) {
+            target.setTimeInMillis(target.getTimeInMillis() + howOftenMilliseconds);
+        }
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
         alarmManager.cancel(AlarmManagerHelper.getAlarmIntent(context, PendingIntent.FLAG_NO_CREATE | PendingIntent.FLAG_IMMUTABLE));
         alarmManager.setRepeating(
                 AlarmManager.RTC,
-                calendar.getTimeInMillis(),
+                target.getTimeInMillis(),
                 (long) ((24.0 / interval) * 60 * 60 * 1_000),
                 intent
         );

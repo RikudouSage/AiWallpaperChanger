@@ -72,6 +72,11 @@ public class GenerateAndSetBackgroundWorker extends ListenableWorker {
                 }
             }, error -> {
                 Log.e("AIWallpaperError", "Failed generating AI image", error);
+                if (error.networkResponse != null) {
+                    Log.d("AIWallpaperError", new String(error.networkResponse.data));
+                } else {
+                    Log.d("AIWallpaperError", error.getMessage(), error.getCause());
+                }
                 completer.setException(error);
             });
 
