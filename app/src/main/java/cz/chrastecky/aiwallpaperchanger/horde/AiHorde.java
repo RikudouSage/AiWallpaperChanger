@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import cz.chrastecky.aiwallpaperchanger.BuildConfig;
 import cz.chrastecky.aiwallpaperchanger.exception.RetryGenerationException;
 import cz.chrastecky.aiwallpaperchanger.dto.GenerateRequest;
 import cz.chrastecky.aiwallpaperchanger.dto.response.ActiveModel;
@@ -36,8 +37,6 @@ import cz.chrastecky.aiwallpaperchanger.dto.response.HordeWarning;
 import cz.chrastecky.aiwallpaperchanger.dto.response.ModelType;
 
 public class AiHorde {
-    private static final String API_KEY = "f3b3ef57-0cd5-408f-a6b4-d59fa9628c74";
-
     public interface OnResponse<T> {
         void onResponse(T response);
     }
@@ -161,7 +160,7 @@ public class AiHorde {
             @Override
             public Map<String, String> getHeaders() {
                 Map<String, String> headers = new HashMap<>();
-                headers.put("apikey", API_KEY);
+                headers.put("apikey", BuildConfig.API_KEY);
                 return headers;
             }
 
@@ -208,7 +207,7 @@ public class AiHorde {
             @Override
             public Map<String, String> getHeaders() {
                 Map<String, String> headers = new HashMap<>();
-                headers.put("apikey", API_KEY);
+                headers.put("apikey", BuildConfig.API_KEY);
                 return headers;
             }
 
@@ -257,7 +256,7 @@ public class AiHorde {
             @Override
             public Map<String, String> getHeaders() {
                 Map<String, String> headers = new HashMap<>();
-                headers.put("apikey", API_KEY);
+                headers.put("apikey", BuildConfig.API_KEY);
                 return headers;
             }
 

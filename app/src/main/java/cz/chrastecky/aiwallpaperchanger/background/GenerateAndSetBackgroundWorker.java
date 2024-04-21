@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.util.Calendar;
 
+import cz.chrastecky.aiwallpaperchanger.BuildConfig;
 import cz.chrastecky.aiwallpaperchanger.R;
 import cz.chrastecky.aiwallpaperchanger.dto.GenerateRequest;
 import cz.chrastecky.aiwallpaperchanger.helper.ChannelHelper;
@@ -55,6 +56,23 @@ public class GenerateAndSetBackgroundWorker extends ListenableWorker {
             String requestJson = preferences.getString("generationParameters", "");
             Log.d("WorkerJob", "Request: " + requestJson);
             GenerateRequest request = new Gson().fromJson(preferences.getString("generationParameters", ""), GenerateRequest.class);
+            if (!BuildConfig.NSFW_ENABLED && request.getNsfw()) {
+                request = new GenerateRequest(
+                        request.getPrompt(),
+                        request.getNegativePrompt(),
+                        request.getModel(),
+                        request.getSampler(),
+                        request.getSteps(),
+                        request.getClipSkip(),
+                        request.getWidth(),
+                        request.getHeight(),
+                        request.getFaceFixer(),
+                        request.getUpscaler(),
+                        request.getCfgScale(),
+                        false,
+                        request.getKarras()
+                );
+            }
             aiHorde.generateImage(request, status -> {
                 Log.d("WorkerJob", "OnProgress");
             }, response -> {

@@ -45,6 +45,34 @@ android {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
         }
     }
+    flavorDimensions 'nsfw', 'key'
+    productFlavors {
+        Properties properties = new Properties()
+        properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
+        nsfwEnabled {
+            dimension 'nsfw'
+            applicationIdSuffix '.nsfw'
+            versionNameSuffix 'N'
+            buildConfigField "boolean", "NSFW_ENABLED", "true"
+        }
+        nsfwDisabled {
+            dimension 'nsfw'
+            buildConfigField "boolean", "NSFW_ENABLED", "false"
+        }
+        prodKey {
+            dimension 'key'
+            buildConfigField "String", "API_KEY", "\"" + (properties.getProperty('prod_api_key') ?: "0000000000") + "\""
+        }
+        devKey {
+            dimension 'key'
+            buildConfigField "String", "API_KEY", "\"" + (properties.getProperty('dev_api_key') ?: "0000000000") + "\""
+        }
+        noKey {
+            dimension 'key'
+            buildConfigField "String", "API_KEY", "\"0000000000\""
+        }
+    }
 }
 
 dependencies {

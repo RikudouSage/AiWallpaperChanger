@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
+import cz.chrastecky.aiwallpaperchanger.BuildConfig;
 import cz.chrastecky.aiwallpaperchanger.R;
 import cz.chrastecky.aiwallpaperchanger.activity.PreviewActivity;
 import cz.chrastecky.aiwallpaperchanger.databinding.ActivityMainBinding;
@@ -329,7 +330,7 @@ public class MainActivity extends AppCompatActivity {
                 null,
                 upscaler,
                 7.0,
-                true,
+                BuildConfig.NSFW_ENABLED,
                 true
         );
     }
