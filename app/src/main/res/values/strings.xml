@@ -4,7 +4,7 @@
     <string name="app.generate.negative_prompt">Negative prompt</string>
     <string name="app.generate.model">Model</string>
     <string name="app.error.fetching_models_failed">Fetching the list of available models failed, please try again later.</string>
-    <string name="app.generate.steps">Steps</string>
+    <string name="app.generate.steps">Steps (%d)</string>
     <string name="app.generate.preview">Preview</string>
     <string name="app.error.generating_failed">Generating your image failed, please try again later.</string>
     <string name="app.error.create_tmp_file">Could not create a temporary file to store the generated image in.</string>

@@ -5,7 +5,7 @@
     <string name="app.generate.negative_prompt">Negativní prompt</string>
     <string name="app.generate.model">Model</string>
     <string name="app.error.fetching_models_failed">Získávání seznamu dostupných modelů selhalo, zkuste to prosím znovu.</string>
-    <string name="app.generate.steps">Kroky</string>
+    <string name="app.generate.steps">Kroky (%d)</string>
     <string name="app.generate.preview">Náhled</string>
     <string name="app.error.generating_failed">Generování vašeho obrázku selhalo, zkuste to prosím znovu.</string>
     <string name="app.error.create_tmp_file">Nezdařilo se vytvoření dočasného souboru pro generování.</string>

@@ -26,6 +26,7 @@ import androidx.appcompat.widget.SwitchCompat;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.android.volley.toolbox.Volley;
+import com.google.android.material.slider.Slider;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.gson.Gson;
 
@@ -247,6 +248,8 @@ public class MainActivity extends AppCompatActivity {
         ConstraintLayout loader = findViewById(R.id.loader);
         SwitchCompat advancedSwitch = findViewById(R.id.advanced_switch);
         Spinner samplerField = findViewById(R.id.sampler_field);
+        Slider stepsField = findViewById(R.id.steps_slider);
+        TextView stepsTitle = findViewById(R.id.steps_title);
 
         SharedPreferences preferences = new SharedPreferencesHelper().get(this);
 
@@ -258,15 +261,6 @@ public class MainActivity extends AppCompatActivity {
         ));
         samplerField.setSelection(samplers.indexOf(DEFAULT_SAMPLER));
 
-        if (request != null) {
-            TextInputEditText prompt = findViewById(R.id.promp_field);
-            TextInputEditText negativePrompt = findViewById(R.id.negative_prompt_field);
-
-            prompt.setText(request.getPrompt());
-            negativePrompt.setText(request.getNegativePrompt());
-            samplerField.setSelection(samplers.indexOf(request.getSampler().name()));
-        }
-
         advancedSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             SharedPreferences.Editor editor = preferences.edit();
             editor.putBoolean("advanced", isChecked);
@@ -276,6 +270,21 @@ public class MainActivity extends AppCompatActivity {
             advancedWrapper.setVisibility(isChecked ? View.VISIBLE : View.GONE);
         });
         advancedSwitch.setChecked(preferences.getBoolean("advanced", false));
+
+        stepsField.addOnChangeListener((slider, value, fromUser) -> {
+            stepsTitle.setText(getString(R.string.app_generate_steps, (int) value));
+        });
+        stepsTitle.setText(getString(R.string.app_generate_steps, 25));
+
+        if (request != null) {
+            TextInputEditText prompt = findViewById(R.id.promp_field);
+            TextInputEditText negativePrompt = findViewById(R.id.negative_prompt_field);
+
+            prompt.setText(request.getPrompt());
+            negativePrompt.setText(request.getNegativePrompt());
+            samplerField.setSelection(samplers.indexOf(request.getSampler().name()));
+            stepsField.setValue(request.getSteps());
+        }
 
         horde.getModels(response -> {
             response.sort((a, b) -> String.CASE_INSENSITIVE_ORDER.compare(a.getName(), b.getName()));
@@ -301,6 +310,9 @@ public class MainActivity extends AppCompatActivity {
         TextInputEditText negativePrompt = findViewById(R.id.negative_prompt_field);
         Spinner model = findViewById(R.id.model_field);
         Spinner sampler = findViewById(R.id.sampler_field);
+        Slider steps = findViewById(R.id.steps_slider);
+
+        boolean advanced = ((SwitchCompat) findViewById(R.id.advanced_switch)).isChecked();
 
         int[] widthAndHeight = this.calculateWidthAndHeight();
         String upscaler = this.getUpscaler(widthAndHeight);
@@ -309,8 +321,8 @@ public class MainActivity extends AppCompatActivity {
                 prompt.getText().toString(),
                 negativePrompt.getText().length() > 0 ? negativePrompt.getText().toString() : null,
                 (String) model.getSelectedItem(),
-                Sampler.valueOf((String) sampler.getSelectedItem()),
-                25,
+                advanced ? Sampler.valueOf((String) sampler.getSelectedItem()) : Sampler.k_dpmpp_sde,
+                advanced ? (int) steps.getValue() : 25,
                 1,
                 widthAndHeight[0],
                 widthAndHeight[1],
