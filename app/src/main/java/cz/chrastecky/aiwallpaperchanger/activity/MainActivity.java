@@ -16,11 +16,13 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.android.volley.toolbox.Volley;
@@ -243,8 +245,11 @@ public class MainActivity extends AppCompatActivity {
     private void initializeForm(@Nullable GenerateRequest request) {
         ConstraintLayout rootView = findViewById(R.id.rootView);
         ConstraintLayout loader = findViewById(R.id.loader);
-
+        SwitchCompat advancedSwitch = findViewById(R.id.advanced_switch);
         Spinner samplerField = findViewById(R.id.sampler_field);
+
+        SharedPreferences preferences = new SharedPreferencesHelper().get(this);
+
         List<String> samplers = Sampler.getEntries().stream().map(Enum::name).collect(Collectors.toList());
         samplerField.setAdapter(new ArrayAdapter<>(
                 this,
@@ -261,6 +266,16 @@ public class MainActivity extends AppCompatActivity {
             negativePrompt.setText(request.getNegativePrompt());
             samplerField.setSelection(samplers.indexOf(request.getSampler().name()));
         }
+
+        advancedSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putBoolean("advanced", isChecked);
+            editor.apply();
+
+            ConstraintLayout advancedWrapper = findViewById(R.id.advanced_settings_wrapper);
+            advancedWrapper.setVisibility(isChecked ? View.VISIBLE : View.GONE);
+        });
+        advancedSwitch.setChecked(preferences.getBoolean("advanced", false));
 
         horde.getModels(response -> {
             response.sort((a, b) -> String.CASE_INSENSITIVE_ORDER.compare(a.getName(), b.getName()));

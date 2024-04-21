@@ -27,4 +27,6 @@
     <string name="app.generate.estimated_time.too_long">Pořád na tom pracujeme.</string>
     <string name="app.generate.estimated_time.pre_start">Váš obrázek brzy začneme generovat.</string>
     <string name="app.generate.last_generated">Tapeta naposledy změněna: %s</string>
+    <string name="app.generate.advanced_toggle">Pokročilé</string>
+    <string name="app.generate.sampler">Sampler</string>
 </resources>
