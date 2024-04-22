@@ -11,7 +11,7 @@
     <string name="app.error.create_tmp_file">Nezdařilo se vytvoření dočasného souboru pro generování.</string>
     <string name="app.preview.description">Zde si můžete prohlédnout vygenerovaný obrázek. Pokud vypadá dobře, můžete si nastavit automatickou změnu pomocí zadaného promptu a ostatních parametrů.</string>
     <string name="app.preview.alt_text">Obrázek vygenerovaný AI na základě parametrů z předchozího formuláře.</string>
-    <string name="app.preview.button.ok">Vypadá dobře!</string>
+    <string name="app.preview.button.ok">Vypadá to dobře!</string>
     <string name="app.preview.button.cancel">Zkusit znovu</string>
     <string name="app.title.configure_schedule">Nastavení plánu</string>
     <string name="app.schedule.times">Kolikrát denně chcete, aby aplikace změnila vaši tapetu?</string>
@@ -23,7 +23,7 @@
     <string name="app.success.scheduled">Úspěch! Vaše tapeta by se měla měnit ve specifikovaném intervalu.</string>
     <string name="app.generate.cancel_schedule">Zrušit existující plán</string>
     <string name="app.succes.cancelled">Naplánovaná změna tapety byla úspěšně zrušena.</string>
-    <string name="app.generate.estimated_time">Očekávaná doba čekání: %ss</string>
+    <string name="app.generate.estimated_time">Předpokládaná doba čekání: %ss</string>
     <string name="app.generate.estimated_time.too_long">Pořád na tom pracujeme.</string>
     <string name="app.generate.estimated_time.pre_start">Váš obrázek brzy začneme generovat.</string>
     <string name="app.generate.last_generated">Tapeta naposledy změněna: %s</string>
