@@ -1,5 +1,6 @@
 package cz.chrastecky.aiwallpaperchanger.background;
 
+import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.WallpaperManager;
 import android.content.Context;
@@ -24,11 +25,15 @@ import com.google.gson.Gson;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.UUID;
 
 import cz.chrastecky.aiwallpaperchanger.BuildConfig;
 import cz.chrastecky.aiwallpaperchanger.R;
 import cz.chrastecky.aiwallpaperchanger.dto.GenerateRequest;
+import cz.chrastecky.aiwallpaperchanger.dto.StoredRequest;
 import cz.chrastecky.aiwallpaperchanger.helper.ChannelHelper;
+import cz.chrastecky.aiwallpaperchanger.helper.History;
 import cz.chrastecky.aiwallpaperchanger.helper.SharedPreferencesHelper;
 import cz.chrastecky.aiwallpaperchanger.horde.AiHorde;
 
@@ -37,12 +42,13 @@ public class GenerateAndSetBackgroundWorker extends ListenableWorker {
         super(context, workerParams);
     }
 
+    @SuppressLint("ApplySharedPref")
     @NonNull
     @Override
     public ListenableFuture<Result> startWork() {
         return CallbackToFutureAdapter.getFuture(completer -> {
             Log.d("WorkerJob", "Inside doWork()");
-            AiHorde aiHorde = new AiHorde(Volley.newRequestQueue(getApplicationContext()));
+            AiHorde aiHorde = new AiHorde(getApplicationContext());
             SharedPreferences preferences = new SharedPreferencesHelper().get(getApplicationContext());
 
             if (!preferences.contains("generationParameters")) {
@@ -70,16 +76,28 @@ public class GenerateAndSetBackgroundWorker extends ListenableWorker {
                         request.getKarras()
                 );
             }
+            GenerateRequest finalRequest = request;
             aiHorde.generateImage(request, status -> {
                 Log.d("WorkerJob", "OnProgress");
             }, response -> {
                 Log.d("WorkerJob", "Finished");
                 WallpaperManager wallpaperManager = WallpaperManager.getInstance(getApplicationContext());
                 try {
-                    wallpaperManager.setBitmap(response);
+                    wallpaperManager.setBitmap(response.getImage());
                     SharedPreferences.Editor editor = preferences.edit();
                     editor.putString("lastChanged", DateFormat.getInstance().format(Calendar.getInstance().getTime()));
                     editor.commit();
+
+                    History history = new History(getApplicationContext());
+                    history.addItem(new StoredRequest(
+                            UUID.randomUUID(),
+                            finalRequest,
+                            response.getDetail().getSeed(),
+                            response.getDetail().getWorkerId(),
+                            response.getDetail().getWorkerName(),
+                            new Date()
+                    ));
+
                     completer.set(Result.success());
                 } catch (IOException e) {
                     Log.e("AIWallpaperError", "Failed setting new wallpaper", e);

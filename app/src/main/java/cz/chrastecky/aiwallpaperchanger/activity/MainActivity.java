@@ -16,7 +16,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,7 +24,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
-import com.android.volley.toolbox.Volley;
 import com.google.android.material.slider.Slider;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.gson.Gson;
@@ -39,12 +37,12 @@ import java.util.stream.Collectors;
 
 import cz.chrastecky.aiwallpaperchanger.BuildConfig;
 import cz.chrastecky.aiwallpaperchanger.R;
-import cz.chrastecky.aiwallpaperchanger.activity.PreviewActivity;
 import cz.chrastecky.aiwallpaperchanger.databinding.ActivityMainBinding;
 import cz.chrastecky.aiwallpaperchanger.dto.GenerateRequest;
 import cz.chrastecky.aiwallpaperchanger.dto.Sampler;
 import cz.chrastecky.aiwallpaperchanger.dto.Upscaler;
 import cz.chrastecky.aiwallpaperchanger.dto.response.ActiveModel;
+import cz.chrastecky.aiwallpaperchanger.dto.response.GenerationDetailWithBitmap;
 import cz.chrastecky.aiwallpaperchanger.exception.RetryGenerationException;
 import cz.chrastecky.aiwallpaperchanger.helper.AlarmManagerHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.SharedPreferencesHelper;
@@ -59,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.horde = new AiHorde(Volley.newRequestQueue(this));
+        this.horde = new AiHorde(this);
 
         SharedPreferences sharedPreferences = new SharedPreferencesHelper().get(this);
         GenerateRequest request = null;
@@ -131,7 +129,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("HordeRequestProgress", "Remaining: " + progress.getWaitTime());
             };
 
-            AiHorde.OnResponse<Bitmap> onResponse = response -> {
+            AiHorde.OnResponse<GenerationDetailWithBitmap> onResponse = response -> {
                 try {
                     File imageFile = new File(getFilesDir(), "currentImage.webp");
                     if (imageFile.exists()) {
@@ -139,12 +137,15 @@ public class MainActivity extends AppCompatActivity {
                     }
                     imageFile.createNewFile();
                     FileOutputStream imageOutputStream = new FileOutputStream(imageFile, false);
-                    response.compress(Bitmap.CompressFormat.WEBP, 100, imageOutputStream);
+                    response.getImage().compress(Bitmap.CompressFormat.WEBP, 100, imageOutputStream);
                     imageOutputStream.close();
 
                     Intent intent = new Intent(this, PreviewActivity.class);
                     intent.putExtra("imagePath", imageFile.getAbsolutePath());
                     intent.putExtra("generationParameters", new Gson().toJson(createGenerateRequest()));
+                    intent.putExtra("seed", response.getDetail().getSeed());
+                    intent.putExtra("workerId", response.getDetail().getWorkerId());
+                    intent.putExtra("workerName", response.getDetail().getWorkerName());
                     startActivity(intent);
                 } catch (IOException e) {
                     Toast.makeText(this, R.string.app_error_create_tmp_file, Toast.LENGTH_LONG).show();

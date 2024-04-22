@@ -1,5 +1,6 @@
 package cz.chrastecky.aiwallpaperchanger.horde;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.Log;
 import android.widget.ImageView;
@@ -14,6 +15,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.JsonRequest;
+import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -26,15 +28,16 @@ import java.util.List;
 import java.util.Map;
 
 import cz.chrastecky.aiwallpaperchanger.BuildConfig;
-import cz.chrastecky.aiwallpaperchanger.exception.RetryGenerationException;
 import cz.chrastecky.aiwallpaperchanger.dto.GenerateRequest;
 import cz.chrastecky.aiwallpaperchanger.dto.response.ActiveModel;
 import cz.chrastecky.aiwallpaperchanger.dto.response.AsyncRequestFullStatus;
 import cz.chrastecky.aiwallpaperchanger.dto.response.AsyncRequestStatusCheck;
 import cz.chrastecky.aiwallpaperchanger.dto.response.GenerationDetail;
+import cz.chrastecky.aiwallpaperchanger.dto.response.GenerationDetailWithBitmap;
 import cz.chrastecky.aiwallpaperchanger.dto.response.GenerationQueued;
 import cz.chrastecky.aiwallpaperchanger.dto.response.HordeWarning;
 import cz.chrastecky.aiwallpaperchanger.dto.response.ModelType;
+import cz.chrastecky.aiwallpaperchanger.exception.RetryGenerationException;
 
 public class AiHorde {
     public interface OnResponse<T> {
@@ -50,9 +53,11 @@ public class AiHorde {
 
     private static final String baseUrl = "https://aihorde.net/api/v2";
     private final RequestQueue requestQueue;
+    private final Context context;
 
-    public AiHorde(RequestQueue requestQueue) {
-        this.requestQueue = requestQueue;
+    public AiHorde(Context context) {
+        this.requestQueue = Volley.newRequestQueue(context);
+        this.context = context;
     }
 
     public void getModels(OnResponse<List<ActiveModel>> onResponse, @Nullable OnError onError) {
@@ -98,7 +103,7 @@ public class AiHorde {
     public void generateImage(
             GenerateRequest request,
             OnProgress onProgress,
-            OnResponse<Bitmap> onResponse,
+            OnResponse<GenerationDetailWithBitmap> onResponse,
             @Nullable OnError onError
     ) {
         String prompt = request.getPrompt();
@@ -239,7 +244,7 @@ public class AiHorde {
         };
     }
 
-    private JsonRequest<AsyncRequestFullStatus> getFullStatusRequest(String id, OnResponse<String> onResponse, OnError onError) {
+    private JsonRequest<AsyncRequestFullStatus> getFullStatusRequest(String id, OnResponse<GenerationDetail> onResponse, OnError onError) {
         return new JsonRequest<AsyncRequestFullStatus>(
                 Request.Method.GET,
                 baseUrl + "/generate/status/" + id,
@@ -249,7 +254,7 @@ public class AiHorde {
                         onError.onError(new VolleyError(new RetryGenerationException()));
                         return;
                     }
-                    onResponse.onResponse(asyncRequestFullStatus.getGenerations().get(0).getImg());
+                    onResponse.onResponse(asyncRequestFullStatus.getGenerations().get(0));
                 },
                 onError::onError
         ) {
@@ -305,7 +310,7 @@ public class AiHorde {
         };
     }
 
-    private void recursivelyCheckForStatus(String id, OnProgress onProgress, OnResponse<Bitmap> onResponse, @Nullable OnError onError) {
+    private void recursivelyCheckForStatus(String id, OnProgress onProgress, OnResponse<GenerationDetailWithBitmap> onResponse, @Nullable OnError onError) {
         requestQueue.add(getCheckStatusRequest(
                 id,
                 progress -> {
@@ -320,8 +325,10 @@ public class AiHorde {
                         }
                     }
 
-                    requestQueue.add(getFullStatusRequest(id, imageUrl -> {
-                        requestQueue.add(new ImageRequest(imageUrl, onResponse::onResponse, 1_000_000, 1_000_000, ImageView.ScaleType.CENTER, Bitmap.Config.RGB_565, volleyError -> {
+                    requestQueue.add(getFullStatusRequest(id, status -> {
+                        requestQueue.add(new ImageRequest(status.getImg(), detail -> {
+                            onResponse.onResponse(new GenerationDetailWithBitmap(status, detail));
+                        }, 1_000_000, 1_000_000, ImageView.ScaleType.CENTER, Bitmap.Config.RGB_565, volleyError -> {
                             if (onError != null) {
                                 onError.onError(volleyError);
                             }
