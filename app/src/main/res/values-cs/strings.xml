@@ -30,4 +30,8 @@
     <string name="app.generate.advanced_toggle">Pokročilé</string>
     <string name="app.generate.sampler">Sampler</string>
     <string name="app.generate.clip_skip">CLIP skip (%d)</string>
+    <string name="app.generate.width_and_height">Šířka a výška</string>
+    <string name="app.generate.width">Šířka</string>
+    <string name="app.generate.height">Výška</string>
+    <string name="app.generate.upscaler">Zvětšovač</string>
 </resources>

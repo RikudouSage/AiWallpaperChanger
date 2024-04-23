@@ -30,4 +30,8 @@
     <string name="app.generate.advanced_toggle">Advanced</string>
     <string name="app.generate.sampler">Sampler</string>
     <string name="app.generate.clip_skip">CLIP skip (%d)</string>
+    <string name="app.generate.width_and_height">Width and height</string>
+    <string name="app.generate.width">Width</string>
+    <string name="app.generate.height">Height</string>
+    <string name="app.generate.upscaler">Upscaler</string>
 </resources>

@@ -31,7 +31,11 @@ import com.google.gson.Gson;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Modifier;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
@@ -53,6 +57,8 @@ public class MainActivity extends AppCompatActivity {
     private static final String DEFAULT_MODEL = "ICBINP - I Can't Believe It's Not Photography";
     private static final String DEFAULT_SAMPLER = Sampler.k_dpmpp_sde.name();
     private AiHorde horde;
+
+    private Map<String, Boolean> formElementsValidation = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,29 +82,11 @@ public class MainActivity extends AppCompatActivity {
         rootView.setVisibility(View.INVISIBLE);
         loader.setVisibility(View.VISIBLE);
 
+        initializeValidations();
         initializeForm(request);
+        this.validate();
 
-        TextInputEditText promptField = findViewById(R.id.promp_field);
         Button previewButton = findViewById(R.id.preview_button);
-
-        promptField.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                setButtonEnabled(previewButton, s.length() > 0);
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
-
-        setButtonEnabled(previewButton, promptField.getText() != null && promptField.getText().length() > 0);
         previewButton.setOnClickListener(button -> {
             if (getCurrentFocus() != null) {
                 InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -245,6 +233,84 @@ public class MainActivity extends AppCompatActivity {
         return new int[] {(int) width, (int) height};
     }
 
+    private void validate() {
+        Button previewButton = findViewById(R.id.preview_button);
+        for (String key : formElementsValidation.keySet()) {
+            if (!formElementsValidation.get(key)) {
+                setButtonEnabled(previewButton, false);
+                return;
+            }
+        }
+
+        setButtonEnabled(previewButton, true);
+    }
+
+    private void initializeValidations() {
+        this.formElementsValidation.put("prompt", false);
+        this.formElementsValidation.put("width", true);
+        this.formElementsValidation.put("height", true);
+
+        TextInputEditText prompt = findViewById(R.id.prompt_field);
+        TextInputEditText width = findViewById(R.id.width_field);
+        TextInputEditText height = findViewById(R.id.height_field);
+
+        prompt.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                formElementsValidation.put("prompt", s.length() > 0);
+                validate();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
+        width.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                try {
+                    int value = Integer.parseInt(s.toString());
+                    formElementsValidation.put("width", value % 64 == 0);
+                } catch (NumberFormatException e) {
+                    formElementsValidation.put("width", false);
+                }
+                validate();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
+        height.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                try {
+                    int value = Integer.parseInt(s.toString());
+                    formElementsValidation.put("height", value % 64 == 0);
+                } catch (NumberFormatException e) {
+                    formElementsValidation.put("height", false);
+                }
+                validate();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
+    }
+
     private void initializeForm(@Nullable GenerateRequest request) {
         ConstraintLayout rootView = findViewById(R.id.rootView);
         ConstraintLayout loader = findViewById(R.id.loader);
@@ -254,8 +320,12 @@ public class MainActivity extends AppCompatActivity {
         TextView stepsTitle = findViewById(R.id.steps_title);
         Slider clipSkipField = findViewById(R.id.clip_skip_slider);
         TextView clipSkipTitle = findViewById(R.id.clip_skip_title);
+        TextInputEditText widthField = findViewById(R.id.width_field);
+        TextInputEditText heightField = findViewById(R.id.height_field);
+        Spinner upscalerField = findViewById(R.id.upscaler);
 
         SharedPreferences preferences = new SharedPreferencesHelper().get(this);
+        int[] widthHeight = calculateWidthAndHeight();
 
         List<String> samplers = Sampler.getEntries().stream().map(Enum::name).collect(Collectors.toList());
         samplerField.setAdapter(new ArrayAdapter<>(
@@ -264,6 +334,18 @@ public class MainActivity extends AppCompatActivity {
                 samplers
         ));
         samplerField.setSelection(samplers.indexOf(DEFAULT_SAMPLER));
+
+        List<String> upscalers = Arrays.stream(Upscaler.class.getFields())
+                .map(field -> {
+                    try {
+                        return field.get(null).toString();
+                    } catch (IllegalAccessException e) {
+                        throw new RuntimeException(e);
+                    }
+                })
+                .collect(Collectors.toList());
+        upscalerField.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, upscalers));
+        upscalerField.setSelection(upscalers.indexOf(getUpscaler(widthHeight)));
 
         advancedSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             SharedPreferences.Editor editor = preferences.edit();
@@ -283,9 +365,11 @@ public class MainActivity extends AppCompatActivity {
             clipSkipTitle.setText(getString(R.string.app_generate_clip_skip, (int) value));
         });
         clipSkipTitle.setText(getString(R.string.app_generate_clip_skip, 1));
+        widthField.setText(String.valueOf(widthHeight[0]));
+        heightField.setText(String.valueOf(widthHeight[1]));
 
         if (request != null) {
-            TextInputEditText prompt = findViewById(R.id.promp_field);
+            TextInputEditText prompt = findViewById(R.id.prompt_field);
             TextInputEditText negativePrompt = findViewById(R.id.negative_prompt_field);
 
             prompt.setText(request.getPrompt());
@@ -293,6 +377,8 @@ public class MainActivity extends AppCompatActivity {
             samplerField.setSelection(samplers.indexOf(request.getSampler().name()));
             stepsField.setValue(request.getSteps());
             clipSkipField.setValue(request.getClipSkip());
+            widthField.setText(String.valueOf(request.getWidth()));
+            heightField.setText(String.valueOf(request.getHeight()));
         }
 
         horde.getModels(response -> {
@@ -315,17 +401,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private GenerateRequest createGenerateRequest() {
-        TextInputEditText prompt = findViewById(R.id.promp_field);
+        TextInputEditText prompt = findViewById(R.id.prompt_field);
         TextInputEditText negativePrompt = findViewById(R.id.negative_prompt_field);
         Spinner model = findViewById(R.id.model_field);
         Spinner sampler = findViewById(R.id.sampler_field);
         Slider steps = findViewById(R.id.steps_slider);
         Slider clipSkip = findViewById(R.id.clip_skip_slider);
+        TextInputEditText width = findViewById(R.id.width_field);
+        TextInputEditText height = findViewById(R.id.height_field);
+        Spinner upscaler = findViewById(R.id.upscaler);
 
         boolean advanced = ((SwitchCompat) findViewById(R.id.advanced_switch)).isChecked();
 
         int[] widthAndHeight = this.calculateWidthAndHeight();
-        String upscaler = this.getUpscaler(widthAndHeight);
+        String defaultUpscaler = this.getUpscaler(widthAndHeight);
 
         return new GenerateRequest(
                 prompt.getText().toString(),
@@ -334,10 +423,10 @@ public class MainActivity extends AppCompatActivity {
                 advanced ? Sampler.valueOf((String) sampler.getSelectedItem()) : Sampler.k_dpmpp_sde,
                 advanced ? (int) steps.getValue() : 25,
                 advanced ? (int) clipSkip.getValue() : 1,
-                widthAndHeight[0],
-                widthAndHeight[1],
+                advanced ? Integer.parseInt(width.getText().toString()) : widthAndHeight[0],
+                advanced ? Integer.parseInt(height.getText().toString()) : widthAndHeight[1],
                 null,
-                upscaler,
+                advanced ? (String) upscaler.getSelectedItem() : defaultUpscaler,
                 7.0,
                 BuildConfig.NSFW_ENABLED,
                 true
