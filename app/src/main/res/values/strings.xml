@@ -34,4 +34,5 @@
     <string name="app.generate.width">Width</string>
     <string name="app.generate.height">Height</string>
     <string name="app.generate.upscaler">Upscaler</string>
+    <string name="app.select.empty_option">-- none --</string>
 </resources>

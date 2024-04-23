@@ -34,4 +34,5 @@
     <string name="app.generate.width">Šířka</string>
     <string name="app.generate.height">Výška</string>
     <string name="app.generate.upscaler">Zvětšovač</string>
+    <string name="app.select.empty_option">-- žádný --</string>
 </resources>

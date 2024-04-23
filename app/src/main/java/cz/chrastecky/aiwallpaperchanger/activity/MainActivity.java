@@ -154,6 +154,7 @@ public class MainActivity extends AppCompatActivity {
                 loader.setVisibility(View.INVISIBLE);
             };
 
+            Log.d("HordeRequest", new Gson().toJson(createGenerateRequest()));
             horde.generateImage(createGenerateRequest(), onProgress, onResponse, onError.value);
 
             rootView.setVisibility(View.INVISIBLE);
@@ -344,6 +345,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 })
                 .collect(Collectors.toList());
+        upscalers.add(0, getString(R.string.app_select_empty_option));
         upscalerField.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, upscalers));
         upscalerField.setSelection(upscalers.indexOf(getUpscaler(widthHeight)));
 
@@ -416,6 +418,9 @@ public class MainActivity extends AppCompatActivity {
         int[] widthAndHeight = this.calculateWidthAndHeight();
         String defaultUpscaler = this.getUpscaler(widthAndHeight);
 
+        String selectedUpscaler = (String) upscaler.getSelectedItem();
+        String noneOption = getString(R.string.app_select_empty_option);
+
         return new GenerateRequest(
                 prompt.getText().toString(),
                 negativePrompt.getText().length() > 0 ? negativePrompt.getText().toString() : null,
@@ -426,7 +431,7 @@ public class MainActivity extends AppCompatActivity {
                 advanced ? Integer.parseInt(width.getText().toString()) : widthAndHeight[0],
                 advanced ? Integer.parseInt(height.getText().toString()) : widthAndHeight[1],
                 null,
-                advanced ? (String) upscaler.getSelectedItem() : defaultUpscaler,
+                advanced ? (selectedUpscaler.equals(noneOption) ? null : selectedUpscaler) : defaultUpscaler,
                 7.0,
                 BuildConfig.NSFW_ENABLED,
                 true
