@@ -35,4 +35,5 @@
     <string name="app.generate.height">Výška</string>
     <string name="app.generate.upscaler">Zvětšovač</string>
     <string name="app.select.empty_option">-- žádný --</string>
+    <string name="notification.doze_mode.disable">Prosím vypněte optimalizace baterie pro AI Wallpaper Changer.</string>
 </resources>

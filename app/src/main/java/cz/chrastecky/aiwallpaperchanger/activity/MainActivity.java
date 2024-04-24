@@ -31,7 +31,6 @@ import com.google.gson.Gson;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -97,6 +96,9 @@ public class MainActivity extends AppCompatActivity {
 //            Intent intent = new Intent(this, PreviewActivity.class);
 //            intent.putExtra("imagePath", imageFile.getAbsolutePath());
 //            intent.putExtra("generationParameters", new Gson().toJson(createGenerateRequest()));
+//            intent.putExtra("seed", "123");
+//            intent.putExtra("workerId", "abcde");
+//            intent.putExtra("workerName", "Fake worker");
 //            startActivity(intent);
 
             TextView progressText = findViewById(R.id.progress_info);

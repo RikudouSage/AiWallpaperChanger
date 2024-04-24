@@ -1,17 +1,12 @@
 package cz.chrastecky.aiwallpaperchanger.activity;
 
-import android.Manifest;
-import android.app.AlarmManager;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.provider.Settings;
-import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
@@ -19,13 +14,11 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 
 import java.util.Arrays;
-import java.util.Calendar;
 
+import cz.chrastecky.aiwallpaperchanger.BuildConfig;
 import cz.chrastecky.aiwallpaperchanger.R;
-import cz.chrastecky.aiwallpaperchanger.background.AlarmReceiver;
 import cz.chrastecky.aiwallpaperchanger.databinding.ActivityConfigureScheduleBinding;
 import cz.chrastecky.aiwallpaperchanger.helper.AlarmManagerHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.ChannelHelper;
@@ -50,6 +43,7 @@ public class ConfigureScheduleActivity extends AppCompatActivity {
 
         Button scheduleButton = findViewById(R.id.schedule_button);
         scheduleButton.setOnClickListener(view -> {
+            handleDozeMode();
             schedule();
 //            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
 //                if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
@@ -74,6 +68,21 @@ public class ConfigureScheduleActivity extends AppCompatActivity {
 //                schedule();
 //            }
         });
+    }
+
+    private void handleDozeMode() {
+        PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
+        if (powerManager.isIgnoringBatteryOptimizations(getPackageName())) {
+            return;
+        }
+        if (BuildConfig.DOZE_MANAGEMENT_ENABLED) {
+            Intent intent = new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+            intent.setData(Uri.parse("package:" + getPackageName()));
+            startActivity(intent);
+        } else {
+            Toast.makeText(this, R.string.notification_doze_mode_disable, Toast.LENGTH_LONG).show();
+            startActivity(new Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS));
+        }
     }
 
     @Override

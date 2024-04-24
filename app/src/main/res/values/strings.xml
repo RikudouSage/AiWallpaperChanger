@@ -35,4 +35,5 @@
     <string name="app.generate.height">Height</string>
     <string name="app.generate.upscaler">Upscaler</string>
     <string name="app.select.empty_option">-- none --</string>
+    <string name="notification.doze_mode.disable">Please disable battery optimizations for AI Wallpaper Changer.</string>
 </resources>

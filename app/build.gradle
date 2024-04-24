@@ -45,7 +45,7 @@ android {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
         }
     }
-    flavorDimensions 'nsfw', 'key'
+    flavorDimensions 'nsfw', 'key', 'doze'
     productFlavors {
         Properties properties = new Properties()
         properties.load(project.rootProject.file('local.properties').newDataInputStream())
@@ -70,6 +70,14 @@ android {
         noKey {
             dimension 'key'
             buildConfigField "String", "API_KEY", "\"0000000000\""
+        }
+        dozeEnabled {
+            dimension 'doze'
+            buildConfigField "boolean", "DOZE_MANAGEMENT_ENABLED", "true"
+        }
+        dozeDisabled {
+            dimension 'doze'
+            buildConfigField "boolean", "DOZE_MANAGEMENT_ENABLED", "false"
         }
     }
 }
