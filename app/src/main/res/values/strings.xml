@@ -15,6 +15,7 @@
     <string name="app.title.configure_schedule">Configure Schedule</string>
     <string name="app.schedule.times">How many times a day do you want the app to change your wallpaper?</string>
     <string name="app.schedule.schedule_button">Schedule!</string>
+    <string name="notification.channel.background_work.id" translatable="false">background_work</string>
     <string name="notification.channel.background_work.title">Background work</string>
     <string name="notification.channel.background_work.description">This channel is used to display a notification while the app is generating a new wallpaper in the background. Without this we cannot ensure that the wallpaper will be generated successfully.</string>
     <string name="notification.background_work.title">Generating new AI wallpaper</string>
