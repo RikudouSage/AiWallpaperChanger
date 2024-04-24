@@ -52,6 +52,7 @@ android {
 
         nsfwEnabled {
             dimension 'nsfw'
+            versionNameSuffix 'N'
             buildConfigField "boolean", "NSFW_ENABLED", "true"
         }
         nsfwDisabled {
@@ -61,22 +62,27 @@ android {
         }
         prodKey {
             dimension 'key'
+            versionNameSuffix 'P'
             buildConfigField "String", "API_KEY", "\"" + (properties.getProperty('prod_api_key') ?: "0000000000") + "\""
         }
         devKey {
             dimension 'key'
+            versionNameSuffix 'D'
             buildConfigField "String", "API_KEY", "\"" + (properties.getProperty('dev_api_key') ?: "0000000000") + "\""
         }
         noKey {
             dimension 'key'
+            versionNameSuffix 'N'
             buildConfigField "String", "API_KEY", "\"0000000000\""
         }
         dozeEnabled {
             dimension 'doze'
+            versionNameSuffix 'D'
             buildConfigField "boolean", "DOZE_MANAGEMENT_ENABLED", "true"
         }
         dozeDisabled {
             dimension 'doze'
+            versionNameSuffix 'N'
             buildConfigField "boolean", "DOZE_MANAGEMENT_ENABLED", "false"
         }
     }
