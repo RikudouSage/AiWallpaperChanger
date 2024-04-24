@@ -36,4 +36,7 @@
     <string name="app.generate.upscaler">Zvětšovač</string>
     <string name="app.select.empty_option">-- žádný --</string>
     <string name="notification.doze_mode.disable">Prosím vypněte optimalizace baterie pro AI Wallpaper Changer.</string>
+    <string name="app.title.history">Historie</string>
+    <string name="app.history.no_history">Žádná historie tapet neexistuje, směle do toho a nějaké vygenerujte!</string>
+    <string name="app.history.open_in_browser">Otevřít v HordeNG</string>
 </resources>

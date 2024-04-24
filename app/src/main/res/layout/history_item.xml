@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable name="date" type="java.lang.String" />
+        <variable name="request" type="java.lang.String" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingBottom="16dp"
+        >
+
+        <TextView
+            android:id="@+id/date_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@{date}"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="22. 04. 2024 18:01:36" />
+
+        <TextView
+            android:id="@+id/request_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/date_text"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:text="@{request}"
+            tools:text="{&quot;cfgScale&quot;:7.0,&quot;clipSkip&quot;:1,&quot;height&quot;:1024,&quot;karras&quot;:true,&quot;model&quot;:&quot;ICBINP - I Can\u0027t Believe It\u0027s Not Photography&quot;,&quot;negativePrompt&quot;:&quot;deformed, ugly&quot;,&quot;nsfw&quot;:false,&quot;prompt&quot;:&quot;beautiful woman, abstract, art, colorful&quot;,&quot;sampler&quot;:&quot;k_dpmpp_sde&quot;,&quot;steps&quot;:25,&quot;upscaler&quot;:&quot;RealESRGAN_x4plus&quot;,&quot;width&quot;:576}" />
+
+        <Button
+            android:id="@+id/horde_ng_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@color/md_theme_primary"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:text="@string/app.history.open_in_browser"
+            android:textColor="@color/md_theme_onPrimary"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/request_text" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

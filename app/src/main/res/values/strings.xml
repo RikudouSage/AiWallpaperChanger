@@ -36,4 +36,7 @@
     <string name="app.generate.upscaler">Upscaler</string>
     <string name="app.select.empty_option">-- none --</string>
     <string name="notification.doze_mode.disable">Please disable battery optimizations for AI Wallpaper Changer.</string>
+    <string name="app.title.history">History</string>
+    <string name="app.history.no_history">There is no wallpaper history, go on and generate some wallpapers!</string>
+    <string name="app.history.open_in_browser">Open in HordeNG</string>
 </resources>
