@@ -39,5 +39,5 @@
     <string name="app.title.history">Historie</string>
     <string name="app.history.no_history">Žádná historie tapet neexistuje, směle do toho a nějaké vygenerujte!</string>
     <string name="app.history.open_in_browser">Otevřít v HordeNG</string>
-    <string name="app.generate.nsfw">NSFW (nahota apod.)</string>
+    <string name="app.generate.nsfw">NSFW povoleno (nahota apod.)</string>
 </resources>

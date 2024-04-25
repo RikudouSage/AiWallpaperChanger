@@ -39,5 +39,5 @@
     <string name="app.title.history">History</string>
     <string name="app.history.no_history">There is no wallpaper history, go on and generate some wallpapers!</string>
     <string name="app.history.open_in_browser">Open in HordeNG</string>
-    <string name="app.generate.nsfw">NSFW</string>
+    <string name="app.generate.nsfw">NSFW enabled</string>
 </resources>
