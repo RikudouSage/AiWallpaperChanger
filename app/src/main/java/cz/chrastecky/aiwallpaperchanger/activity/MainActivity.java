@@ -39,6 +39,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import cz.chrastecky.aiwallpaperchanger.BuildConfig;
@@ -49,6 +50,7 @@ import cz.chrastecky.aiwallpaperchanger.dto.Sampler;
 import cz.chrastecky.aiwallpaperchanger.dto.Upscaler;
 import cz.chrastecky.aiwallpaperchanger.dto.response.ActiveModel;
 import cz.chrastecky.aiwallpaperchanger.dto.response.GenerationDetailWithBitmap;
+import cz.chrastecky.aiwallpaperchanger.exception.ContentCensoredException;
 import cz.chrastecky.aiwallpaperchanger.exception.RetryGenerationException;
 import cz.chrastecky.aiwallpaperchanger.helper.AlarmManagerHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.SharedPreferencesHelper;
@@ -158,8 +160,15 @@ public class MainActivity extends AppCompatActivity {
             };
 
             ValueWrapper<AiHorde.OnError> onError = new ValueWrapper<>();
+            AtomicInteger censoredRetries = new AtomicInteger(3);
             onError.value = error -> {
                 if (error.getCause() instanceof RetryGenerationException) {
+                    horde.generateImage(createGenerateRequest(), onProgress, onResponse, onError.value);
+                    return;
+                }
+                if (error.getCause() instanceof ContentCensoredException && censoredRetries.get() > 0) {
+                    Log.d("HordeError", "Request got censored, retrying");
+                    censoredRetries.addAndGet(-1);
                     horde.generateImage(createGenerateRequest(), onProgress, onResponse, onError.value);
                     return;
                 }

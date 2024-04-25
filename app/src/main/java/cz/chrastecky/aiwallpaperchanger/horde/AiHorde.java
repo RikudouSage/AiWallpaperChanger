@@ -37,6 +37,7 @@ import cz.chrastecky.aiwallpaperchanger.dto.response.GenerationDetailWithBitmap;
 import cz.chrastecky.aiwallpaperchanger.dto.response.GenerationQueued;
 import cz.chrastecky.aiwallpaperchanger.dto.response.HordeWarning;
 import cz.chrastecky.aiwallpaperchanger.dto.response.ModelType;
+import cz.chrastecky.aiwallpaperchanger.exception.ContentCensoredException;
 import cz.chrastecky.aiwallpaperchanger.exception.RetryGenerationException;
 
 public class AiHorde {
@@ -252,6 +253,10 @@ public class AiHorde {
                 asyncRequestFullStatus -> {
                     if (asyncRequestFullStatus.getGenerations().isEmpty()) {
                         onError.onError(new VolleyError(new RetryGenerationException()));
+                        return;
+                    }
+                    if (asyncRequestFullStatus.getGenerations().get(0).getCensored()) {
+                        onError.onError(new VolleyError(new ContentCensoredException()));
                         return;
                     }
                     onResponse.onResponse(asyncRequestFullStatus.getGenerations().get(0));
