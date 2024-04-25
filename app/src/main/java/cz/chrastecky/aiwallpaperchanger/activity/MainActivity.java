@@ -354,6 +354,7 @@ public class MainActivity extends AppCompatActivity {
         TextInputEditText widthField = findViewById(R.id.width_field);
         TextInputEditText heightField = findViewById(R.id.height_field);
         Spinner upscalerField = findViewById(R.id.upscaler);
+        SwitchCompat nsfwField = findViewById(R.id.nsfw_switch);
 
         SharedPreferences preferences = new SharedPreferencesHelper().get(this);
         int[] widthHeight = calculateWidthAndHeight();
@@ -400,6 +401,10 @@ public class MainActivity extends AppCompatActivity {
         widthField.setText(String.valueOf(widthHeight[0]));
         heightField.setText(String.valueOf(widthHeight[1]));
 
+        if (BuildConfig.NSFW_ENABLED) {
+            nsfwField.setVisibility(View.VISIBLE);
+        }
+
         if (request != null) {
             TextInputEditText prompt = findViewById(R.id.prompt_field);
             TextInputEditText negativePrompt = findViewById(R.id.negative_prompt_field);
@@ -442,6 +447,7 @@ public class MainActivity extends AppCompatActivity {
         TextInputEditText width = findViewById(R.id.width_field);
         TextInputEditText height = findViewById(R.id.height_field);
         Spinner upscaler = findViewById(R.id.upscaler);
+        SwitchCompat nsfw = findViewById(R.id.nsfw_switch);
 
         boolean advanced = ((SwitchCompat) findViewById(R.id.advanced_switch)).isChecked();
 
@@ -463,7 +469,7 @@ public class MainActivity extends AppCompatActivity {
                 null,
                 advanced ? (selectedUpscaler.equals(noneOption) ? null : selectedUpscaler) : defaultUpscaler,
                 7.0,
-                BuildConfig.NSFW_ENABLED,
+                BuildConfig.NSFW_ENABLED && nsfw.isChecked(),
                 true
         );
     }
