@@ -14,6 +14,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
@@ -88,6 +89,10 @@ public class MainActivity extends AppCompatActivity {
             }
             if (item.getItemId() == R.id.settings_menu_item) {
                 startActivity(new Intent(this, SettingsActivity.class));
+                return true;
+            }
+            if (item.getItemId() == R.id.premium_menu_item) {
+                startActivity(new Intent(this, PremiumActivity.class));
                 return true;
             }
 
@@ -235,6 +240,11 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = new MenuInflater(this);
         inflater.inflate(R.menu.menu, menu);
+
+        if (BuildConfig.BILLING_ENABLED) {
+            menu.findItem(R.id.premium_menu_item).setVisible(true);
+        }
+
         return true;
     }
 

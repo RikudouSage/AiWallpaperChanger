@@ -45,4 +45,5 @@
     <string name="app.settings.api_key_hint">Leave empty to use the default</string>
     <string name="app.error.invalid_api_key">The provided API key is not valid.</string>
     <string name="app.error.forbidden_request">Generating your image failed. Perhaps your request is too complex?</string>
+    <string name="app.title.premium">Premium</string>
 </resources>
