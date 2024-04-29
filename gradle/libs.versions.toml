@@ -1,5 +1,6 @@
 [versions]
 agp = "8.3.2"
+billing = "6.2.1"
 concurrentFutures = "1.1.0"
 gson = "2.10.1"
 kotlin = "1.9.0"
@@ -24,6 +25,7 @@ workRuntime = "2.9.0"
 androidx-concurrent-futures = { module = "androidx.concurrent:concurrent-futures", version.ref = "concurrentFutures" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-work-runtime = { module = "androidx.work:work-runtime", version.ref = "workRuntime" }
+billing = { module = "com.android.billingclient:billing", version.ref = "billing" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }

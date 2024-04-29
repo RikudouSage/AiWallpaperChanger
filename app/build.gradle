@@ -92,11 +92,13 @@ android {
             dimension 'billing'
             versionNameSuffix 'B'
             buildConfigField "boolean", "BILLING_ENABLED", "true"
+            buildConfigField "String", "PREMIUM_API_KEY", "\"" + (properties.getProperty('prod_api_key')) + "\""
         }
         billingDisabled {
             dimension 'billing'
             versionNameSuffix 'N'
             buildConfigField "boolean", "BILLING_ENABLED", "false"
+            buildConfigField "String", "PREMIUM_API_KEY", "\"0000000000\""
         }
     }
 }
@@ -122,6 +124,7 @@ dependencies {
     implementation libs.gson
     implementation libs.androidx.work.runtime
     implementation libs.androidx.concurrent.futures
+    implementation libs.billing
     testImplementation libs.junit
     androidTestImplementation libs.androidx.junit
     androidTestImplementation libs.androidx.espresso.core
