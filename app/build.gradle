@@ -48,7 +48,7 @@ android {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
         }
     }
-    flavorDimensions 'nsfw', 'key', 'doze'
+    flavorDimensions 'nsfw', 'key', 'doze', 'billing'
     productFlavors {
         Properties properties = new Properties()
         properties.load(project.rootProject.file('local.properties').newDataInputStream())
@@ -87,6 +87,16 @@ android {
             dimension 'doze'
             versionNameSuffix 'N'
             buildConfigField "boolean", "DOZE_MANAGEMENT_ENABLED", "false"
+        }
+        billingEnabled {
+            dimension 'billing'
+            versionNameSuffix 'B'
+            buildConfigField "boolean", "BILLING_ENABLED", "true"
+        }
+        billingDisabled {
+            dimension 'billing'
+            versionNameSuffix 'N'
+            buildConfigField "boolean", "BILLING_ENABLED", "false"
         }
     }
 }
