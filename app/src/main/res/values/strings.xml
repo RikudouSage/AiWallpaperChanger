@@ -40,4 +40,8 @@
     <string name="app.history.no_history">There is no wallpaper history, go on and generate some wallpapers!</string>
     <string name="app.history.open_in_browser">Open in HordeNG</string>
     <string name="app.generate.nsfw">NSFW enabled</string>
+    <string name="app.title.settings">Settings</string>
+    <string name="app.settings.api_key">Custom API key</string>
+    <string name="app.settings.api_key_hint">Leave empty to use the default</string>
+    <string name="app.error.invalid_api_key">The provided API key is not valid.</string>
 </resources>

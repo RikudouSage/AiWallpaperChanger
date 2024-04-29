@@ -1,6 +1,7 @@
 package cz.chrastecky.aiwallpaperchanger.horde;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.util.Log;
 import android.widget.ImageView;
@@ -39,6 +40,7 @@ import cz.chrastecky.aiwallpaperchanger.dto.response.HordeWarning;
 import cz.chrastecky.aiwallpaperchanger.dto.response.ModelType;
 import cz.chrastecky.aiwallpaperchanger.exception.ContentCensoredException;
 import cz.chrastecky.aiwallpaperchanger.exception.RetryGenerationException;
+import cz.chrastecky.aiwallpaperchanger.helper.SharedPreferencesHelper;
 
 public class AiHorde {
     public interface OnResponse<T> {
@@ -166,7 +168,7 @@ public class AiHorde {
             @Override
             public Map<String, String> getHeaders() {
                 Map<String, String> headers = new HashMap<>();
-                headers.put("apikey", BuildConfig.API_KEY);
+                headers.put("apikey", apiKey());
                 return headers;
             }
 
@@ -213,7 +215,7 @@ public class AiHorde {
             @Override
             public Map<String, String> getHeaders() {
                 Map<String, String> headers = new HashMap<>();
-                headers.put("apikey", BuildConfig.API_KEY);
+                headers.put("apikey", apiKey());
                 return headers;
             }
 
@@ -266,7 +268,7 @@ public class AiHorde {
             @Override
             public Map<String, String> getHeaders() {
                 Map<String, String> headers = new HashMap<>();
-                headers.put("apikey", BuildConfig.API_KEY);
+                headers.put("apikey", apiKey());
                 return headers;
             }
 
@@ -350,5 +352,10 @@ public class AiHorde {
                     }
                 }
         ));
+    }
+
+    private String apiKey() {
+        SharedPreferences preferences = new SharedPreferencesHelper().get(context);
+        return preferences.getString("api_key", BuildConfig.API_KEY);
     }
 }

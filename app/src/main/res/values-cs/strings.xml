@@ -40,4 +40,8 @@
     <string name="app.history.no_history">Žádná historie tapet neexistuje, směle do toho a nějaké vygenerujte!</string>
     <string name="app.history.open_in_browser">Otevřít v HordeNG</string>
     <string name="app.generate.nsfw">NSFW povoleno (nahota apod.)</string>
+    <string name="app.title.settings">Nastavení</string>
+    <string name="app.settings.api_key">Vlastní API klíč</string>
+    <string name="app.settings.api_key_hint">Ponechte prázdné pro výchozí hodnotu</string>
+    <string name="app.error.invalid_api_key">Zadaný API klíč je neplatný.</string>
 </resources>

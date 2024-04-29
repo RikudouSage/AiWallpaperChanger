@@ -27,6 +27,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import com.android.volley.AuthFailureError;
 import com.google.android.material.slider.Slider;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.gson.Gson;
@@ -81,8 +82,12 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(binding.toolbar);
         binding.toolbar.getOverflowIcon().setColorFilter(getColor(R.color.md_theme_onPrimary), PorterDuff.Mode.SRC_ATOP);
         binding.toolbar.setOnMenuItemClickListener(item -> {
-            if (item.getItemId() == R.id.history_item) {
+            if (item.getItemId() == R.id.history_menu_item) {
                 startActivity(new Intent(this, HistoryActivity.class));
+                return true;
+            }
+            if (item.getItemId() == R.id.settings_menu_item) {
+                startActivity(new Intent(this, SettingsActivity.class));
                 return true;
             }
 
@@ -172,7 +177,11 @@ public class MainActivity extends AppCompatActivity {
                     horde.generateImage(createGenerateRequest(), onProgress, onResponse, onError.value);
                     return;
                 }
-                Toast.makeText(this, R.string.app_error_generating_failed, Toast.LENGTH_LONG).show();
+                if (error instanceof AuthFailureError) {
+                    Toast.makeText(this, R.string.app_error_invalid_api_key, Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(this, R.string.app_error_generating_failed, Toast.LENGTH_LONG).show();
+                }
                 rootView.setVisibility(View.VISIBLE);
                 loader.setVisibility(View.INVISIBLE);
             };
