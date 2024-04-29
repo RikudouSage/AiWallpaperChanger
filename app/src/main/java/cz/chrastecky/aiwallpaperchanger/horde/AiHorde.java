@@ -8,10 +8,12 @@ import android.widget.ImageView;
 
 import androidx.annotation.Nullable;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.ImageRequest;
@@ -157,8 +159,12 @@ public class AiHorde {
                 volleyError -> {
                     if (volleyError.networkResponse != null) {
                         Log.d("HordeError", new String(volleyError.networkResponse.data));
-                    } else {
+                    } else if (volleyError.getMessage() != null) {
                         Log.d("HordeError", volleyError.getMessage());
+                    } else if (volleyError.getCause() != null) {
+                        Log.d("HordeError", volleyError.getCause().getMessage(), volleyError.getCause());
+                    } else {
+                        Log.d("HordeError", volleyError.toString());
                     }
                     if (onError != null) {
                         onError.onError(volleyError);

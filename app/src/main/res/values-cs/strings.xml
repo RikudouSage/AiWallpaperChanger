@@ -44,4 +44,5 @@
     <string name="app.settings.api_key">Vlastní API klíč</string>
     <string name="app.settings.api_key_hint">Ponechte prázdné pro výchozí hodnotu</string>
     <string name="app.error.invalid_api_key">Zadaný API klíč je neplatný.</string>
+    <string name="app.error.forbidden_request">Generování obrázku selhalo. Možná je váš požadavek je příliš složitý?</string>
 </resources>

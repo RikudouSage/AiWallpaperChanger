@@ -178,7 +178,13 @@ public class MainActivity extends AppCompatActivity {
                     return;
                 }
                 if (error instanceof AuthFailureError) {
-                    Toast.makeText(this, R.string.app_error_invalid_api_key, Toast.LENGTH_LONG).show();
+                    if (error.networkResponse.statusCode == 401) {
+                        Toast.makeText(this, R.string.app_error_invalid_api_key, Toast.LENGTH_LONG).show();
+                    } else if (error.networkResponse.statusCode == 403) {
+                        Toast.makeText(this, R.string.app_error_forbidden_request, Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(this, R.string.app_error_generating_failed, Toast.LENGTH_LONG).show();
+                    }
                 } else {
                     Toast.makeText(this, R.string.app_error_generating_failed, Toast.LENGTH_LONG).show();
                 }
