@@ -36,6 +36,7 @@ public class BillingHelper {
     ) {
         if (!BuildConfig.BILLING_ENABLED) {
             onUnavailable.onUnavailable();
+            return;
         }
 
         BillingClient billingClient = BillingClient.newBuilder(context)
