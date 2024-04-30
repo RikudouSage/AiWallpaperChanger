@@ -40,6 +40,7 @@ public class GenerateAndSetBackgroundWorker extends ListenableWorker {
     public ListenableFuture<Result> startWork() {
         return CallbackToFutureAdapter.getFuture(completer -> {
             BillingHelper.getPurchaseStatus(getApplicationContext(), PremiumActivity.PREMIUM_PURCHASE_NAME, premiumStatus -> {
+                Log.d("WorkerJob", "Is premium: " + (premiumStatus ? "Yes" : "No"));
                 if (premiumStatus) {
                     AiHorde.DEFAULT_API_KEY = BuildConfig.PREMIUM_API_KEY;
                 }
