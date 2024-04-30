@@ -11,8 +11,8 @@ android {
         applicationId "cz.chrastecky.aiwallpaperchanger"
         minSdk 24
         targetSdk 34
-        versionCode 9
-        versionName '9.0'
+        versionCode 12
+        versionName '12'
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -48,7 +48,7 @@ android {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
         }
     }
-    flavorDimensions 'nsfw', 'key', 'doze'
+    flavorDimensions 'nsfw', 'key', 'doze', 'billing'
     productFlavors {
         Properties properties = new Properties()
         properties.load(project.rootProject.file('local.properties').newDataInputStream())
@@ -88,6 +88,18 @@ android {
             versionNameSuffix 'N'
             buildConfigField "boolean", "DOZE_MANAGEMENT_ENABLED", "false"
         }
+        billingEnabled {
+            dimension 'billing'
+            versionNameSuffix 'B'
+            buildConfigField "boolean", "BILLING_ENABLED", "true"
+            buildConfigField "String", "PREMIUM_API_KEY", "\"" + (properties.getProperty('prod_api_key')) + "\""
+        }
+        billingDisabled {
+            dimension 'billing'
+            versionNameSuffix 'N'
+            buildConfigField "boolean", "BILLING_ENABLED", "false"
+            buildConfigField "String", "PREMIUM_API_KEY", "\"0000000000\""
+        }
     }
 }
 
@@ -112,6 +124,7 @@ dependencies {
     implementation libs.gson
     implementation libs.androidx.work.runtime
     implementation libs.androidx.concurrent.futures
+    implementation libs.billing
     testImplementation libs.junit
     androidTestImplementation libs.androidx.junit
     androidTestImplementation libs.androidx.espresso.core

@@ -55,7 +55,11 @@ public class AlarmManagerHelper {
                 (long) ((24.0 / interval) * 60 * 60 * 1_000),
                 intent
         );
-//        alarmManager.set(AlarmManager.RTC, calendar.getTimeInMillis(), intent);
-//        Log.d("Schedule", "Should run at " + calendar.getTime());
+
+//        AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
+//        Calendar now = Calendar.getInstance();
+//        now.add(Calendar.MINUTE, 1);
+//        alarmManager.set(AlarmManager.RTC, now.getTimeInMillis(), getAlarmIntent(context));
+//        Log.d("Schedule", "Should run at " + now.getTime());
     }
 }

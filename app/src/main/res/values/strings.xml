@@ -44,4 +44,12 @@
     <string name="app.settings.api_key">Custom API key</string>
     <string name="app.settings.api_key_hint">Leave empty to use the default</string>
     <string name="app.error.invalid_api_key">The provided API key is not valid.</string>
+    <string name="app.error.forbidden_request">Generating your image failed. Perhaps your request is too complex?</string>
+    <string name="app.title.premium">Premium</string>
+    <string name="app.premium.description">Opting for the Premium subscription allows you to jump ahead in the line, much like a custom API key with high kudos amount does.\n\nWhat essentially happens is this: instead of being grouped with the default, anonymous API key users, you join a higher tier with a considerable amount of kudos, thereby gaining queue priority.\n\nThe benefits of this include:\n- High priority in the queue (equivalent to providing your own api key with high amount of kudos)\n- The ability to set more complex generation parameters (as is possible with any API key, even without kudos)\n- Your support contributes directly to the continuing development of the app\n\nPlease note that the premium subscription doesn\'t provide:\n- Exclusive access to special features\n- Improved image quality above what is usual without a premium subscription\n\nSimply put, a Premium package isn\'t necessary unless you want faster response times during peak hours. If you still decide to subscribe, knowing these conditions, we sincerely appreciate it!</string>
+    <string name="app.premium.unavailable">Premium is not available in your country.</string>
+    <string name="app.premium.billing_unavailable">Billing is unavailable on your device, cannot purchase Premium.</string>
+    <string name="app.premium.already_purchased">You have already purchased Premium, thank you!</string>
+    <string name="app.premium.activate">Activate Premium</string>
+    <string name="app.premium.error_launching_subscribe">There was an error while trying to launch a payment window, please try again later.</string>
 </resources>

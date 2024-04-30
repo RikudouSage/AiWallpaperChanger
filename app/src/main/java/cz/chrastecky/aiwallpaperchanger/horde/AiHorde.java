@@ -8,10 +8,12 @@ import android.widget.ImageView;
 
 import androidx.annotation.Nullable;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.ImageRequest;
@@ -43,6 +45,8 @@ import cz.chrastecky.aiwallpaperchanger.exception.RetryGenerationException;
 import cz.chrastecky.aiwallpaperchanger.helper.SharedPreferencesHelper;
 
 public class AiHorde {
+    public static String DEFAULT_API_KEY = BuildConfig.API_KEY;
+
     public interface OnResponse<T> {
         void onResponse(T response);
     }
@@ -157,8 +161,12 @@ public class AiHorde {
                 volleyError -> {
                     if (volleyError.networkResponse != null) {
                         Log.d("HordeError", new String(volleyError.networkResponse.data));
-                    } else {
+                    } else if (volleyError.getMessage() != null) {
                         Log.d("HordeError", volleyError.getMessage());
+                    } else if (volleyError.getCause() != null) {
+                        Log.d("HordeError", volleyError.getCause().getMessage(), volleyError.getCause());
+                    } else {
+                        Log.d("HordeError", volleyError.toString());
                     }
                     if (onError != null) {
                         onError.onError(volleyError);
@@ -356,6 +364,6 @@ public class AiHorde {
 
     private String apiKey() {
         SharedPreferences preferences = new SharedPreferencesHelper().get(context);
-        return preferences.getString("api_key", BuildConfig.API_KEY);
+        return preferences.getString("api_key", DEFAULT_API_KEY);
     }
 }

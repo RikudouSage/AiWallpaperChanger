@@ -8,4 +8,9 @@
         android:id="@+id/settings_menu_item"
         android:title="@string/app.title.settings"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/premium_menu_item"
+        android:title="@string/app.title.premium"
+        app:showAsAction="never"
+        android:visible="false" />
 </menu>

@@ -14,6 +14,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
@@ -54,6 +55,7 @@ import cz.chrastecky.aiwallpaperchanger.dto.response.GenerationDetailWithBitmap;
 import cz.chrastecky.aiwallpaperchanger.exception.ContentCensoredException;
 import cz.chrastecky.aiwallpaperchanger.exception.RetryGenerationException;
 import cz.chrastecky.aiwallpaperchanger.helper.AlarmManagerHelper;
+import cz.chrastecky.aiwallpaperchanger.helper.BillingHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.SharedPreferencesHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.ValueWrapper;
 import cz.chrastecky.aiwallpaperchanger.horde.AiHorde;
@@ -88,6 +90,10 @@ public class MainActivity extends AppCompatActivity {
             }
             if (item.getItemId() == R.id.settings_menu_item) {
                 startActivity(new Intent(this, SettingsActivity.class));
+                return true;
+            }
+            if (item.getItemId() == R.id.premium_menu_item) {
+                startActivity(new Intent(this, PremiumActivity.class));
                 return true;
             }
 
@@ -178,7 +184,13 @@ public class MainActivity extends AppCompatActivity {
                     return;
                 }
                 if (error instanceof AuthFailureError) {
-                    Toast.makeText(this, R.string.app_error_invalid_api_key, Toast.LENGTH_LONG).show();
+                    if (error.networkResponse.statusCode == 401) {
+                        Toast.makeText(this, R.string.app_error_invalid_api_key, Toast.LENGTH_LONG).show();
+                    } else if (error.networkResponse.statusCode == 403) {
+                        Toast.makeText(this, R.string.app_error_forbidden_request, Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(this, R.string.app_error_generating_failed, Toast.LENGTH_LONG).show();
+                    }
                 } else {
                     Toast.makeText(this, R.string.app_error_generating_failed, Toast.LENGTH_LONG).show();
                 }
@@ -223,12 +235,25 @@ public class MainActivity extends AppCompatActivity {
             lastChanged.setText(getString(R.string.app_generate_last_generated, lastChangedTime));
             lastChanged.setVisibility(View.VISIBLE);
         }
+
+        BillingHelper.getPurchaseStatus(this, PremiumActivity.PREMIUM_PURCHASE_NAME, status -> {
+            if (!status) {
+                return;
+            }
+
+            AiHorde.DEFAULT_API_KEY = BuildConfig.PREMIUM_API_KEY;
+        });
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = new MenuInflater(this);
         inflater.inflate(R.menu.menu, menu);
+
+        if (BuildConfig.BILLING_ENABLED) {
+            menu.findItem(R.id.premium_menu_item).setVisible(true);
+        }
+
         return true;
     }
 
