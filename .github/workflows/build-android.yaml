@@ -22,10 +22,10 @@ jobs:
           result-encoding: string
           script: |
             return '${{ matrix.task }}'.replace('assembleN', 'n');
-      - name: set up JDK 11
+      - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
-          java-version: '11'
+          java-version: '17'
           distribution: 'temurin'
           cache: gradle
 
