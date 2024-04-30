@@ -21,8 +21,7 @@ jobs:
         with:
           result-encoding: string
           script: |
-            console.log(context);
-            return matrix.task.replace('assembleN', 'n');
+            return ${{ matrix.task }}.replace('assembleN', 'n');
       - name: set up JDK 11
         uses: actions/setup-java@v3
         with:
