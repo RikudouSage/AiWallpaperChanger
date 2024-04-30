@@ -39,6 +39,7 @@ jobs:
         run: ./gradlew ${{ matrix.task }}
       - name: Sign Android release
         uses: r0adkll/sign-android-release@v1
+        id: sign_app
         with:
           releaseDirectory: app/build/outputs/apk/${{ steps.extract_name.outputs.result }}/release/
           signingKeyBase64: ${{ secrets.SIGNING_KEY }}
