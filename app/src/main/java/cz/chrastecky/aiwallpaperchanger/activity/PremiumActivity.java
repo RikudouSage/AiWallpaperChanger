@@ -23,6 +23,7 @@ import com.android.billingclient.api.QueryPurchasesParams;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import cz.chrastecky.aiwallpaperchanger.BuildConfig;
@@ -32,6 +33,8 @@ import cz.chrastecky.aiwallpaperchanger.helper.BillingHelper;
 
 public class PremiumActivity extends AppCompatActivity {
     public final static String PREMIUM_PURCHASE_NAME = "premium_api_key";
+    private final static String MONTHLY_OFFER_ID = "premium-api-key-monthly";
+    private final static String YEARLY_OFFER_ID = "premium-api-key-yearly";
 
     private ProductDetails productDetails;
     @Nullable
@@ -64,7 +67,9 @@ public class PremiumActivity extends AppCompatActivity {
 
             BillingFlowParams.ProductDetailsParams productDetailsParams = BillingFlowParams.ProductDetailsParams.newBuilder()
                     .setProductDetails(productDetails)
-                    .setOfferToken(productDetails.getSubscriptionOfferDetails().get(0).getOfferToken())
+                    .setOfferToken(productDetails.getSubscriptionOfferDetails()
+                            .stream().filter(offer -> Objects.equals(offer.getOfferId(), MONTHLY_OFFER_ID))
+                            .collect(Collectors.toList()).get(0).getOfferToken())
                     .build();
             BillingFlowParams billingFlowParams = BillingFlowParams.newBuilder()
                     .setProductDetailsParamsList(new ArrayList<>(Collections.singleton(productDetailsParams)))
