@@ -37,10 +37,18 @@ jobs:
           echo "dev_api_key=0000000000" >> local.properties
       - name: Build with Gradle
         run: ./gradlew ${{ matrix.task }}
+      - name: Sign Android release
+        uses: r0adkll/sign-android-release@v1
+        with:
+          releaseDirectory: app/build/outputs/apk/${{ steps.extract_name.outputs.result }}/release/
+          signingKeyBase64: ${{ secrets.SIGNING_KEY }}
+          alias: ${{ secrets.KEY_ALIAS }}
+          keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
+          keyPassword: ${{ secrets.KEY_PASSWORD }}
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ steps.extract_name.outputs.result }}
-          path: app/build/outputs/apk/${{ steps.extract_name.outputs.result }}/release/*.apk
+          path: ${{steps.sign_app.outputs.signedReleaseFile}}
           if-no-files-found: error
           retention-days: 1
