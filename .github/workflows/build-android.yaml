@@ -2,7 +2,9 @@ name: Build APP
 
 on:
   push:
-    branches: [ "master" ]
+    tags:
+      - v*
+  workflow_dispatch:
 
 jobs:
   build:
@@ -58,6 +60,49 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ steps.extract_name.outputs.result }}
-          path: ${{steps.sign_app.outputs.signedReleaseFile}}
+          path: ${{ steps.sign_app.outputs.signedReleaseFile }}
           if-no-files-found: error
           retention-days: 1
+
+  create_release:
+    runs-on: ubuntu-latest
+    needs: [build]
+    steps:
+      - name: Extract version name
+        id: extract_name
+        uses: actions/github-script@v7
+        with:
+          result-encoding: string
+          script: |
+            return context.payload.ref.replace(/refs\/tags\/v/, '');
+      - name: Download SFW
+        uses: actions/download-artifact@v4
+        with:
+          name: nsfwDisabledNoKeyDozeEnabledBillingDisabled
+          path: sfw
+      - name: Download NSFW
+        uses: actions/download-artifact@v4
+        with:
+          name: nsfwEnabledNoKeyDozeEnabledBillingDisabled
+          path: nsfw
+      - name: Rename files
+        env:
+          VERSION_NAME: ${{ steps.extract_name.outputs.result }}
+        run: |
+          mv sfw/*.apk cz.chrastecky.aiwallpaperchanger_${VERSION_NAME}_SFW.apk
+          mv nsfw/*.apk cz.chrastecky.aiwallpaperchanger_${VERSION_NAME}_NSFW.apk
+      - name: Create a release
+        uses: softprops/action-gh-release@v2.0.4
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION_NAME: ${{ steps.extract_name.outputs.result }}
+        with:
+          name: Release ${{ steps.extract_name.outputs.result }}
+          draft: false
+          prerelease: false
+          fail_on_unmatched_files: true
+          generate_release_notes: true
+          make_latest: true
+          files: |
+            cz.chrastecky.aiwallpaperchanger_$VERSION_NAME_SFW.apk
+            cz.chrastecky.aiwallpaperchanger_$VERSION_NAME_NSFW.apk
