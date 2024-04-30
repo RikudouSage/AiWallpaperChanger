@@ -88,17 +88,13 @@ jobs:
           name: nsfwEnabledNoKeyDozeEnabledBillingDisabled
           path: nsfw
       - name: Rename files
-        env:
-          VERSION_NAME: ${{ steps.extract_name.outputs.result }}
         run: |
-          mv sfw/*.apk cz.chrastecky.aiwallpaperchanger_${VERSION_NAME}_SFW.apk
-          mv nsfw/*.apk cz.chrastecky.aiwallpaperchanger_${VERSION_NAME}_NSFW.apk
-          ls -lah
+          mv sfw/*.apk cz.chrastecky.aiwallpaperchanger_${{ steps.extract_name.outputs.result }}_SFW.apk
+          mv nsfw/*.apk cz.chrastecky.aiwallpaperchanger_${{ steps.extract_name.outputs.result }}_NSFW.apk
       - name: Create a release
         uses: softprops/action-gh-release@v2.0.4
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          VERSION_NAME: ${{ steps.extract_name.outputs.result }}
         with:
           name: Release ${{ steps.extract_name.outputs.result }}
           draft: false
@@ -107,5 +103,5 @@ jobs:
           generate_release_notes: true
           make_latest: true
           files: |
-            cz.chrastecky.aiwallpaperchanger_${VERSION_NAME}_SFW.apk
-            cz.chrastecky.aiwallpaperchanger_${VERSION_NAME}_NSFW.apk
+            cz.chrastecky.aiwallpaperchanger_${{ steps.extract_name.outputs.result }}_SFW.apk
+            cz.chrastecky.aiwallpaperchanger_${{ steps.extract_name.outputs.result }}_NSFW.apk
