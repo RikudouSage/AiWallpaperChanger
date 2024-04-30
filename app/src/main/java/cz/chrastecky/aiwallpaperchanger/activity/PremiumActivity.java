@@ -68,7 +68,7 @@ public class PremiumActivity extends AppCompatActivity {
             BillingFlowParams.ProductDetailsParams productDetailsParams = BillingFlowParams.ProductDetailsParams.newBuilder()
                     .setProductDetails(productDetails)
                     .setOfferToken(productDetails.getSubscriptionOfferDetails()
-                            .stream().filter(offer -> Objects.equals(offer.getOfferId(), MONTHLY_OFFER_ID))
+                            .stream().filter(offer -> Objects.equals(offer.getBasePlanId(), MONTHLY_OFFER_ID))
                             .collect(Collectors.toList()).get(0).getOfferToken())
                     .build();
             BillingFlowParams billingFlowParams = BillingFlowParams.newBuilder()
@@ -143,11 +143,13 @@ public class PremiumActivity extends AppCompatActivity {
     private void initializeBilling() {
         ProgressBar loader = findViewById(R.id.purchase_loader);
         TextView unavailable = findViewById(R.id.billing_unavailable);
+        TextView purchased = findViewById(R.id.already_purchased);
         Button activatePremium = findViewById(R.id.activate_premium_button);
 
         loader.setVisibility(View.VISIBLE);
         unavailable.setVisibility(View.INVISIBLE);
         activatePremium.setVisibility(View.INVISIBLE);
+        purchased.setVisibility(View.INVISIBLE);
 
         BillingHelper.getBillingClient(this, billingClient -> {
             this.billingClient = billingClient;
