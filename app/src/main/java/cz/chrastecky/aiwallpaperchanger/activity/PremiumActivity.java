@@ -31,7 +31,7 @@ import cz.chrastecky.aiwallpaperchanger.databinding.ActivityPremiumBinding;
 import cz.chrastecky.aiwallpaperchanger.helper.BillingHelper;
 
 public class PremiumActivity extends AppCompatActivity {
-    private final static String PREMIUM_PURCHASE_NAME = "premium_api_key";
+    public final static String PREMIUM_PURCHASE_NAME = "premium_api_key";
 
     private ProductDetails productDetails;
     @Nullable

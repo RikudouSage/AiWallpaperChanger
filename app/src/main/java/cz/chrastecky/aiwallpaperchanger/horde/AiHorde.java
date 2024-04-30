@@ -45,6 +45,8 @@ import cz.chrastecky.aiwallpaperchanger.exception.RetryGenerationException;
 import cz.chrastecky.aiwallpaperchanger.helper.SharedPreferencesHelper;
 
 public class AiHorde {
+    public static String DEFAULT_API_KEY = BuildConfig.API_KEY;
+
     public interface OnResponse<T> {
         void onResponse(T response);
     }
@@ -362,6 +364,6 @@ public class AiHorde {
 
     private String apiKey() {
         SharedPreferences preferences = new SharedPreferencesHelper().get(context);
-        return preferences.getString("api_key", BuildConfig.API_KEY);
+        return preferences.getString("api_key", DEFAULT_API_KEY);
     }
 }

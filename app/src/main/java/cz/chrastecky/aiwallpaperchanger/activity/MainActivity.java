@@ -55,6 +55,7 @@ import cz.chrastecky.aiwallpaperchanger.dto.response.GenerationDetailWithBitmap;
 import cz.chrastecky.aiwallpaperchanger.exception.ContentCensoredException;
 import cz.chrastecky.aiwallpaperchanger.exception.RetryGenerationException;
 import cz.chrastecky.aiwallpaperchanger.helper.AlarmManagerHelper;
+import cz.chrastecky.aiwallpaperchanger.helper.BillingHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.SharedPreferencesHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.ValueWrapper;
 import cz.chrastecky.aiwallpaperchanger.horde.AiHorde;
@@ -234,6 +235,14 @@ public class MainActivity extends AppCompatActivity {
             lastChanged.setText(getString(R.string.app_generate_last_generated, lastChangedTime));
             lastChanged.setVisibility(View.VISIBLE);
         }
+
+        BillingHelper.getPurchaseStatus(this, PremiumActivity.PREMIUM_PURCHASE_NAME, status -> {
+            if (!status) {
+                return;
+            }
+
+            AiHorde.DEFAULT_API_KEY = BuildConfig.PREMIUM_API_KEY;
+        });
     }
 
     @Override
