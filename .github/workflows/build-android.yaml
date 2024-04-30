@@ -93,6 +93,7 @@ jobs:
         run: |
           mv sfw/*.apk cz.chrastecky.aiwallpaperchanger_${VERSION_NAME}_SFW.apk
           mv nsfw/*.apk cz.chrastecky.aiwallpaperchanger_${VERSION_NAME}_NSFW.apk
+          ls -lah
       - name: Create a release
         uses: softprops/action-gh-release@v2.0.4
         env:
