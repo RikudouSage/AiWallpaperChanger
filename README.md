@@ -7,7 +7,7 @@ In simple mode you only choose a prompt and a negative prompt (and NSFW toggle i
 ## Download
 
 The app can either be downloaded from [Google Play](https://play.google.com/store/apps/details?id=cz.chrastecky.aiwallpaperchanger) or from the [latest release](https://github.com/RikudouSage/AiWallpaperChanger/releases/latest)
-here on GitHub. I recommend using [Obtainium])https://github.com/ImranR98/Obtainium) instead of manually downloading apk files.
+here on GitHub. I recommend using [Obtainium](https://github.com/ImranR98/Obtainium) instead of manually downloading apk files.
 
 ## Play Store version vs. GitHub release
 
