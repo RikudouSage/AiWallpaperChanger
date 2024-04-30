@@ -1,6 +1,7 @@
 package cz.chrastecky.aiwallpaperchanger.activity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
@@ -10,10 +11,12 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.android.billingclient.api.AcknowledgePurchaseParams;
 import com.android.billingclient.api.BillingClient;
 import com.android.billingclient.api.BillingFlowParams;
 import com.android.billingclient.api.BillingResult;
 import com.android.billingclient.api.ProductDetails;
+import com.android.billingclient.api.Purchase;
 import com.android.billingclient.api.QueryProductDetailsParams;
 import com.android.billingclient.api.QueryPurchasesParams;
 
@@ -97,9 +100,9 @@ public class PremiumActivity extends AppCompatActivity {
 
         assert billingClient != null;
         billingClient.queryPurchasesAsync(QueryPurchasesParams.newBuilder().setProductType(BillingClient.ProductType.SUBS).build(), (billingResult, list) -> {
-            List<List<String>> purchasedIds = list.stream()
-                    .map(purchase -> purchase.getProducts())
-                    .filter(purchases -> purchases.contains(PREMIUM_PURCHASE_NAME))
+            List<Purchase> purchasedIds = list.stream()
+                    .filter(purchase -> purchase.getPurchaseState() == Purchase.PurchaseState.PURCHASED)
+                    .filter(purchase -> purchase.getProducts().contains(PREMIUM_PURCHASE_NAME))
                     .collect(Collectors.toList());
 
             if (purchasedIds.isEmpty()) {
@@ -109,6 +112,21 @@ public class PremiumActivity extends AppCompatActivity {
                 activatePremium.setVisibility(View.VISIBLE);
                 return;
             }
+
+            purchasedIds.forEach(purchase -> {
+                if (purchase.isAcknowledged()) {
+                    return;
+                }
+
+                AcknowledgePurchaseParams acknowledgePurchaseParams =
+                        AcknowledgePurchaseParams.newBuilder()
+                                .setPurchaseToken(purchase.getPurchaseToken())
+                                .build();
+
+                billingClient.acknowledgePurchase(acknowledgePurchaseParams, result -> {
+                    Log.d("PurchaseResult", result.toString());
+                });
+            });
 
             loader.setVisibility(View.INVISIBLE);
             activatePremium.setVisibility(View.INVISIBLE);
