@@ -8,6 +8,7 @@ import android.widget.ImageView;
 
 import androidx.annotation.Nullable;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
@@ -45,6 +46,7 @@ import cz.chrastecky.aiwallpaperchanger.exception.RetryGenerationException;
 import cz.chrastecky.aiwallpaperchanger.helper.SharedPreferencesHelper;
 
 public class AiHorde {
+    private static final String CLIENT_AGENT_HEADER = BuildConfig.APPLICATION_ID + ":" + BuildConfig.VERSION_NAME + ":" + BuildConfig.MAINTAINER;
     public static String DEFAULT_API_KEY = BuildConfig.API_KEY;
 
     public interface OnResponse<T> {
@@ -79,6 +81,14 @@ public class AiHorde {
                     }
                 }
         ) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Client-Agent", CLIENT_AGENT_HEADER);
+
+                return headers;
+            }
+
             @Override
             protected Response<List<ActiveModel>> parseNetworkResponse(NetworkResponse networkResponse) {
                 String body = new String(networkResponse.data, StandardCharsets.UTF_8);
@@ -177,6 +187,7 @@ public class AiHorde {
             public Map<String, String> getHeaders() {
                 Map<String, String> headers = new HashMap<>();
                 headers.put("apikey", apiKey());
+                headers.put("Client-Agent", CLIENT_AGENT_HEADER);
                 return headers;
             }
 
@@ -224,6 +235,7 @@ public class AiHorde {
             public Map<String, String> getHeaders() {
                 Map<String, String> headers = new HashMap<>();
                 headers.put("apikey", apiKey());
+                headers.put("Client-Agent", CLIENT_AGENT_HEADER);
                 return headers;
             }
 
@@ -277,6 +289,7 @@ public class AiHorde {
             public Map<String, String> getHeaders() {
                 Map<String, String> headers = new HashMap<>();
                 headers.put("apikey", apiKey());
+                headers.put("Client-Agent", CLIENT_AGENT_HEADER);
                 return headers;
             }
 
