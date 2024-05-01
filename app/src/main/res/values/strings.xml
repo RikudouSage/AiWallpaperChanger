@@ -55,4 +55,5 @@
     <string name="app.title.help">Help</string>
     <string name="app.help.prompt_description">Prompt describes what you want to see in the image. Use keywords separated by comma. For example, to get an abstract image of a woman, you can use: woman, abstract, art, colorful</string>
     <string name="app.help.negative_prompt_description">Negative prompt describes what you don\'t want to see in the image. The format is the same as in Prompt, to complement the prompt example, you mgiht add \"realistic, ugly, deformed\" as a negative prompt to ensure you get some nice abstract image.</string>
+    <string name="app.help.model_description">Model determines what the image will look like. Each model has different style and the only way to know what you like is to either try it out or search for the model on the internet. Some good starting models include: Lyriel (for artistic images), I Can\'t Believe It\'s Not Photography (realistic images), AlbedoBase XL (general model that has no specialization)</string>
 </resources>

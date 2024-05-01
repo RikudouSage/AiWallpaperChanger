@@ -55,4 +55,5 @@
     <string name="app.title.help">Nápověda</string>
     <string name="app.help.prompt_description">Prompt popisuje, co chcete na obrázku vidět. Používejte klíčová slova oddělená čárkou. Například, pokud chcete abstraktní obrázek ženy, můžete použít: woman, abstract, art, colorful</string>
     <string name="app.help.negative_prompt_description">Negativní prompt popisuje, co v obrázku vidět nechcete. Formát je stejný jako pro Prompt, pro doplnění příkladu z promptu, můžete použít \"realistic, ugly, deformed\" jako negativní prompt, abyste se ujistili, že dostanete nějaký pěkný abstraktní obrázek.</string>
+    <string name="app.help.model_description">Model určuje, jak bude výsledný obrázek vypadat. Každý model má jiný styl a jediný způsob, jak zjistit, jestli se vám líbí, je vyzkoušením, nebo vyhledáním modelu na internetu. Dobré modely pro začátek: Lyriel (umělecké obrázky), I Can\'t Believe It\'s Not Photography (realistické obrázky), AlbedoBase XL (obecný model bez specializace)</string>
 </resources>

@@ -52,6 +52,27 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:minWidth="150dp"
+                    android:text="@string/app.generate.negative_prompt"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/app.help.negative_prompt_description" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:paddingBottom="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:minWidth="150dp"
                     android:text="@string/app.generate.prompt"
                     android:textStyle="bold" />
 
@@ -73,14 +94,14 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:minWidth="150dp"
-                    android:text="@string/app.generate.negative_prompt"
+                    android:text="@string/app.generate.model"
                     android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/app.help.negative_prompt_description" />
+                    android:text="@string/app.help.model_description" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
