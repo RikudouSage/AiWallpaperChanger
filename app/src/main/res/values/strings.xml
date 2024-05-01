@@ -52,4 +52,7 @@
     <string name="app.premium.already_purchased">You have already purchased Premium, thank you!</string>
     <string name="app.premium.activate">Activate Premium</string>
     <string name="app.premium.error_launching_subscribe">There was an error while trying to launch a payment window, please try again later.</string>
+    <string name="app.title.help">Help</string>
+    <string name="app.help.prompt_description">Prompt describes what you want to see in the image. Use keywords separated by comma. For example, to get an abstract image of a woman, you can use: woman, abstract, art, colorful</string>
+    <string name="app.help.negative_prompt_description">Negative prompt describes what you don\'t want to see in the image. The format is the same as in Prompt, to complement the prompt example, you mgiht add \"realistic, ugly, deformed\" as a negative prompt to ensure you get some nice abstract image.</string>
 </resources>

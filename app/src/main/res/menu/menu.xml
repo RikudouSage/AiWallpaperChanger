@@ -13,4 +13,8 @@
         android:title="@string/app.title.premium"
         app:showAsAction="never"
         android:visible="false" />
+    <item
+        android:id="@+id/help_menu_item"
+        android:title="@string/app.title.help"
+        app:showAsAction="never" />
 </menu>
