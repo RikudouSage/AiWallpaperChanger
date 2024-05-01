@@ -1,8 +1,10 @@
 package cz.chrastecky.aiwallpaperchanger.horde;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.provider.Settings;
 import android.util.Log;
 import android.widget.ImageView;
 
@@ -117,6 +119,7 @@ public class AiHorde {
         });
     }
 
+    @SuppressLint("HardwareIds")
     public void generateImage(
             GenerateRequest request,
             OnProgress onProgress,
@@ -153,6 +156,7 @@ public class AiHorde {
             requestBody.put("params", params);
             requestBody.put("models", new JSONArray(new String[] {request.getModel()}));
             requestBody.put("nsfw", request.getNsfw());
+            requestBody.put("proxied_account", Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID));
         } catch (JSONException e) {
             if (onError != null) {
                 onError.onError(new VolleyError(e));
