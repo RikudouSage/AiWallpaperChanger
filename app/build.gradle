@@ -21,6 +21,7 @@ android {
         dataBinding {
             enabled = true
         }
+        buildConfigField "String", "MAINTAINER", "\"Rikudou\""
     }
 
     buildTypes {
