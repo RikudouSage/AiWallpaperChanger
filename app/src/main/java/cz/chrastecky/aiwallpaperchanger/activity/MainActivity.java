@@ -57,19 +57,20 @@ import cz.chrastecky.aiwallpaperchanger.helper.AlarmManagerHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.BillingHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.SharedPreferencesHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.ValueWrapper;
-import cz.chrastecky.aiwallpaperchanger.horde.AiHorde;
+import cz.chrastecky.aiwallpaperchanger.provider.AiHorde;
+import cz.chrastecky.aiwallpaperchanger.provider.AiProvider;
 
 public class MainActivity extends AppCompatActivity {
     private static final String DEFAULT_MODEL = "ICBINP - I Can't Believe It's Not Photography";
     private static final String DEFAULT_SAMPLER = Sampler.k_dpmpp_sde.name();
-    private AiHorde horde;
+    private AiProvider aiProvider;
 
     private Map<String, Boolean> formElementsValidation = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.horde = new AiHorde(this);
+        this.aiProvider = new AiHorde(this);
 
         SharedPreferences sharedPreferences = new SharedPreferencesHelper().get(this);
         GenerateRequest request = null;
@@ -181,13 +182,13 @@ public class MainActivity extends AppCompatActivity {
             AtomicInteger censoredRetries = new AtomicInteger(3);
             onError.value = error -> {
                 if (error.getCause() instanceof RetryGenerationException) {
-                    horde.generateImage(createGenerateRequest(), onProgress, onResponse, onError.value);
+                    aiProvider.generateImage(createGenerateRequest(), onProgress, onResponse, onError.value);
                     return;
                 }
                 if (error.getCause() instanceof ContentCensoredException && censoredRetries.get() > 0) {
                     Log.d("HordeError", "Request got censored, retrying");
                     censoredRetries.addAndGet(-1);
-                    horde.generateImage(createGenerateRequest(), onProgress, onResponse, onError.value);
+                    aiProvider.generateImage(createGenerateRequest(), onProgress, onResponse, onError.value);
                     return;
                 }
                 if (error instanceof AuthFailureError) {
@@ -206,7 +207,7 @@ public class MainActivity extends AppCompatActivity {
             };
 
             Log.d("HordeRequest", new Gson().toJson(createGenerateRequest()));
-            horde.generateImage(createGenerateRequest(), onProgress, onResponse, onError.value);
+            aiProvider.generateImage(createGenerateRequest(), onProgress, onResponse, onError.value);
 
             rootView.setVisibility(View.INVISIBLE);
             loader.setVisibility(View.VISIBLE);
@@ -459,7 +460,7 @@ public class MainActivity extends AppCompatActivity {
             heightField.setText(String.valueOf(request.getHeight()));
         }
 
-        horde.getModels(response -> {
+        aiProvider.getModels(response -> {
             response.sort((a, b) -> String.CASE_INSENSITIVE_ORDER.compare(a.getName(), b.getName()));
             List<String> models = response.stream().map(ActiveModel::getName).collect(Collectors.toList());
             Spinner modelField = findViewById(R.id.model_field);

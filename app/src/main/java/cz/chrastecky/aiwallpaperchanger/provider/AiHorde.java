@@ -1,4 +1,4 @@
-package cz.chrastecky.aiwallpaperchanger.horde;
+package cz.chrastecky.aiwallpaperchanger.provider;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -8,6 +8,7 @@ import android.provider.Settings;
 import android.util.Log;
 import android.widget.ImageView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.android.volley.AuthFailureError;
@@ -48,20 +49,9 @@ import cz.chrastecky.aiwallpaperchanger.exception.RetryGenerationException;
 import cz.chrastecky.aiwallpaperchanger.helper.HashHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.SharedPreferencesHelper;
 
-public class AiHorde {
+public class AiHorde implements AiProvider {
     private static final String CLIENT_AGENT_HEADER = BuildConfig.APPLICATION_ID + ":" + BuildConfig.VERSION_NAME + ":" + BuildConfig.MAINTAINER;
     public static String DEFAULT_API_KEY = BuildConfig.API_KEY;
-
-    public interface OnResponse<T> {
-        void onResponse(T response);
-    }
-    public interface OnError {
-        void onError(VolleyError error);
-    }
-
-    public interface OnProgress {
-        void onProgress(AsyncRequestStatusCheck status);
-    }
 
     private static final String baseUrl = "https://aihorde.net/api/v2";
     private final RequestQueue requestQueue;
@@ -72,7 +62,8 @@ public class AiHorde {
         this.context = context;
     }
 
-    public void getModels(OnResponse<List<ActiveModel>> onResponse, @Nullable OnError onError) {
+    @Override
+    public void getModels(@NonNull OnResponse<List<ActiveModel>> onResponse, @Nullable OnError onError) {
         requestQueue.add(new JsonRequest<List<ActiveModel>>(
                 Request.Method.GET,
                 baseUrl + "/status/models",
@@ -120,10 +111,11 @@ public class AiHorde {
         });
     }
 
+    @Override
     public void generateImage(
-            GenerateRequest request,
-            OnProgress onProgress,
-            OnResponse<GenerationDetailWithBitmap> onResponse,
+            @NonNull GenerateRequest request,
+            @NonNull OnProgress onProgress,
+            @NonNull OnResponse<GenerationDetailWithBitmap> onResponse,
             @Nullable OnError onError
     ) {
         String prompt = request.getPrompt();
