@@ -65,4 +65,5 @@
     <string name="app.help.upscaler_description">Upscaler is a model that enlarges your image after it has been generated. Every Upscaler uses a different algorithm to do so, so the resulting image might look slightly differently, try out which one looks the best for you. If you specify an Upscaler, your image is first generated at the resolution you specify and afterwards enlarged by your selected Upscaler. By default, either RealESRGAN_x4plus or RealESRGAN_x2plus is used depending on your resolution.</string>
     <string name="app.title.about">About</string>
     <string name="app.about.text">The app uses <a href="https://aihorde.net/">AI Horde</a> to generate images.\n\nYou can contact the author on the following social media:\n\n- <a href="https://lemmings.world/u/rikudou">Lemmy</a>\n- <a href="https://phpc.social/@chrastecky">Mastodon</a>\n- <a href="https://matrix.to/#/@rikudou:lemmings.world">Matrix</a>\n</string>
+    <string name="app.about.version">Version: %s</string>
 </resources>

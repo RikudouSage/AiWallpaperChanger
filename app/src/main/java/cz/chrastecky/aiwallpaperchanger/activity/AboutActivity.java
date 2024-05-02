@@ -5,6 +5,7 @@ import android.text.method.LinkMovementMethod;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import cz.chrastecky.aiwallpaperchanger.BuildConfig;
 import cz.chrastecky.aiwallpaperchanger.R;
 import cz.chrastecky.aiwallpaperchanger.databinding.ActivityAboutBinding;
 
@@ -15,6 +16,7 @@ public class AboutActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         ActivityAboutBinding binding = ActivityAboutBinding.inflate(getLayoutInflater());
+        binding.setVersion(BuildConfig.VERSION_NAME);
         setContentView(binding.getRoot());
 
         setSupportActionBar(binding.toolbar);
