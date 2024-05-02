@@ -30,6 +30,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import cz.chrastecky.aiwallpaperchanger.BuildConfig;
 import cz.chrastecky.aiwallpaperchanger.dto.GenerateRequest;
@@ -352,13 +354,14 @@ public class AiHorde {
                 progress -> {
                     if (!progress.getDone()) {
                         onProgress.onProgress(progress);
-                        try {
-                            Thread.sleep(2000);
-                            this.recursivelyCheckForStatus(id, onProgress, onResponse, onError);
-                            return;
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
-                        }
+                        Timer timer = new Timer();
+                        timer.schedule(new TimerTask() {
+                            @Override
+                            public void run() {
+                                AiHorde.this.recursivelyCheckForStatus(id, onProgress, onResponse, onError);
+                            }
+                        }, 2_000);
+                        return;
                     }
 
                     requestQueue.add(getFullStatusRequest(id, status -> {
