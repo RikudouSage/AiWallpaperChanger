@@ -11,8 +11,8 @@ android {
         applicationId "cz.chrastecky.aiwallpaperchanger"
         minSdk 24
         targetSdk 34
-        versionCode 14
-        versionName '1.1.0'
+        versionCode 16
+        versionName '1.2.1'
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -21,6 +21,8 @@ android {
         dataBinding {
             enabled = true
         }
+        buildConfigField "String", "MAINTAINER", "\"Rikudou\""
+        buildConfigField "String", "ANONYMOUS_API_KEY", "\"0000000000\""
     }
 
     buildTypes {

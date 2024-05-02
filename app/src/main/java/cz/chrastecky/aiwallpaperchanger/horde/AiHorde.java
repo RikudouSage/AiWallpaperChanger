@@ -1,19 +1,20 @@
 package cz.chrastecky.aiwallpaperchanger.horde;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.provider.Settings;
 import android.util.Log;
 import android.widget.ImageView;
 
 import androidx.annotation.Nullable;
 
-import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
-import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.ImageRequest;
@@ -29,6 +30,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import cz.chrastecky.aiwallpaperchanger.BuildConfig;
 import cz.chrastecky.aiwallpaperchanger.dto.GenerateRequest;
@@ -42,9 +45,11 @@ import cz.chrastecky.aiwallpaperchanger.dto.response.HordeWarning;
 import cz.chrastecky.aiwallpaperchanger.dto.response.ModelType;
 import cz.chrastecky.aiwallpaperchanger.exception.ContentCensoredException;
 import cz.chrastecky.aiwallpaperchanger.exception.RetryGenerationException;
+import cz.chrastecky.aiwallpaperchanger.helper.HashHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.SharedPreferencesHelper;
 
 public class AiHorde {
+    private static final String CLIENT_AGENT_HEADER = BuildConfig.APPLICATION_ID + ":" + BuildConfig.VERSION_NAME + ":" + BuildConfig.MAINTAINER;
     public static String DEFAULT_API_KEY = BuildConfig.API_KEY;
 
     public interface OnResponse<T> {
@@ -79,6 +84,14 @@ public class AiHorde {
                     }
                 }
         ) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Client-Agent", CLIENT_AGENT_HEADER);
+
+                return headers;
+            }
+
             @Override
             protected Response<List<ActiveModel>> parseNetworkResponse(NetworkResponse networkResponse) {
                 String body = new String(networkResponse.data, StandardCharsets.UTF_8);
@@ -143,6 +156,13 @@ public class AiHorde {
             requestBody.put("params", params);
             requestBody.put("models", new JSONArray(new String[] {request.getModel()}));
             requestBody.put("nsfw", request.getNsfw());
+            if (
+                    BuildConfig.BILLING_ENABLED
+                    && !BuildConfig.PREMIUM_API_KEY.equals(BuildConfig.ANONYMOUS_API_KEY)
+                    && DEFAULT_API_KEY.equals(BuildConfig.PREMIUM_API_KEY)
+            ) {
+                requestBody.put("proxied_account", uniqueId() == null ? "unknown" : uniqueId());
+            }
         } catch (JSONException e) {
             if (onError != null) {
                 onError.onError(new VolleyError(e));
@@ -177,6 +197,7 @@ public class AiHorde {
             public Map<String, String> getHeaders() {
                 Map<String, String> headers = new HashMap<>();
                 headers.put("apikey", apiKey());
+                headers.put("Client-Agent", CLIENT_AGENT_HEADER);
                 return headers;
             }
 
@@ -224,6 +245,7 @@ public class AiHorde {
             public Map<String, String> getHeaders() {
                 Map<String, String> headers = new HashMap<>();
                 headers.put("apikey", apiKey());
+                headers.put("Client-Agent", CLIENT_AGENT_HEADER);
                 return headers;
             }
 
@@ -277,6 +299,7 @@ public class AiHorde {
             public Map<String, String> getHeaders() {
                 Map<String, String> headers = new HashMap<>();
                 headers.put("apikey", apiKey());
+                headers.put("Client-Agent", CLIENT_AGENT_HEADER);
                 return headers;
             }
 
@@ -331,13 +354,14 @@ public class AiHorde {
                 progress -> {
                     if (!progress.getDone()) {
                         onProgress.onProgress(progress);
-                        try {
-                            Thread.sleep(2000);
-                            this.recursivelyCheckForStatus(id, onProgress, onResponse, onError);
-                            return;
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
-                        }
+                        Timer timer = new Timer();
+                        timer.schedule(new TimerTask() {
+                            @Override
+                            public void run() {
+                                AiHorde.this.recursivelyCheckForStatus(id, onProgress, onResponse, onError);
+                            }
+                        }, 2_000);
+                        return;
                     }
 
                     requestQueue.add(getFullStatusRequest(id, status -> {
@@ -365,5 +389,15 @@ public class AiHorde {
     private String apiKey() {
         SharedPreferences preferences = new SharedPreferencesHelper().get(context);
         return preferences.getString("api_key", DEFAULT_API_KEY);
+    }
+
+    @Nullable
+    private String uniqueId() {
+        @SuppressLint("HardwareIds")
+        String id = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
+        if (id == null) {
+            return null;
+        }
+        return HashHelper.sha256(id);
     }
 }
