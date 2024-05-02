@@ -154,7 +154,7 @@ public class AiHorde {
             requestBody.put("params", params);
             requestBody.put("models", new JSONArray(new String[] {request.getModel()}));
             requestBody.put("nsfw", request.getNsfw());
-            requestBody.put("proxied_account", uniqueId());
+            requestBody.put("proxied_account", uniqueId() == null ? "unknown" : uniqueId());
         } catch (JSONException e) {
             if (onError != null) {
                 onError.onError(new VolleyError(e));
