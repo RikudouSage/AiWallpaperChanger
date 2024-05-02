@@ -99,6 +99,10 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(this, HelpActivity.class));
                 return true;
             }
+            if (item.getItemId() == R.id.about_menu_item) {
+                startActivity(new Intent(this, AboutActivity.class));
+                return true;
+            }
 
             return false;
         });
