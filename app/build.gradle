@@ -22,6 +22,7 @@ android {
             enabled = true
         }
         buildConfigField "String", "MAINTAINER", "\"Rikudou\""
+        buildConfigField "String", "ANONYMOUS_API_KEY", "\"0000000000\""
     }
 
     buildTypes {
