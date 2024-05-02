@@ -65,4 +65,5 @@
     <string name="app.help.upscaler_description">Upscaler je model, který zvětšuje váš obrázek poté, co byl vygenerován. Každý Upscaler používá jiný algoritmus, takže výsledný obrázek může vypadat trochu jinak, vyzkoušejte si jednotlivé modely, abyste zjistili, co vám vyhovuje nejvíce. Pokud vyberete Upscaler, váš obrázek je nejdříve vygenerován v rozlišení, které zvolíte a následně je zvětšen vámi zvoleným Upscalerem. Ve výchozím se použije RealESRGAN_x4plus, nebo RealESRGAN_x2plus na základě vašeho rozlišení.</string>
     <string name="app.title.about">O aplikaci</string>
     <string name="app.about.text">Aplikace využívá <a href="https://aihorde.net/">AI Horde</a> pro generování obrázků.\n\nAutora můžete kontaktovat na těchto sociálních sítích:\n\n- <a href="https://lemmings.world/u/rikudou">Lemmy</a>\n- <a href="https://phpc.social/@chrastecky">Mastodon</a>\n- <a href="https://matrix.to/#/@rikudou:lemmings.world">Matrix</a></string>
+    <string name="app.about.version">Verze: %s</string>
 </resources>
