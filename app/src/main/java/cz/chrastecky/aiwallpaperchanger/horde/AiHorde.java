@@ -11,12 +11,10 @@ import android.widget.ImageView;
 import androidx.annotation.Nullable;
 
 import com.android.volley.AuthFailureError;
-import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
-import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.ImageRequest;
@@ -45,6 +43,7 @@ import cz.chrastecky.aiwallpaperchanger.dto.response.HordeWarning;
 import cz.chrastecky.aiwallpaperchanger.dto.response.ModelType;
 import cz.chrastecky.aiwallpaperchanger.exception.ContentCensoredException;
 import cz.chrastecky.aiwallpaperchanger.exception.RetryGenerationException;
+import cz.chrastecky.aiwallpaperchanger.helper.HashHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.SharedPreferencesHelper;
 
 public class AiHorde {
@@ -119,7 +118,6 @@ public class AiHorde {
         });
     }
 
-    @SuppressLint("HardwareIds")
     public void generateImage(
             GenerateRequest request,
             OnProgress onProgress,
@@ -156,7 +154,7 @@ public class AiHorde {
             requestBody.put("params", params);
             requestBody.put("models", new JSONArray(new String[] {request.getModel()}));
             requestBody.put("nsfw", request.getNsfw());
-            requestBody.put("proxied_account", Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID));
+            requestBody.put("proxied_account", uniqueId());
         } catch (JSONException e) {
             if (onError != null) {
                 onError.onError(new VolleyError(e));
@@ -382,5 +380,15 @@ public class AiHorde {
     private String apiKey() {
         SharedPreferences preferences = new SharedPreferencesHelper().get(context);
         return preferences.getString("api_key", DEFAULT_API_KEY);
+    }
+
+    @Nullable
+    private String uniqueId() {
+        @SuppressLint("HardwareIds")
+        String id = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
+        if (id == null) {
+            return null;
+        }
+        return HashHelper.sha256(id);
     }
 }
