@@ -27,7 +27,7 @@ import cz.chrastecky.aiwallpaperchanger.dto.StoredRequest;
 import cz.chrastecky.aiwallpaperchanger.helper.BillingHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.History;
 import cz.chrastecky.aiwallpaperchanger.helper.SharedPreferencesHelper;
-import cz.chrastecky.aiwallpaperchanger.horde.AiHorde;
+import cz.chrastecky.aiwallpaperchanger.provider.AiHorde;
 
 public class GenerateAndSetBackgroundWorker extends ListenableWorker {
     public GenerateAndSetBackgroundWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
