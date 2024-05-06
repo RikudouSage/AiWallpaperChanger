@@ -1,18 +1,27 @@
 package cz.chrastecky.aiwallpaperchanger.activity;
 
+import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
 
 import cz.chrastecky.aiwallpaperchanger.R;
 import cz.chrastecky.aiwallpaperchanger.databinding.ActivitySettingsBinding;
+import cz.chrastecky.aiwallpaperchanger.helper.ContentResolverHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.SharedPreferencesHelper;
 
 public class SettingsActivity extends AppCompatActivity {
+
+    private Uri directoryUri = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +35,26 @@ public class SettingsActivity extends AppCompatActivity {
 
         initializeForm();
 
+        @SuppressLint("WrongConstant")
+        ActivityResultLauncher<Intent> activityLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK) {
+                        assert result.getData() != null;
+                        assert result.getData().getData() != null;
+                        Uri uri = result.getData().getData();
+
+                        final int takeFlags = result.getData().getFlags()
+                                & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                        getContentResolver().takePersistableUriPermission(uri, takeFlags);
+
+                        directoryUri = uri;
+                    } else if (result.getResultCode() == RESULT_CANCELED) {
+                        binding.saveWallpapersSwitch.setChecked(false);
+                    }
+                }
+        );
+
         FloatingActionButton saveButton = findViewById(R.id.save_button);
         saveButton.setOnClickListener(view -> {
             SharedPreferences.Editor editor = new SharedPreferencesHelper().get(this).edit();
@@ -33,22 +62,31 @@ public class SettingsActivity extends AppCompatActivity {
             TextInputEditText apiKeyField = findViewById(R.id.api_key_field);
             if (apiKeyField.getText() == null) {
                 editor.remove("api_key");
-                editor.apply();
-                finish();
-                return;
+            } else {
+                String apiKey = apiKeyField.getText().toString();
+                if (apiKey.isEmpty()) {
+                    editor.remove("api_key");
+                } else {
+                    editor.putString("api_key", apiKey);
+                }
             }
 
-            String apiKey = apiKeyField.getText().toString();
-            if (apiKey.isEmpty()) {
-                editor.remove("api_key");
-                editor.apply();
-                finish();
-                return;
+
+            if (directoryUri == null) {
+                editor.remove("storeWallpapersUri");
+            } else {
+                editor.putString("storeWallpapersUri", directoryUri.toString());
             }
 
-            editor.putString("api_key", apiKey);
             editor.apply();
             finish();
+        });
+
+        binding.saveWallpapersSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+                activityLauncher.launch(intent);
+            }
         });
     }
 
@@ -57,5 +95,13 @@ public class SettingsActivity extends AppCompatActivity {
 
         TextInputEditText apiKey = findViewById(R.id.api_key_field);
         apiKey.setText(preferences.getString("api_key", ""));
+
+        if (
+                preferences.contains("storeWallpapersUri")
+                && ContentResolverHelper.canAccessDirectory(this, Uri.parse(preferences.getString("storeWallpapersUri", "")))
+        ) {
+            SwitchCompat storeWallpapers = findViewById(R.id.save_wallpapers_switch);
+            storeWallpapers.setChecked(true);
+        }
     }
 }

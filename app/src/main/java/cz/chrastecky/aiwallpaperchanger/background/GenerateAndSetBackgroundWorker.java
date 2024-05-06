@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.WallpaperManager;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -25,6 +26,7 @@ import cz.chrastecky.aiwallpaperchanger.activity.PremiumActivity;
 import cz.chrastecky.aiwallpaperchanger.dto.GenerateRequest;
 import cz.chrastecky.aiwallpaperchanger.dto.StoredRequest;
 import cz.chrastecky.aiwallpaperchanger.helper.BillingHelper;
+import cz.chrastecky.aiwallpaperchanger.helper.ContentResolverHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.History;
 import cz.chrastecky.aiwallpaperchanger.helper.SharedPreferencesHelper;
 import cz.chrastecky.aiwallpaperchanger.provider.AiHorde;
@@ -81,6 +83,10 @@ public class GenerateAndSetBackgroundWorker extends ListenableWorker {
                     Log.d("WorkerJob", "Finished");
                     WallpaperManager wallpaperManager = WallpaperManager.getInstance(getApplicationContext());
                     try {
+                        if (preferences.contains("storeWallpapersUri")) {
+                            ContentResolverHelper.storeBitmap(getApplicationContext(), Uri.parse(preferences.getString("storeWallpapersUri", "")), UUID.randomUUID() + ".png", response.getImage());
+                        }
+
                         wallpaperManager.setBitmap(response.getImage());
                         SharedPreferences.Editor editor = preferences.edit();
                         editor.putString("lastChanged", DateFormat.getInstance().format(Calendar.getInstance().getTime()));
