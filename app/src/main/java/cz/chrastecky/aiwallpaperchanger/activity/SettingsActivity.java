@@ -73,9 +73,9 @@ public class SettingsActivity extends AppCompatActivity {
 
 
             if (directoryUri == null) {
-                editor.remove("store_wallpapers_uri");
+                editor.remove("storeWallpapersUri");
             } else {
-                editor.putString("store_wallpapers_uri", directoryUri.toString());
+                editor.putString("storeWallpapersUri", directoryUri.toString());
             }
 
             editor.apply();
@@ -97,8 +97,8 @@ public class SettingsActivity extends AppCompatActivity {
         apiKey.setText(preferences.getString("api_key", ""));
 
         if (
-                preferences.contains("store_wallpapers_uri")
-                && ContentResolverHelper.canAccessDirectory(this, Uri.parse(preferences.getString("store_wallpapers_uri", "")))
+                preferences.contains("storeWallpapersUri")
+                && ContentResolverHelper.canAccessDirectory(this, Uri.parse(preferences.getString("storeWallpapersUri", "")))
         ) {
             SwitchCompat storeWallpapers = findViewById(R.id.save_wallpapers_switch);
             storeWallpapers.setChecked(true);

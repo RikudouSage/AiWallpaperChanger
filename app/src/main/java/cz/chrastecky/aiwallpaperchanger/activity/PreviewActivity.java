@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.widget.Button;
@@ -27,6 +28,7 @@ import cz.chrastecky.aiwallpaperchanger.R;
 import cz.chrastecky.aiwallpaperchanger.databinding.ActivityPreviewBinding;
 import cz.chrastecky.aiwallpaperchanger.dto.GenerateRequest;
 import cz.chrastecky.aiwallpaperchanger.dto.StoredRequest;
+import cz.chrastecky.aiwallpaperchanger.helper.ContentResolverHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.History;
 import cz.chrastecky.aiwallpaperchanger.helper.SharedPreferencesHelper;
 
@@ -60,12 +62,17 @@ public class PreviewActivity extends AppCompatActivity {
 
         Button okButton = findViewById(R.id.ok_button);
         okButton.setOnClickListener(view -> {
-            SharedPreferences.Editor editor = new SharedPreferencesHelper().get(this).edit();
+            SharedPreferences preferences = new SharedPreferencesHelper().get(this);
+            SharedPreferences.Editor editor = preferences.edit();
             editor.putString("generationParameters", intent.getStringExtra("generationParameters"));
             editor.apply();
 
             AsyncTask.execute(() -> {
                 try {
+                    if (preferences.contains("storeWallpapersUri")) {
+                        ContentResolverHelper.storeBitmap(this, Uri.parse(preferences.getString("storeWallpapersUri", "")), UUID.randomUUID() + ".png", image);
+                    }
+
                     WallpaperManager wallpaperManager = WallpaperManager.getInstance(this);
                     wallpaperManager.setBitmap(image);
                     editor.putString("lastChanged", DateFormat.getInstance().format(Calendar.getInstance().getTime()));
