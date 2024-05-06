@@ -66,4 +66,5 @@
     <string name="app.title.about">About</string>
     <string name="app.about.text">The app uses <a href="https://aihorde.net/">AI Horde</a> to generate images.\n\nYou can contact the author on the following social media:\n\n- <a href="https://lemmings.world/u/rikudou">Lemmy</a>\n- <a href="https://phpc.social/@chrastecky">Mastodon</a>\n- <a href="https://matrix.to/#/@rikudou:lemmings.world">Matrix</a>\n</string>
     <string name="app.about.version">Version: %s</string>
+    <string name="app.settings.save_wallpapers">Save all wallpapers in a directory</string>
 </resources>
