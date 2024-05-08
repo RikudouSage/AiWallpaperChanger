@@ -108,6 +108,13 @@ public class MainActivity extends AppCompatActivity {
             return false;
         });
 
+
+        binding.nsfwSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putBoolean("nsfwToggled", isChecked);
+            editor.apply();
+        });
+
         ConstraintLayout rootView = findViewById(R.id.rootView);
         ConstraintLayout loader = findViewById(R.id.loader);
 
@@ -445,6 +452,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (BuildConfig.NSFW_ENABLED) {
             nsfwField.setVisibility(View.VISIBLE);
+            nsfwField.setChecked(preferences.getBoolean("nsfwToggled", false));
         }
 
         if (request != null) {
