@@ -68,4 +68,5 @@
     <string name="app.about.version">Version: %s</string>
     <string name="app.settings.save_wallpapers">Save all wallpapers in a directory</string>
     <string name="app.generate.cfg_scale">CFG scale (%.1f)</string>
+    <string name="app.generate.hires_fix">HiRes Fix</string>
 </resources>

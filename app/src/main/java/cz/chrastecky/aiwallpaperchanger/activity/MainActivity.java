@@ -406,6 +406,7 @@ public class MainActivity extends AppCompatActivity {
         SwitchCompat nsfwField = findViewById(R.id.nsfw_switch);
         Slider cfgScaleField = findViewById(R.id.cfg_scale);
         TextView cfgScaleTitle = findViewById(R.id.cfg_scale_title);
+        SwitchCompat hiresFixField = findViewById(R.id.hires_fix_switch);
 
         SharedPreferences preferences = new SharedPreferencesHelper().get(this);
         int[] widthHeight = calculateWidthAndHeight();
@@ -470,6 +471,7 @@ public class MainActivity extends AppCompatActivity {
             widthField.setText(String.valueOf(request.getWidth()));
             heightField.setText(String.valueOf(request.getHeight()));
             cfgScaleField.setValue((float) request.getCfgScale());
+            hiresFixField.setChecked(request.getHiresFix());
         }
 
         aiProvider.getModels(response -> {
@@ -503,6 +505,7 @@ public class MainActivity extends AppCompatActivity {
         Spinner upscaler = findViewById(R.id.upscaler);
         SwitchCompat nsfw = findViewById(R.id.nsfw_switch);
         Slider cfgScale = findViewById(R.id.cfg_scale);
+        SwitchCompat hiresFix = findViewById(R.id.hires_fix_switch);
 
         boolean advanced = ((SwitchCompat) findViewById(R.id.advanced_switch)).isChecked();
 
@@ -525,7 +528,8 @@ public class MainActivity extends AppCompatActivity {
                 advanced ? (selectedUpscaler.equals(noneOption) ? null : selectedUpscaler) : defaultUpscaler,
                 advanced ? cfgScale.getValue() : 7,
                 BuildConfig.NSFW_ENABLED && nsfw.isChecked(),
-                true
+                true,
+                advanced && hiresFix.isChecked()
         );
     }
 

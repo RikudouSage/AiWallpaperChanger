@@ -73,7 +73,8 @@ public class GenerateAndSetBackgroundWorker extends ListenableWorker {
                             request.getUpscaler(),
                             request.getCfgScale(),
                             false,
-                            request.getKarras()
+                            request.getKarras(),
+                            request.getHiresFix()
                     );
                 }
                 GenerateRequest finalRequest = request;
