@@ -404,6 +404,8 @@ public class MainActivity extends AppCompatActivity {
         TextInputEditText heightField = findViewById(R.id.height_field);
         Spinner upscalerField = findViewById(R.id.upscaler);
         SwitchCompat nsfwField = findViewById(R.id.nsfw_switch);
+        Slider cfgScaleField = findViewById(R.id.cfg_scale);
+        TextView cfgScaleTitle = findViewById(R.id.cfg_scale_title);
 
         SharedPreferences preferences = new SharedPreferencesHelper().get(this);
         int[] widthHeight = calculateWidthAndHeight();
@@ -439,16 +441,17 @@ public class MainActivity extends AppCompatActivity {
         });
         advancedSwitch.setChecked(preferences.getBoolean("advanced", false));
 
-        stepsField.addOnChangeListener((slider, value, fromUser) -> {
-            stepsTitle.setText(getString(R.string.app_generate_steps, (int) value));
-        });
+        stepsField.addOnChangeListener((slider, value, fromUser) -> stepsTitle.setText(getString(R.string.app_generate_steps, (int) value)));
         stepsTitle.setText(getString(R.string.app_generate_steps, 25));
-        clipSkipField.addOnChangeListener((slider, value, fromUser) ->  {
-            clipSkipTitle.setText(getString(R.string.app_generate_clip_skip, (int) value));
-        });
+
+        clipSkipField.addOnChangeListener((slider, value, fromUser) -> clipSkipTitle.setText(getString(R.string.app_generate_clip_skip, (int) value)));
         clipSkipTitle.setText(getString(R.string.app_generate_clip_skip, 1));
+
         widthField.setText(String.valueOf(widthHeight[0]));
         heightField.setText(String.valueOf(widthHeight[1]));
+
+        cfgScaleField.addOnChangeListener((slider, value, fromUser) -> cfgScaleTitle.setText(getString(R.string.app_generate_cfg_scale, value)));
+        cfgScaleTitle.setText(getString(R.string.app_generate_cfg_scale, 7f));
 
         if (BuildConfig.NSFW_ENABLED) {
             nsfwField.setVisibility(View.VISIBLE);
@@ -466,6 +469,7 @@ public class MainActivity extends AppCompatActivity {
             clipSkipField.setValue(request.getClipSkip());
             widthField.setText(String.valueOf(request.getWidth()));
             heightField.setText(String.valueOf(request.getHeight()));
+            cfgScaleField.setValue((float) request.getCfgScale());
         }
 
         aiProvider.getModels(response -> {
@@ -498,6 +502,7 @@ public class MainActivity extends AppCompatActivity {
         TextInputEditText height = findViewById(R.id.height_field);
         Spinner upscaler = findViewById(R.id.upscaler);
         SwitchCompat nsfw = findViewById(R.id.nsfw_switch);
+        Slider cfgScale = findViewById(R.id.cfg_scale);
 
         boolean advanced = ((SwitchCompat) findViewById(R.id.advanced_switch)).isChecked();
 
@@ -518,7 +523,7 @@ public class MainActivity extends AppCompatActivity {
                 advanced ? Integer.parseInt(height.getText().toString()) : widthAndHeight[1],
                 null,
                 advanced ? (selectedUpscaler.equals(noneOption) ? null : selectedUpscaler) : defaultUpscaler,
-                7.0,
+                advanced ? cfgScale.getValue() : 7,
                 BuildConfig.NSFW_ENABLED && nsfw.isChecked(),
                 true
         );
