@@ -144,6 +144,7 @@ public class AiHorde implements AiProvider {
             params.put("post_processing", new JSONArray(postProcessors));
             params.put("cfg_scale", request.getCfgScale());
             params.put("karras", request.getKarras());
+            params.put("hires_fix", request.getHiresFix());
 
             requestBody.put("params", params);
             requestBody.put("models", new JSONArray(new String[] {request.getModel()}));

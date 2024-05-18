@@ -14,4 +14,5 @@ data class GenerateRequest(
     val cfgScale: Double,
     val nsfw: Boolean,
     val karras: Boolean,
+    val hiresFix: Boolean,
 )
