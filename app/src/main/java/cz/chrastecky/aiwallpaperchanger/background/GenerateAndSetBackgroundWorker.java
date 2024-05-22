@@ -83,7 +83,7 @@ public class GenerateAndSetBackgroundWorker extends ListenableWorker {
                             request.getHiresFix()
                     );
                 }
-                GenerateRequest finalRequest = request;
+                final GenerateRequest finalRequest = request;
 
                 AiProvider.OnProgress onProgress = status -> Log.d("WorkerJob", "OnProgress: " + status.getWaitTime());
                 AiProvider.OnResponse<GenerationDetailWithBitmap> onResponse = response -> {
@@ -119,13 +119,13 @@ public class GenerateAndSetBackgroundWorker extends ListenableWorker {
                 ValueWrapper<AiHorde.OnError> onError = new ValueWrapper<>();
                 onError.value = error -> {
                     if (error.getCause() instanceof RetryGenerationException) {
-                        aiHorde.generateImage(request, onProgress, onResponse, onError.value);
+                        aiHorde.generateImage(finalRequest, onProgress, onResponse, onError.value);
                         return;
                     }
                     if (error.getCause() instanceof ContentCensoredException && censoredRetries.get() > 0) {
                         Log.d("HordeError", "Request got censored, retrying");
                         censoredRetries.addAndGet(-1);
-                        aiHorde.generateImage(request, onProgress, onResponse, onError.value);
+                        aiHorde.generateImage(finalRequest, onProgress, onResponse, onError.value);
                         return;
                     }
 
@@ -138,7 +138,7 @@ public class GenerateAndSetBackgroundWorker extends ListenableWorker {
                     completer.setException(error);
                 };
 
-                aiHorde.generateImage(request, onProgress, onResponse, onError.value);
+                aiHorde.generateImage(finalRequest, onProgress, onResponse, onError.value);
             });
 
             return "BillingManagerEnqueued";
