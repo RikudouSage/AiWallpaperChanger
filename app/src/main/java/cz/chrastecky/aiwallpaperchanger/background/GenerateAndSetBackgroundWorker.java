@@ -20,16 +20,22 @@ import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import cz.chrastecky.aiwallpaperchanger.BuildConfig;
 import cz.chrastecky.aiwallpaperchanger.activity.PremiumActivity;
 import cz.chrastecky.aiwallpaperchanger.dto.GenerateRequest;
 import cz.chrastecky.aiwallpaperchanger.dto.StoredRequest;
+import cz.chrastecky.aiwallpaperchanger.dto.response.GenerationDetailWithBitmap;
+import cz.chrastecky.aiwallpaperchanger.exception.ContentCensoredException;
+import cz.chrastecky.aiwallpaperchanger.exception.RetryGenerationException;
 import cz.chrastecky.aiwallpaperchanger.helper.BillingHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.ContentResolverHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.History;
 import cz.chrastecky.aiwallpaperchanger.helper.SharedPreferencesHelper;
+import cz.chrastecky.aiwallpaperchanger.helper.ValueWrapper;
 import cz.chrastecky.aiwallpaperchanger.provider.AiHorde;
+import cz.chrastecky.aiwallpaperchanger.provider.AiProvider;
 
 public class GenerateAndSetBackgroundWorker extends ListenableWorker {
     public GenerateAndSetBackgroundWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
@@ -78,9 +84,9 @@ public class GenerateAndSetBackgroundWorker extends ListenableWorker {
                     );
                 }
                 GenerateRequest finalRequest = request;
-                aiHorde.generateImage(request, status -> {
-                    Log.d("WorkerJob", "OnProgress");
-                }, response -> {
+
+                AiProvider.OnProgress onProgress = status -> Log.d("WorkerJob", "OnProgress: " + status.getWaitTime());
+                AiProvider.OnResponse<GenerationDetailWithBitmap> onResponse = response -> {
                     Log.d("WorkerJob", "Finished");
                     WallpaperManager wallpaperManager = WallpaperManager.getInstance(getApplicationContext());
                     try {
@@ -108,7 +114,21 @@ public class GenerateAndSetBackgroundWorker extends ListenableWorker {
                         Log.e("AIWallpaperError", "Failed setting new wallpaper", e);
                         completer.setException(e);
                     }
-                }, error -> {
+                };
+                AtomicInteger censoredRetries = new AtomicInteger(3);
+                ValueWrapper<AiHorde.OnError> onError = new ValueWrapper<>();
+                onError.value = error -> {
+                    if (error.getCause() instanceof RetryGenerationException) {
+                        aiHorde.generateImage(request, onProgress, onResponse, onError.value);
+                        return;
+                    }
+                    if (error.getCause() instanceof ContentCensoredException && censoredRetries.get() > 0) {
+                        Log.d("HordeError", "Request got censored, retrying");
+                        censoredRetries.addAndGet(-1);
+                        aiHorde.generateImage(request, onProgress, onResponse, onError.value);
+                        return;
+                    }
+
                     Log.e("AIWallpaperError", "Failed generating AI image", error);
                     if (error.networkResponse != null) {
                         Log.d("AIWallpaperError", new String(error.networkResponse.data));
@@ -116,7 +136,9 @@ public class GenerateAndSetBackgroundWorker extends ListenableWorker {
                         Log.d("AIWallpaperError", error.getMessage(), error.getCause());
                     }
                     completer.setException(error);
-                });
+                };
+
+                aiHorde.generateImage(request, onProgress, onResponse, onError.value);
             });
 
             return "BillingManagerEnqueued";
