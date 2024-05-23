@@ -70,6 +70,6 @@
     <string name="app.generate.cfg_scale">CFG scale (%.1f)</string>
     <string name="app.generate.hires_fix">HiRes Fix</string>
     <string name="app.shortcut.next_image">Next image</string>
-    <string name="app.shortcut.next_image.info">The next image using the stored parameters will be generated in the background.</string>
+    <string name="app.shortcut.next_image.info">The next image using the stored parameters will be generated soon.</string>
     <string name="app.shortcut.next_image.error">There is no schedule set, cannot generate next image.</string>
 </resources>
