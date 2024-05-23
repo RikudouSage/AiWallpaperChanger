@@ -55,6 +55,8 @@ public class AlarmManagerHelper {
                 intent
         );
 
+        ShortcutManagerHelper.createShortcuts(context);
+
 //        AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
 //        Calendar now = Calendar.getInstance();
 //        now.add(Calendar.MINUTE, 1);
