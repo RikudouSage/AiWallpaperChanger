@@ -69,7 +69,7 @@
     <string name="app.settings.save_wallpapers">Uložit všechny tapety do složky</string>
     <string name="app.generate.cfg_scale">CFG měřítko (%.1f)</string>
     <string name="app.generate.hires_fix">HiRes Fix</string>
-    <string name="app.shortcut.next_image">Další obrázek</string>
+    <string name="app.shortcut.next_image">Další tapeta</string>
     <string name="app.shortcut.next_image.info">Další obrázek za pomoci uložených parametrů bude brzy vygenerován.</string>
     <string name="app.shortcut.next_image.error">Není vytvořen žádný plán generování, nemůžeme vygenerovat další obrázek.</string>
 </resources>
