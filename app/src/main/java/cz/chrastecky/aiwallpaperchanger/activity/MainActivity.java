@@ -56,6 +56,7 @@ import cz.chrastecky.aiwallpaperchanger.exception.RetryGenerationException;
 import cz.chrastecky.aiwallpaperchanger.helper.AlarmManagerHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.BillingHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.SharedPreferencesHelper;
+import cz.chrastecky.aiwallpaperchanger.helper.ShortcutManagerHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.ValueWrapper;
 import cz.chrastecky.aiwallpaperchanger.provider.AiHorde;
 import cz.chrastecky.aiwallpaperchanger.provider.AiProvider;
@@ -238,9 +239,14 @@ public class MainActivity extends AppCompatActivity {
                 sharedPreferences.remove("selectedInterval");
                 sharedPreferences.apply();
 
+                ShortcutManagerHelper.hideShortcuts(this);
+
                 Toast.makeText(this, R.string.app_succes_cancelled, Toast.LENGTH_LONG).show();
             });
             cancelButton.setVisibility(View.VISIBLE);
+            ShortcutManagerHelper.createShortcuts(this);
+        } else {
+            ShortcutManagerHelper.hideShortcuts(this);
         }
 
         SharedPreferences sharedPreferences = new SharedPreferencesHelper().get(this);
