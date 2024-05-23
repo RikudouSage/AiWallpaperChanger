@@ -105,6 +105,10 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(this, AboutActivity.class));
                 return true;
             }
+            if (item.getItemId() == R.id.next_image_menu_item) {
+                startActivity(new Intent(this, TriggerNextImageActivity.class));
+                return true;
+            }
 
             return false;
         });
@@ -273,6 +277,9 @@ public class MainActivity extends AppCompatActivity {
 
         if (BuildConfig.BILLING_ENABLED) {
             menu.findItem(R.id.premium_menu_item).setVisible(true);
+        }
+        if (AlarmManagerHelper.getAlarmIntent(this, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_NO_CREATE) != null) {
+            menu.findItem(R.id.next_image_menu_item).setVisible(true);
         }
 
         return true;
