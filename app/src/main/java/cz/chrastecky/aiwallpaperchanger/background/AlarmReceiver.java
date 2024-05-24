@@ -3,12 +3,13 @@ package cz.chrastecky.aiwallpaperchanger.background;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
 import androidx.work.Constraints;
 import androidx.work.NetworkType;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
+
+import cz.chrastecky.aiwallpaperchanger.helper.Logger;
 
 public class AlarmReceiver extends BroadcastReceiver {
     public static final String ACTION_NAME = "cz.chrastecky.aiwallpaperchanger.ALARM_ACTION";
@@ -19,7 +20,9 @@ public class AlarmReceiver extends BroadcastReceiver {
             return;
         }
 
-        Log.d("AlarmReceiver", "Alarm intent received");
+        Logger logger = new Logger(context);
+
+        logger.debug("AlarmReceiver", "Alarm intent received");
         WorkManager manager = WorkManager.getInstance(context);
         Constraints constraints = new Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
@@ -29,6 +32,6 @@ public class AlarmReceiver extends BroadcastReceiver {
                 .setConstraints(constraints)
                 .build();
         manager.enqueue(request);
-        Log.d("AlarmReceiver", "Worker enqueued");
+        logger.debug("AlarmReceiver", "Worker enqueued");
     }
 }

@@ -1,7 +1,6 @@
 package cz.chrastecky.aiwallpaperchanger.activity;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
@@ -30,6 +29,7 @@ import cz.chrastecky.aiwallpaperchanger.BuildConfig;
 import cz.chrastecky.aiwallpaperchanger.R;
 import cz.chrastecky.aiwallpaperchanger.databinding.ActivityPremiumBinding;
 import cz.chrastecky.aiwallpaperchanger.helper.BillingHelper;
+import cz.chrastecky.aiwallpaperchanger.helper.Logger;
 
 public class PremiumActivity extends AppCompatActivity {
     public final static String PREMIUM_PURCHASE_NAME = "premium_api_key";
@@ -39,6 +39,8 @@ public class PremiumActivity extends AppCompatActivity {
     private ProductDetails productDetails;
     @Nullable
     private BillingClient billingClient;
+
+    private Logger logger = new Logger(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,7 +131,7 @@ public class PremiumActivity extends AppCompatActivity {
                                 .build();
 
                 billingClient.acknowledgePurchase(acknowledgePurchaseParams, result -> {
-                    Log.d("PurchaseResult", result.toString());
+                    logger.debug("PurchaseResult", result.toString());
                 });
             });
 

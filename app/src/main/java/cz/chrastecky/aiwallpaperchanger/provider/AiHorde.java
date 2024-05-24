@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.provider.Settings;
-import android.util.Log;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
@@ -47,6 +46,7 @@ import cz.chrastecky.aiwallpaperchanger.dto.response.ModelType;
 import cz.chrastecky.aiwallpaperchanger.exception.ContentCensoredException;
 import cz.chrastecky.aiwallpaperchanger.exception.RetryGenerationException;
 import cz.chrastecky.aiwallpaperchanger.helper.HashHelper;
+import cz.chrastecky.aiwallpaperchanger.helper.Logger;
 import cz.chrastecky.aiwallpaperchanger.helper.SharedPreferencesHelper;
 
 public class AiHorde implements AiProvider {
@@ -56,10 +56,12 @@ public class AiHorde implements AiProvider {
     private static final String baseUrl = "https://aihorde.net/api/v2";
     private final RequestQueue requestQueue;
     private final Context context;
+    private final Logger logger;
 
     public AiHorde(Context context) {
         this.requestQueue = Volley.newRequestQueue(context);
         this.context = context;
+        this.logger = new Logger(this.context);
     }
 
     @Override
@@ -173,13 +175,13 @@ public class AiHorde implements AiProvider {
                 },
                 volleyError -> {
                     if (volleyError.networkResponse != null) {
-                        Log.d("HordeError", new String(volleyError.networkResponse.data));
+                        logger.debug("HordeError", new String(volleyError.networkResponse.data));
                     } else if (volleyError.getMessage() != null) {
-                        Log.d("HordeError", volleyError.getMessage());
+                        logger.debug("HordeError", volleyError.getMessage());
                     } else if (volleyError.getCause() != null) {
-                        Log.d("HordeError", volleyError.getCause().getMessage(), volleyError.getCause());
+                        logger.debug("HordeError", volleyError.getCause().getMessage(), volleyError.getCause());
                     } else {
-                        Log.d("HordeError", volleyError.toString());
+                        logger.debug("HordeError", volleyError.toString());
                     }
                     if (onError != null) {
                         onError.onError(volleyError);
@@ -391,6 +393,6 @@ public class AiHorde implements AiProvider {
         if (id == null) {
             return null;
         }
-        return HashHelper.sha256(id);
+        return HashHelper.sha256(id, logger);
     }
 }

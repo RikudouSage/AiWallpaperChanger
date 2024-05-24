@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
@@ -55,6 +54,7 @@ import cz.chrastecky.aiwallpaperchanger.exception.ContentCensoredException;
 import cz.chrastecky.aiwallpaperchanger.exception.RetryGenerationException;
 import cz.chrastecky.aiwallpaperchanger.helper.AlarmManagerHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.BillingHelper;
+import cz.chrastecky.aiwallpaperchanger.helper.Logger;
 import cz.chrastecky.aiwallpaperchanger.helper.SharedPreferencesHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.ShortcutManagerHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.ValueWrapper;
@@ -65,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String DEFAULT_MODEL = "ICBINP - I Can't Believe It's Not Photography";
     private static final String DEFAULT_SAMPLER = Sampler.k_dpmpp_sde.name();
     private AiProvider aiProvider;
+    private Logger logger = new Logger(this);
 
     private Map<String, Boolean> formElementsValidation = new HashMap<>();
 
@@ -161,7 +162,7 @@ public class MainActivity extends AppCompatActivity {
                         progressText.setText(R.string.app_generate_estimated_time_too_long);
                     }
                 }
-                Log.d("HordeRequestProgress", "Remaining: " + progress.getWaitTime());
+                logger.debug("HordeRequestProgress", "Remaining: " + progress.getWaitTime());
             };
 
             AiHorde.OnResponse<GenerationDetailWithBitmap> onResponse = response -> {
@@ -198,7 +199,7 @@ public class MainActivity extends AppCompatActivity {
                     return;
                 }
                 if (error.getCause() instanceof ContentCensoredException && censoredRetries.get() > 0) {
-                    Log.d("HordeError", "Request got censored, retrying");
+                    logger.debug("HordeError", "Request got censored, retrying");
                     censoredRetries.addAndGet(-1);
                     aiProvider.generateImage(createGenerateRequest(), onProgress, onResponse, onError.value);
                     return;
@@ -218,7 +219,7 @@ public class MainActivity extends AppCompatActivity {
                 loader.setVisibility(View.INVISIBLE);
             };
 
-            Log.d("HordeRequest", new Gson().toJson(createGenerateRequest()));
+            logger.debug("HordeRequest", new Gson().toJson(createGenerateRequest()));
             aiProvider.generateImage(createGenerateRequest(), onProgress, onResponse, onError.value);
 
             rootView.setVisibility(View.INVISIBLE);
@@ -501,7 +502,7 @@ public class MainActivity extends AppCompatActivity {
             loader.setVisibility(View.INVISIBLE);
             rootView.setVisibility(View.VISIBLE);
         }, error -> {
-            Log.e("AiHorde", "Fetching list of models failed", error);
+            logger.error("AiHorde", "Fetching list of models failed", error);
             Toast.makeText(this, R.string.app_error_fetching_models_failed, Toast.LENGTH_LONG).show();
         });
     }
@@ -549,7 +550,6 @@ public class MainActivity extends AppCompatActivity {
     private void setButtonEnabled(Button button, boolean enabled) {
         button.setEnabled(enabled);
         button.setBackgroundResource(enabled ? R.color.md_theme_primary : android.R.color.darker_gray);
-        Log.d("Color", String.format("#%06X", 0xFFFFFF & getResources().getColor(R.color.md_theme_onPrimary, null)));
         button.setTextColor(getResources().getColor(enabled ? R.color.md_theme_onPrimary : android.R.color.black, null));
     }
 }

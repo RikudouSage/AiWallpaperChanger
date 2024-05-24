@@ -61,6 +61,6 @@ public class AlarmManagerHelper {
 //        Calendar now = Calendar.getInstance();
 //        now.add(Calendar.MINUTE, 1);
 //        alarmManager.set(AlarmManager.RTC, now.getTimeInMillis(), getAlarmIntent(context));
-//        Log.d("Schedule", "Should run at " + now.getTime());
+//        Logger.debug("Schedule", "Should run at " + now.getTime());
     }
 }
