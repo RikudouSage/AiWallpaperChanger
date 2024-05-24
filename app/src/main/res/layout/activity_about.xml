@@ -61,6 +61,12 @@
                     android:layout_height="wrap_content"
                     android:text="@{@string/app_about_version(version)}"
                     android:textSize="20sp" />
+
+                <Button
+                    android:id="@+id/send_logs"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/app.about.share_logs" />
             </LinearLayout>
         </ScrollView>
 

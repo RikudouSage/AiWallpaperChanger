@@ -53,6 +53,9 @@ public class Logger {
     }
 
     private void log(@NonNull Type type, String tag, String message, @Nullable Throwable throwable) {
+        Date dayBeforeYesterday = new Date();
+        dayBeforeYesterday.setTime(new Date().getTime() - 86_400_000 * 2);
+
         String date = DateFormat.format("yyyy-MM-dd", new Date()).toString();
         String dateFull = DateFormat.format("yyyy-MM-dd kk:mm:ss", new Date()).toString();
         String targetMessage = "[" + dateFull + "] [" + type + "]" + "[" + tag + "]: " + message;
@@ -62,7 +65,14 @@ public class Logger {
         targetMessage += "\n";
 
         try {
-            File outFile = new File(context.getFilesDir(), "log." + date + ".txt");
+            File previousFile = new File(context.getFilesDir() + "/logs", "log." + DateFormat.format("yyyy-MM-dd", dayBeforeYesterday).toString() + ".txt");
+            if (previousFile.exists()) {
+                previousFile.delete();
+            }
+            File outFile = new File(context.getFilesDir() + "/logs", "log." + date + ".txt");
+            if (!outFile.getParentFile().exists()) {
+                outFile.getParentFile().mkdirs();
+            }
             if (!outFile.exists()) {
                 outFile.createNewFile();
             }

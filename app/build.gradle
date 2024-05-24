@@ -4,6 +4,9 @@ plugins {
 }
 
 android {
+    Properties properties = new Properties()
+    properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
     namespace 'cz.chrastecky.aiwallpaperchanger'
     compileSdk 34
 
@@ -24,6 +27,7 @@ android {
         }
         buildConfigField "String", "MAINTAINER", "\"Rikudou\""
         buildConfigField "String", "ANONYMOUS_API_KEY", "\"0000000000\""
+        buildConfigField "String", "SUPPORT_EMAIL", "\"" + (properties.getProperty("support_email") ?: "") + "\""
     }
 
     buildTypes {
@@ -54,9 +58,6 @@ android {
     }
     flavorDimensions 'nsfw', 'key', 'doze', 'billing'
     productFlavors {
-        Properties properties = new Properties()
-        properties.load(project.rootProject.file('local.properties').newDataInputStream())
-
         nsfwEnabled {
             dimension 'nsfw'
             versionNameSuffix 'N'

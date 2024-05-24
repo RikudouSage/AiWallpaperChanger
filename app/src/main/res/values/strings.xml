@@ -72,4 +72,7 @@
     <string name="app.shortcut.next_image">Next wallpaper</string>
     <string name="app.shortcut.next_image.info">The next image using the stored parameters will be generated soon.</string>
     <string name="app.shortcut.next_image.error">There is no schedule set, cannot generate next image.</string>
+    <string name="app.about.share_logs">Send logs to developer</string>
+    <string name="app.about.share_logs.no_log_file">There is no log file to share with the developer.</string>
+    <string name="app.about.share_logs.chooser_title">Share logs with developer</string>
 </resources>
