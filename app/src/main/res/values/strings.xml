@@ -75,4 +75,7 @@
     <string name="app.about.share_logs">Send logs to developer</string>
     <string name="app.about.share_logs.no_log_file">There is no log file to share with the developer.</string>
     <string name="app.about.share_logs.chooser_title">Share logs with developer</string>
+    <string name="app.title.uncaught_exception">Unhandled error</string>
+    <string name="app.uncaught_exception.explanation">There was an error which we forgot to handle. It has been logged and if you want to help out, you can go to the About page and send the logs to the developer.</string>
+    <string name="app.uncaught_exception.go_to_about">Go to the About page</string>
 </resources>

@@ -48,6 +48,10 @@ public class GenerateAndSetBackgroundWorker extends ListenableWorker {
     @NonNull
     @Override
     public ListenableFuture<Result> startWork() {
+        Thread.setDefaultUncaughtExceptionHandler(
+                (thread, error) -> logger.error("UncaughtException", "Got uncaught exception", error)
+        );
+
         return CallbackToFutureAdapter.getFuture(completer -> {
             BillingHelper.getPurchaseStatus(getApplicationContext(), PremiumActivity.PREMIUM_PURCHASE_NAME, premiumStatus -> {
                 logger.debug("WorkerJob", "Is premium: " + (premiumStatus ? "Yes" : "No"));

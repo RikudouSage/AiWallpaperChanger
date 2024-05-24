@@ -22,6 +22,10 @@ public class AlarmReceiver extends BroadcastReceiver {
 
         Logger logger = new Logger(context);
 
+        Thread.setDefaultUncaughtExceptionHandler(
+                (thread, error) -> logger.error("UncaughtException", "Got uncaught exception", error)
+        );
+
         logger.debug("AlarmReceiver", "Alarm intent received");
         WorkManager manager = WorkManager.getInstance(context);
         Constraints constraints = new Constraints.Builder()
