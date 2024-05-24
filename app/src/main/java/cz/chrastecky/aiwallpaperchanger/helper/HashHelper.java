@@ -1,7 +1,5 @@
 package cz.chrastecky.aiwallpaperchanger.helper;
 
-import android.util.Log;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -11,14 +9,14 @@ import java.security.NoSuchAlgorithmException;
 
 public class HashHelper {
     @Nullable
-    public static String sha256(@NonNull String input) {
+    public static String sha256(@NonNull String input, @NonNull Logger logger) {
         try {
             MessageDigest hash = MessageDigest.getInstance("SHA-256");
             hash.update(input.getBytes(StandardCharsets.UTF_8));
 
             return bytesToHexString(hash.digest());
         } catch (NoSuchAlgorithmException e) {
-            Log.e("AiWallpaperChanger", "Missing SHA-256 algorithm", e);
+            logger.error("AiWallpaperChanger", "Missing SHA-256 algorithm", e);
             return null;
         }
     }

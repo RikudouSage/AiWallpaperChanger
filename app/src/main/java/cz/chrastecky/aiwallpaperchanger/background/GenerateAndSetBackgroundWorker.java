@@ -5,7 +5,6 @@ import android.app.WallpaperManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.concurrent.futures.CallbackToFutureAdapter;
@@ -32,12 +31,15 @@ import cz.chrastecky.aiwallpaperchanger.exception.RetryGenerationException;
 import cz.chrastecky.aiwallpaperchanger.helper.BillingHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.ContentResolverHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.History;
+import cz.chrastecky.aiwallpaperchanger.helper.Logger;
 import cz.chrastecky.aiwallpaperchanger.helper.SharedPreferencesHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.ValueWrapper;
 import cz.chrastecky.aiwallpaperchanger.provider.AiHorde;
 import cz.chrastecky.aiwallpaperchanger.provider.AiProvider;
 
 public class GenerateAndSetBackgroundWorker extends ListenableWorker {
+    Logger logger = new Logger(getApplicationContext());
+
     public GenerateAndSetBackgroundWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
     }
@@ -48,12 +50,12 @@ public class GenerateAndSetBackgroundWorker extends ListenableWorker {
     public ListenableFuture<Result> startWork() {
         return CallbackToFutureAdapter.getFuture(completer -> {
             BillingHelper.getPurchaseStatus(getApplicationContext(), PremiumActivity.PREMIUM_PURCHASE_NAME, premiumStatus -> {
-                Log.d("WorkerJob", "Is premium: " + (premiumStatus ? "Yes" : "No"));
+                logger.debug("WorkerJob", "Is premium: " + (premiumStatus ? "Yes" : "No"));
                 if (premiumStatus) {
                     AiHorde.DEFAULT_API_KEY = BuildConfig.PREMIUM_API_KEY;
                 }
 
-                Log.d("WorkerJob", "Inside doWork()");
+                logger.debug("WorkerJob", "Inside doWork()");
                 AiHorde aiHorde = new AiHorde(getApplicationContext());
                 SharedPreferences preferences = new SharedPreferencesHelper().get(getApplicationContext());
 
@@ -63,7 +65,7 @@ public class GenerateAndSetBackgroundWorker extends ListenableWorker {
                 }
 
                 String requestJson = preferences.getString("generationParameters", "");
-                Log.d("WorkerJob", "Request: " + requestJson);
+                logger.debug("WorkerJob", "Request: " + requestJson);
                 GenerateRequest request = new Gson().fromJson(preferences.getString("generationParameters", ""), GenerateRequest.class);
                 if (!BuildConfig.NSFW_ENABLED && request.getNsfw()) {
                     request = new GenerateRequest(
@@ -85,9 +87,9 @@ public class GenerateAndSetBackgroundWorker extends ListenableWorker {
                 }
                 final GenerateRequest finalRequest = request;
 
-                AiProvider.OnProgress onProgress = status -> Log.d("WorkerJob", "OnProgress: " + status.getWaitTime());
+                AiProvider.OnProgress onProgress = status -> logger.debug("WorkerJob", "OnProgress: " + status.getWaitTime());
                 AiProvider.OnResponse<GenerationDetailWithBitmap> onResponse = response -> {
-                    Log.d("WorkerJob", "Finished");
+                    logger.debug("WorkerJob", "Finished");
                     WallpaperManager wallpaperManager = WallpaperManager.getInstance(getApplicationContext());
                     try {
                         if (preferences.contains("storeWallpapersUri")) {
@@ -111,7 +113,7 @@ public class GenerateAndSetBackgroundWorker extends ListenableWorker {
 
                         completer.set(Result.success());
                     } catch (IOException e) {
-                        Log.e("AIWallpaperError", "Failed setting new wallpaper", e);
+                        logger.error("AIWallpaperError", "Failed setting new wallpaper", e);
                         completer.setException(e);
                     }
                 };
@@ -123,17 +125,17 @@ public class GenerateAndSetBackgroundWorker extends ListenableWorker {
                         return;
                     }
                     if (error.getCause() instanceof ContentCensoredException && censoredRetries.get() > 0) {
-                        Log.d("HordeError", "Request got censored, retrying");
+                        logger.debug("HordeError", "Request got censored, retrying");
                         censoredRetries.addAndGet(-1);
                         aiHorde.generateImage(finalRequest, onProgress, onResponse, onError.value);
                         return;
                     }
 
-                    Log.e("AIWallpaperError", "Failed generating AI image", error);
+                    logger.error("AIWallpaperError", "Failed generating AI image", error);
                     if (error.networkResponse != null) {
-                        Log.d("AIWallpaperError", new String(error.networkResponse.data));
+                        logger.debug("AIWallpaperError", new String(error.networkResponse.data));
                     } else {
-                        Log.d("AIWallpaperError", error.getMessage(), error.getCause());
+                        logger.debug("AIWallpaperError", error.getMessage(), error.getCause());
                     }
                     completer.setException(error);
                 };

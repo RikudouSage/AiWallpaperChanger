@@ -6,7 +6,6 @@ import android.content.UriPermission;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.documentfile.provider.DocumentFile;
@@ -26,13 +25,15 @@ public class ContentResolverHelper {
     }
 
     public static void storeBitmap(@NonNull Context context, @NonNull Uri directory, @NonNull String filename, @NonNull Bitmap content) {
+        Logger logger = new Logger(context);
+
         if (!canAccessDirectory(context, directory)) {
-            Log.e("StoreBitmapError", "Access to the directory " + directory + " is not granted");
+            logger.error("StoreBitmapError", "Access to the directory " + directory + " is not granted");
             return;
         }
         DocumentFile directoryDocument = DocumentFile.fromTreeUri(context, directory);
         if (directoryDocument == null || !directoryDocument.exists()) {
-            Log.e("StoreBitmapError", "Cannot store the image in " + directory + ", the directory either does not exist or there's no permission to view it.");
+            logger.error("StoreBitmapError", "Cannot store the image in " + directory + ", the directory either does not exist or there's no permission to view it.");
             return;
         }
 
@@ -45,7 +46,7 @@ public class ContentResolverHelper {
         ) {
             content.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
         } catch (IOException e) {
-            Log.e("StoreBitmapError", "Could not open file " + file + " for writing.");
+            logger.error("StoreBitmapError", "Could not open file " + file + " for writing.");
         }
     }
 }

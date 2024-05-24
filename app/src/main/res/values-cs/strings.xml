@@ -72,4 +72,7 @@
     <string name="app.shortcut.next_image">Další tapeta</string>
     <string name="app.shortcut.next_image.info">Další obrázek za pomoci uložených parametrů bude brzy vygenerován.</string>
     <string name="app.shortcut.next_image.error">Není vytvořen žádný plán generování, nemůžeme vygenerovat další obrázek.</string>
+    <string name="app.about.share_logs">Odeslat logy vývojáři</string>
+    <string name="app.about.share_logs.no_log_file">Neexistuje soubor s logy, který by šel sdílet.</string>
+    <string name="app.about.share_logs.chooser_title">Sdílet logy s vývojářem</string>
 </resources>

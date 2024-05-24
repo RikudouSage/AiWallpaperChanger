@@ -74,6 +74,16 @@
                 <action android:name="cz.chrastecky.aiwallpaperchanger.ALARM_ACTION" />
             </intent-filter>
         </receiver>
+        
+        <provider
+            android:authorities="${applicationId}.files_provider"
+            android:name=".sharing.AppFileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
     </application>
 
 </manifest>
