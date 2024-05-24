@@ -75,4 +75,7 @@
     <string name="app.about.share_logs">Odeslat logy vývojáři</string>
     <string name="app.about.share_logs.no_log_file">Neexistuje soubor s logy, který by šel sdílet.</string>
     <string name="app.about.share_logs.chooser_title">Sdílet logy s vývojářem</string>
+    <string name="app.title.uncaught_exception">Nezachycená chyba</string>
+    <string name="app.uncaught_exception.explanation">Nastala chyba, kterou jsme zapomněli zachytit. Byla zalogována a pokud nám chcete pomoci, můžete jít na stránku O aplikaci a poslat logy vývojáři.</string>
+    <string name="app.uncaught_exception.go_to_about">Jít na stránku O aplikaci</string>
 </resources>

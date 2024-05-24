@@ -72,6 +72,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setupExceptionLogging();
+
         this.aiProvider = new AiHorde(this);
 
         SharedPreferences sharedPreferences = new SharedPreferencesHelper().get(this);
@@ -551,5 +553,23 @@ public class MainActivity extends AppCompatActivity {
         button.setEnabled(enabled);
         button.setBackgroundResource(enabled ? R.color.md_theme_primary : android.R.color.darker_gray);
         button.setTextColor(getResources().getColor(enabled ? R.color.md_theme_onPrimary : android.R.color.black, null));
+    }
+
+    private void setupExceptionLogging() {
+        if (BuildConfig.DEBUG) {
+            return;
+        }
+        Thread.setDefaultUncaughtExceptionHandler((thread, exception) -> {
+            logger.error("UncaughtException", "There was an uncaught exception", exception);
+
+            Intent intent = new Intent(this, UncaughtErrorActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+            startActivity(intent);
+
+            android.os.Process.killProcess(android.os.Process.myPid());
+            System.exit(0);
+        });
     }
 }
