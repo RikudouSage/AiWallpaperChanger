@@ -121,11 +121,12 @@ public class GenerateAndSetBackgroundWorker extends ListenableWorker {
                 ValueWrapper<AiHorde.OnError> onError = new ValueWrapper<>();
                 onError.value = error -> {
                     if (error.getCause() instanceof RetryGenerationException) {
+                        logger.debug("WorkerJob", "A recoverable error was caught, trying again", error.getCause());
                         aiHorde.generateImage(finalRequest, onProgress, onResponse, onError.value);
                         return;
                     }
                     if (error.getCause() instanceof ContentCensoredException && censoredRetries.get() > 0) {
-                        logger.debug("HordeError", "Request got censored, retrying");
+                        logger.debug("HordeError", "Request got censored, retrying, remaining tries: " + censoredRetries.get());
                         censoredRetries.addAndGet(-1);
                         aiHorde.generateImage(finalRequest, onProgress, onResponse, onError.value);
                         return;
