@@ -78,4 +78,9 @@
     <string name="app.title.uncaught_exception">Nezachycená chyba</string>
     <string name="app.uncaught_exception.explanation">Nastala chyba, kterou jsme zapomněli zachytit. Byla zalogována a pokud nám chcete pomoci, můžete jít na stránku O aplikaci a poslat logy vývojáři.</string>
     <string name="app.uncaught_exception.go_to_about">Jít na stránku O aplikaci</string>
+    <string name="app.permission.data_saver.dialog.body">Vaše zařízení má zapnutu úsporu data, což zabraňuje této aplikaci pracovat na pozadí, když jste na datech. Prosím, přijdete tuto aplikaci jako výjimku, pokud chcete, aby fungovala správně.</string>
+    <string name="app.permission.data_saver.dialog.title">Úspora dat</string>
+    <string name="app.permission.dialog.button.exception">Přidat výjimku</string>
+    <string name="app.permission.dialog.button.ignore">Ignorovat</string>
+    <string name="app.permission.dialog.button.dont_ask_again">Znovu se neptat</string>
 </resources>

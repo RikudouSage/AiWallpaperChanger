@@ -22,6 +22,7 @@ import cz.chrastecky.aiwallpaperchanger.R;
 import cz.chrastecky.aiwallpaperchanger.databinding.ActivityConfigureScheduleBinding;
 import cz.chrastecky.aiwallpaperchanger.helper.AlarmManagerHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.ChannelHelper;
+import cz.chrastecky.aiwallpaperchanger.helper.PermissionHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.SharedPreferencesHelper;
 
 public class ConfigureScheduleActivity extends AppCompatActivity {
@@ -44,6 +45,7 @@ public class ConfigureScheduleActivity extends AppCompatActivity {
         Button scheduleButton = findViewById(R.id.schedule_button);
         scheduleButton.setOnClickListener(view -> {
             handleDozeMode();
+            PermissionHelper.askForDataSaverException(this);
             schedule();
 //            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
 //                if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {

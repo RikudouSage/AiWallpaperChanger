@@ -55,6 +55,7 @@ import cz.chrastecky.aiwallpaperchanger.exception.RetryGenerationException;
 import cz.chrastecky.aiwallpaperchanger.helper.AlarmManagerHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.BillingHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.Logger;
+import cz.chrastecky.aiwallpaperchanger.helper.PermissionHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.SharedPreferencesHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.ShortcutManagerHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.ValueWrapper;
@@ -271,6 +272,10 @@ public class MainActivity extends AppCompatActivity {
 
             AiHorde.DEFAULT_API_KEY = BuildConfig.PREMIUM_API_KEY;
         });
+
+        if (PermissionHelper.shouldCheckForPermissions(this)) {
+            PermissionHelper.askForDataSaverException(this);
+        }
     }
 
     @Override
