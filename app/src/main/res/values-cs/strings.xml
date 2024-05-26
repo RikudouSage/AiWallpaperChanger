@@ -18,7 +18,6 @@
     <string name="app.schedule.schedule_button">Naplánovat!</string>
     <string name="notification.channel.background_work.title">Práce na pozadí</string>
     <string name="notification.channel.background_work.description">Tento kanál se používá pro zobrazení notifikace, zatímco aplikace generuje novou tapetu na pozadí. Bez tohoto kanálu nelze zaručit, že bude tapeta vygenerována úspěšně.</string>
-    <string name="notification.background_work.title">Generování nové AI tapety</string>
     <string name="app.error.notification_permission">Potřebujeme oprávnění pro notifikace, abychom mohli spustit proces na pozadí.</string>
     <string name="app.success.scheduled">Úspěch! Vaše tapeta by se měla měnit ve specifikovaném intervalu.</string>
     <string name="app.generate.cancel_schedule">Zrušit existující plán</string>
@@ -35,7 +34,6 @@
     <string name="app.generate.height">Výška</string>
     <string name="app.generate.upscaler">Zvětšovač</string>
     <string name="app.select.empty_option">-- žádný --</string>
-    <string name="notification.doze_mode.disable">Prosím vypněte optimalizace baterie pro AI Wallpaper Changer.</string>
     <string name="app.title.history">Historie</string>
     <string name="app.history.no_history">Žádná historie tapet neexistuje, směle do toho a nějaké vygenerujte!</string>
     <string name="app.history.open_in_browser">Otevřít v HordeNG</string>
