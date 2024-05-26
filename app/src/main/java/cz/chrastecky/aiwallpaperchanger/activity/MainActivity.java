@@ -275,6 +275,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (PermissionHelper.shouldCheckForPermissions(this)) {
             PermissionHelper.askForDataSaverException(this);
+            PermissionHelper.askForDozeModeException(this);
         }
     }
 

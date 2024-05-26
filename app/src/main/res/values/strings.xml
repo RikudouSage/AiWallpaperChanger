@@ -83,4 +83,6 @@
     <string name="app.permission.dialog.button.exception">Add an exception</string>
     <string name="app.permission.dialog.button.ignore">Ignore</string>
     <string name="app.permission.dialog.button.dont_ask_again">Don\'t ask again</string>
+    <string name="app.permissions.doze_mode.dialog.body">Please add this app as an exception to the battery optimizations of your device, otherwise the app may not work as expected.</string>
+    <string name="app.permissions.doze_mode.dialog.title">Ignore battery optimizations</string>
 </resources>
