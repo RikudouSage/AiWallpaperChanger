@@ -43,7 +43,7 @@ public class PermissionHelper {
         builder.setTitle(R.string.app_permission_data_saver_dialog_title);
         builder.setPositiveButton(R.string.app_permission_dialog_button_exception, (dialog, which) -> {
             Intent intent = new Intent(Settings.ACTION_IGNORE_BACKGROUND_DATA_RESTRICTIONS_SETTINGS);
-            intent.setData(Uri.fromParts("package", context.getPackageName(), null));
+            intent.setData(Uri.fromParts("package", BuildConfig.APPLICATION_ID, null));
             context.startActivity(intent);
         });
         builder.setNeutralButton(R.string.app_permission_dialog_button_ignore, (dialog, which) -> {});
@@ -66,7 +66,7 @@ public class PermissionHelper {
         }
 
         PowerManager powerManager = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
-        if (powerManager.isIgnoringBatteryOptimizations(context.getPackageName())) {
+        if (powerManager.isIgnoringBatteryOptimizations(BuildConfig.APPLICATION_ID)) {
             return;
         }
 
@@ -76,7 +76,7 @@ public class PermissionHelper {
         builder.setPositiveButton(R.string.app_permission_dialog_button_exception, (dialog, which) -> {
             if (BuildConfig.DOZE_MANAGEMENT_ENABLED) {
                 Intent intent = new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
-                intent.setData(Uri.fromParts("package", context.getPackageName(), null));
+                intent.setData(Uri.fromParts("package", BuildConfig.APPLICATION_ID, null));
                 context.startActivity(intent);
             } else {
                 context.startActivity(new Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS));

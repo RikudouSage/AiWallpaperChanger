@@ -149,7 +149,7 @@ public class AiHorde implements AiProvider {
             params.put("hires_fix", request.getHiresFix());
 
             requestBody.put("params", params);
-            requestBody.put("models", new JSONArray(new String[] {request.getModel()}));
+            requestBody.put("models", new JSONArray(request.getModels()));
             requestBody.put("nsfw", request.getNsfw());
             if (
                     BuildConfig.BILLING_ENABLED

@@ -83,4 +83,6 @@
     <string name="app.permission.dialog.button.dont_ask_again">Znovu se neptat</string>
     <string name="app.permissions.doze_mode.dialog.body">Prosím přidejte tuto aplikaci do výjimek pro optimalizace baterie, jinak nemusí fungovat správně.</string>
     <string name="app.permissions.doze_mode.dialog.title">Ignorovat optimalizace baterie</string>
+    <string name="app.generate.models.single">jeden model</string>
+    <string name="app.generate.models.multiple">více modelů</string>
 </resources>

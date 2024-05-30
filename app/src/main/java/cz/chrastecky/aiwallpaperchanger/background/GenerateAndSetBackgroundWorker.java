@@ -75,7 +75,7 @@ public class GenerateAndSetBackgroundWorker extends ListenableWorker {
                     request = new GenerateRequest(
                             request.getPrompt(),
                             request.getNegativePrompt(),
-                            request.getModel(),
+                            request.getModels(),
                             request.getSampler(),
                             request.getSteps(),
                             request.getClipSkip(),

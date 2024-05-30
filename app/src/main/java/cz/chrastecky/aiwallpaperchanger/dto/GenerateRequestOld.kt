@@ -1,9 +1,9 @@
 package cz.chrastecky.aiwallpaperchanger.dto
 
-data class GenerateRequest(
+data class GenerateRequestOld(
     val prompt: String,
     val negativePrompt: String?,
-    val models: List<String>,
+    val model: String,
     val sampler: Sampler,
     val steps: Int,
     val clipSkip: Int,
