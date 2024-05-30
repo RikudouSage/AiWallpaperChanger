@@ -5,12 +5,8 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-        <variable
-            name="unselectedModels"
-            type="java.util.List&lt;java.lang.String>" />
-        <variable
-            name="selectedModels"
-            type="java.util.List&lt;java.lang.String>" />
+        <import type="android.view.View"/>
+        <variable name="hasSelectedModels" type="java.lang.Boolean" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -51,6 +47,33 @@
                 android:paddingTop="16dp"
                 android:paddingEnd="8dp"
                 android:paddingBottom="48dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="@{hasSelectedModels ? View.VISIBLE : View.GONE}"
+                    android:textSize="24sp"
+                    android:text="@string/app.select_models.selected" />
+                <LinearLayout
+                    android:id="@+id/selected_models_wrapper"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:orientation="vertical" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:textSize="24sp"
+                    android:text="@string/app.select_models.all_models" />
+                <LinearLayout
+                    android:id="@+id/available_models_wrapper"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:paddingBottom="16dp"
+                    android:orientation="vertical" />
 
             </LinearLayout>
         </ScrollView>

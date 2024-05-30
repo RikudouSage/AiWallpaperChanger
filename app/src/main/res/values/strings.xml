@@ -86,4 +86,7 @@
     <string name="app.generate.models.single">single model</string>
     <string name="app.generate.models.multiple">multiple models</string>
     <string name="app.title.select_models">Choose models</string>
+    <string name="app.delete">Delete</string>
+    <string name="app.select_models.selected">Selected models</string>
+    <string name="app.select_models.all_models">Available models</string>
 </resources>

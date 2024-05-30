@@ -86,4 +86,7 @@
     <string name="app.generate.models.single">jeden model</string>
     <string name="app.generate.models.multiple">více modelů</string>
     <string name="app.title.select_models">Vybrat modely</string>
+    <string name="app.delete">Smazat</string>
+    <string name="app.select_models.selected">Zvolené modely</string>
+    <string name="app.select_models.all_models">Dostupné modely</string>
 </resources>
