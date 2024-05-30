@@ -12,7 +12,6 @@ import androidx.work.ListenableWorker;
 import androidx.work.WorkerParameters;
 
 import com.google.common.util.concurrent.ListenableFuture;
-import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.text.DateFormat;
@@ -30,6 +29,7 @@ import cz.chrastecky.aiwallpaperchanger.exception.ContentCensoredException;
 import cz.chrastecky.aiwallpaperchanger.exception.RetryGenerationException;
 import cz.chrastecky.aiwallpaperchanger.helper.BillingHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.ContentResolverHelper;
+import cz.chrastecky.aiwallpaperchanger.helper.GenerateRequestMigrationHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.History;
 import cz.chrastecky.aiwallpaperchanger.helper.Logger;
 import cz.chrastecky.aiwallpaperchanger.helper.SharedPreferencesHelper;
@@ -70,12 +70,12 @@ public class GenerateAndSetBackgroundWorker extends ListenableWorker {
 
                 String requestJson = preferences.getString("generationParameters", "");
                 logger.debug("WorkerJob", "Request: " + requestJson);
-                GenerateRequest request = new Gson().fromJson(preferences.getString("generationParameters", ""), GenerateRequest.class);
+                GenerateRequest request = GenerateRequestMigrationHelper.parse(preferences.getString("generationParameters", ""));
                 if (!BuildConfig.NSFW_ENABLED && request.getNsfw()) {
                     request = new GenerateRequest(
                             request.getPrompt(),
                             request.getNegativePrompt(),
-                            request.getModel(),
+                            request.getModels(),
                             request.getSampler(),
                             request.getSteps(),
                             request.getClipSkip(),
@@ -94,6 +94,7 @@ public class GenerateAndSetBackgroundWorker extends ListenableWorker {
                 AiProvider.OnProgress onProgress = status -> logger.debug("WorkerJob", "OnProgress: " + status.getWaitTime());
                 AiProvider.OnResponse<GenerationDetailWithBitmap> onResponse = response -> {
                     logger.debug("WorkerJob", "Finished");
+                    logger.debug("WorkerJob", "Model: " + response.getDetail().getModel());
                     WallpaperManager wallpaperManager = WallpaperManager.getInstance(getApplicationContext());
                     try {
                         if (preferences.contains("storeWallpapersUri")) {

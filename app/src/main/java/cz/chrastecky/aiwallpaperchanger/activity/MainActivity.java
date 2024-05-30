@@ -15,12 +15,15 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
@@ -34,7 +37,9 @@ import com.google.gson.Gson;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,6 +59,7 @@ import cz.chrastecky.aiwallpaperchanger.exception.ContentCensoredException;
 import cz.chrastecky.aiwallpaperchanger.exception.RetryGenerationException;
 import cz.chrastecky.aiwallpaperchanger.helper.AlarmManagerHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.BillingHelper;
+import cz.chrastecky.aiwallpaperchanger.helper.GenerateRequestMigrationHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.Logger;
 import cz.chrastecky.aiwallpaperchanger.helper.PermissionHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.SharedPreferencesHelper;
@@ -67,8 +73,26 @@ public class MainActivity extends AppCompatActivity {
     private static final String DEFAULT_SAMPLER = Sampler.k_dpmpp_sde.name();
     private AiProvider aiProvider;
     private Logger logger = new Logger(this);
+    private ActivityMainBinding binding;
 
     private Map<String, Boolean> formElementsValidation = new HashMap<>();
+
+    private List<String> selectedModels = new ArrayList<>();
+    private List<String> allModels = new ArrayList<>();
+
+    private final ActivityResultLauncher<Intent> selectModelsLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() != RESULT_OK) {
+                    Toast.makeText(this, R.string.app_select_models_selecting_failed, Toast.LENGTH_LONG).show();
+                    return;
+                }
+
+                assert result.getData() != null;
+                selectedModels = result.getData().getStringArrayListExtra("resultModels");
+                binding.setSelectedModels(selectedModels);
+            }
+    );
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,10 +104,11 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = new SharedPreferencesHelper().get(this);
         GenerateRequest request = null;
         if (sharedPreferences.contains("generationParameters")) {
-            request = new Gson().fromJson(sharedPreferences.getString("generationParameters", ""), GenerateRequest.class);
+            request = GenerateRequestMigrationHelper.parse(sharedPreferences.getString("generationParameters", ""));
         }
 
-        ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        binding.setSelectedModels(selectedModels);
         setContentView(binding.getRoot());
 
         setSupportActionBar(binding.toolbar);
@@ -429,6 +454,10 @@ public class MainActivity extends AppCompatActivity {
         Slider cfgScaleField = findViewById(R.id.cfg_scale);
         TextView cfgScaleTitle = findViewById(R.id.cfg_scale_title);
         SwitchCompat hiresFixField = findViewById(R.id.hires_fix_switch);
+        SwitchCompat multipleModelsSwitch = findViewById(R.id.multiple_models_switch);
+        Spinner modelField = findViewById(R.id.model_field);
+        Button modelSelectButton = findViewById(R.id.model_select_button);
+        TextView modelSelectedList = findViewById(R.id.model_selected_list);
 
         SharedPreferences preferences = new SharedPreferencesHelper().get(this);
         int[] widthHeight = calculateWidthAndHeight();
@@ -481,6 +510,24 @@ public class MainActivity extends AppCompatActivity {
             nsfwField.setChecked(preferences.getBoolean("nsfwToggled", false));
         }
 
+        multipleModelsSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            buttonView.setText(isChecked ? R.string.app_generate_models_multiple : R.string.app_generate_models_single);
+            modelField.setVisibility(isChecked ? View.GONE : View.VISIBLE);
+            modelSelectButton.setVisibility(isChecked ? View.VISIBLE : View.GONE);
+            modelSelectedList.setVisibility(isChecked ? View.VISIBLE : View.GONE);
+
+            if (!isChecked && !selectedModels.isEmpty()) {
+                modelField.setSelection(allModels.indexOf(selectedModels.get(0)));
+            }
+        });
+
+        modelSelectButton.setOnClickListener(v -> {
+            Intent intent = new Intent(this, SelectModelsActivity.class);
+            intent.putStringArrayListExtra("selectedModels", new ArrayList<>(selectedModels));
+            intent.putStringArrayListExtra("allModels", new ArrayList<>(allModels));
+            selectModelsLauncher.launch(intent);
+        });
+
         if (request != null) {
             TextInputEditText prompt = findViewById(R.id.prompt_field);
             TextInputEditText negativePrompt = findViewById(R.id.negative_prompt_field);
@@ -494,18 +541,37 @@ public class MainActivity extends AppCompatActivity {
             heightField.setText(String.valueOf(request.getHeight()));
             cfgScaleField.setValue((float) request.getCfgScale());
             hiresFixField.setChecked(request.getHiresFix());
+            multipleModelsSwitch.setChecked(request.getModels().size() > 1);
         }
 
         aiProvider.getModels(response -> {
             response.sort((a, b) -> String.CASE_INSENSITIVE_ORDER.compare(a.getName(), b.getName()));
             List<String> models = response.stream().map(ActiveModel::getName).collect(Collectors.toList());
-            Spinner modelField = findViewById(R.id.model_field);
+            this.allModels = models;
             modelField.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, models));
             modelField.setSelection(models.indexOf(DEFAULT_MODEL));
 
-            if (request != null) {
-                modelField.setSelection(models.indexOf(request.getModel()));
+            if (request != null && !multipleModelsSwitch.isChecked()) {
+                modelField.setSelection(models.indexOf(request.getModels().get(0)));
             }
+            if (request != null) {
+                this.selectedModels = request.getModels();
+                binding.setSelectedModels(this.selectedModels);
+            }
+
+            modelField.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    selectedModels = Collections.singletonList(models.get(position));
+                    binding.setSelectedModels(selectedModels);
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+                    selectedModels = new ArrayList<>();
+                    binding.setSelectedModels(selectedModels);
+                }
+            });
 
             loader.setVisibility(View.INVISIBLE);
             rootView.setVisibility(View.VISIBLE);
@@ -518,7 +584,6 @@ public class MainActivity extends AppCompatActivity {
     private GenerateRequest createGenerateRequest() {
         TextInputEditText prompt = findViewById(R.id.prompt_field);
         TextInputEditText negativePrompt = findViewById(R.id.negative_prompt_field);
-        Spinner model = findViewById(R.id.model_field);
         Spinner sampler = findViewById(R.id.sampler_field);
         Slider steps = findViewById(R.id.steps_slider);
         Slider clipSkip = findViewById(R.id.clip_skip_slider);
@@ -540,7 +605,7 @@ public class MainActivity extends AppCompatActivity {
         return new GenerateRequest(
                 prompt.getText().toString(),
                 negativePrompt.getText().length() > 0 ? negativePrompt.getText().toString() : null,
-                (String) model.getSelectedItem(),
+                selectedModels,
                 advanced ? Sampler.valueOf((String) sampler.getSelectedItem()) : Sampler.k_dpmpp_sde,
                 advanced ? (int) steps.getValue() : 25,
                 advanced ? (int) clipSkip.getValue() : 1,

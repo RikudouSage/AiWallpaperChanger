@@ -83,4 +83,12 @@
     <string name="app.permission.dialog.button.dont_ask_again">Don\'t ask again</string>
     <string name="app.permissions.doze_mode.dialog.body">Please add this app as an exception to the battery optimizations of your device, otherwise the app may not work as expected.</string>
     <string name="app.permissions.doze_mode.dialog.title">Ignore battery optimizations</string>
+    <string name="app.generate.models.single">single model</string>
+    <string name="app.generate.models.multiple">multiple models</string>
+    <string name="app.title.select_models">Choose models</string>
+    <string name="app.delete">Delete</string>
+    <string name="app.select_models.selected">Selected models</string>
+    <string name="app.select_models.all_models">Available models</string>
+    <string name="app.save">Save</string>
+    <string name="app.select_models.selecting_failed">Failed to save the models you selected, try again, please.</string>
 </resources>

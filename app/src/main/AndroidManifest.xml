@@ -17,6 +17,9 @@
         android:theme="@style/AppTheme"
         tools:targetApi="31">
         <activity
+            android:name=".activity.SelectModelsActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.UncaughtErrorActivity"
             android:exported="false" />
         <activity
