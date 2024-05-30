@@ -89,6 +89,6 @@
     <string name="app.delete">Delete</string>
     <string name="app.select_models.selected">Selected models</string>
     <string name="app.select_models.all_models">Available models</string>
-    <string name="app.save" translatable="false">Save</string>
+    <string name="app.save">Save</string>
     <string name="app.select_models.selecting_failed">Failed to save the models you selected, try again, please.</string>
 </resources>
