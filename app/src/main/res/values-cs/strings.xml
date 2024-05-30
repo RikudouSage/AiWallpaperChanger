@@ -85,4 +85,5 @@
     <string name="app.permissions.doze_mode.dialog.title">Ignorovat optimalizace baterie</string>
     <string name="app.generate.models.single">jeden model</string>
     <string name="app.generate.models.multiple">více modelů</string>
+    <string name="app.title.select_models">Vybrat modely</string>
 </resources>

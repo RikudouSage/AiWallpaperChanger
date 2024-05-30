@@ -85,4 +85,5 @@
     <string name="app.permissions.doze_mode.dialog.title">Ignore battery optimizations</string>
     <string name="app.generate.models.single">single model</string>
     <string name="app.generate.models.multiple">multiple models</string>
+    <string name="app.title.select_models">Choose models</string>
 </resources>

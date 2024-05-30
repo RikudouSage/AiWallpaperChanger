@@ -108,6 +108,15 @@
                         android:minHeight="48dp"
                         android:spinnerMode="dialog" />
 
+                    <Button
+                        android:id="@+id/model_select_button"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="8dp"
+                        android:visibility="gone"
+                        tools:visibility="visible"
+                        android:text="@string/app.title.select_models" />
+
                 </com.google.android.material.textfield.TextInputLayout>
 
 

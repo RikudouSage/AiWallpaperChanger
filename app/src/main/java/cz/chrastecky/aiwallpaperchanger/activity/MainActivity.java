@@ -75,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
     private Map<String, Boolean> formElementsValidation = new HashMap<>();
 
     private List<String> selectedModels = new ArrayList<>();
+    private List<String> allModels = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -437,6 +438,7 @@ public class MainActivity extends AppCompatActivity {
         SwitchCompat hiresFixField = findViewById(R.id.hires_fix_switch);
         SwitchCompat multipleModelsSwitch = findViewById(R.id.multiple_models_switch);
         Spinner modelField = findViewById(R.id.model_field);
+        Button modelSelectButton = findViewById(R.id.model_select_button);
 
         SharedPreferences preferences = new SharedPreferencesHelper().get(this);
         int[] widthHeight = calculateWidthAndHeight();
@@ -492,6 +494,14 @@ public class MainActivity extends AppCompatActivity {
         multipleModelsSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             buttonView.setText(isChecked ? R.string.app_generate_models_multiple : R.string.app_generate_models_single);
             modelField.setVisibility(isChecked ? View.GONE : View.VISIBLE);
+            modelSelectButton.setVisibility(isChecked ? View.VISIBLE : View.GONE);
+        });
+
+        modelSelectButton.setOnClickListener(v -> {
+            Intent intent = new Intent(this, SelectModelsActivity.class);
+            intent.putStringArrayListExtra("selectedModels", new ArrayList<>(selectedModels));
+            intent.putStringArrayListExtra("allModels", new ArrayList<>(allModels));
+            startActivity(intent);
         });
 
         if (request != null) {
@@ -513,6 +523,7 @@ public class MainActivity extends AppCompatActivity {
         aiProvider.getModels(response -> {
             response.sort((a, b) -> String.CASE_INSENSITIVE_ORDER.compare(a.getName(), b.getName()));
             List<String> models = response.stream().map(ActiveModel::getName).collect(Collectors.toList());
+            this.allModels = models;
             modelField.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, models));
             modelField.setSelection(models.indexOf(DEFAULT_MODEL));
 
