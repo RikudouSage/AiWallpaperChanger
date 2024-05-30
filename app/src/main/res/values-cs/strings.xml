@@ -89,4 +89,6 @@
     <string name="app.delete">Smazat</string>
     <string name="app.select_models.selected">Zvolené modely</string>
     <string name="app.select_models.all_models">Dostupné modely</string>
+    <string name="app.save">Uložit</string>
+    <string name="app.select_models.selecting_failed">Nezdařilo se uložit seznam modelů, zkuste to znovu, prosím.</string>
 </resources>

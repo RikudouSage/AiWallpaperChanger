@@ -3,8 +3,10 @@ package cz.chrastecky.aiwallpaperchanger.activity;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,6 +17,7 @@ import cz.chrastecky.aiwallpaperchanger.databinding.ModelItemBinding;
 public class SelectModelsActivity extends AppCompatActivity {
 
     private List<String> allModels;
+    private List<String> selectedModels;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,6 +25,13 @@ public class SelectModelsActivity extends AppCompatActivity {
 
         ActivitySelectModelsBinding binding = ActivitySelectModelsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        binding.saveButton.setOnClickListener(view -> {
+            Intent data = new Intent();
+            data.putStringArrayListExtra("resultModels", new ArrayList<>(selectedModels));
+            setResult(RESULT_OK, data);
+            finish();
+        });
 
         setSupportActionBar(binding.toolbar);
         setTitle(R.string.app_title_select_models);
@@ -36,10 +46,12 @@ public class SelectModelsActivity extends AppCompatActivity {
         redrawModels(selectedModels, binding);
     }
 
-    private void redrawModels(List<String> selectedModels, ActivitySelectModelsBinding binding) {
+    private void redrawModels(@NonNull List<String> selectedModels, @NonNull ActivitySelectModelsBinding binding) {
         binding.setHasSelectedModels(!selectedModels.isEmpty());
         binding.selectedModelsWrapper.removeAllViews();
         binding.availableModelsWrapper.removeAllViews();
+
+        this.selectedModels = selectedModels;
 
         for (String model : selectedModels) {
             ModelItemBinding modelItem = ModelItemBinding.inflate(getLayoutInflater());

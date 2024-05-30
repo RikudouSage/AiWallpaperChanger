@@ -22,6 +22,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
@@ -71,11 +73,26 @@ public class MainActivity extends AppCompatActivity {
     private static final String DEFAULT_SAMPLER = Sampler.k_dpmpp_sde.name();
     private AiProvider aiProvider;
     private Logger logger = new Logger(this);
+    private ActivityMainBinding binding;
 
     private Map<String, Boolean> formElementsValidation = new HashMap<>();
 
     private List<String> selectedModels = new ArrayList<>();
     private List<String> allModels = new ArrayList<>();
+
+    private final ActivityResultLauncher<Intent> selectModelsLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() != RESULT_OK) {
+                    Toast.makeText(this, R.string.app_select_models_selecting_failed, Toast.LENGTH_LONG).show();
+                    return;
+                }
+
+                assert result.getData() != null;
+                selectedModels = result.getData().getStringArrayListExtra("resultModels");
+                binding.setSelectedModels(selectedModels);
+            }
+    );
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,7 +107,8 @@ public class MainActivity extends AppCompatActivity {
             request = GenerateRequestMigrationHelper.parse(sharedPreferences.getString("generationParameters", ""));
         }
 
-        ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        binding.setSelectedModels(selectedModels);
         setContentView(binding.getRoot());
 
         setSupportActionBar(binding.toolbar);
@@ -439,6 +457,7 @@ public class MainActivity extends AppCompatActivity {
         SwitchCompat multipleModelsSwitch = findViewById(R.id.multiple_models_switch);
         Spinner modelField = findViewById(R.id.model_field);
         Button modelSelectButton = findViewById(R.id.model_select_button);
+        TextView modelSelectedList = findViewById(R.id.model_selected_list);
 
         SharedPreferences preferences = new SharedPreferencesHelper().get(this);
         int[] widthHeight = calculateWidthAndHeight();
@@ -495,13 +514,18 @@ public class MainActivity extends AppCompatActivity {
             buttonView.setText(isChecked ? R.string.app_generate_models_multiple : R.string.app_generate_models_single);
             modelField.setVisibility(isChecked ? View.GONE : View.VISIBLE);
             modelSelectButton.setVisibility(isChecked ? View.VISIBLE : View.GONE);
+            modelSelectedList.setVisibility(isChecked ? View.VISIBLE : View.GONE);
+
+            if (!isChecked && !selectedModels.isEmpty()) {
+                modelField.setSelection(allModels.indexOf(selectedModels.get(0)));
+            }
         });
 
         modelSelectButton.setOnClickListener(v -> {
             Intent intent = new Intent(this, SelectModelsActivity.class);
             intent.putStringArrayListExtra("selectedModels", new ArrayList<>(selectedModels));
             intent.putStringArrayListExtra("allModels", new ArrayList<>(allModels));
-            startActivity(intent);
+            selectModelsLauncher.launch(intent);
         });
 
         if (request != null) {
@@ -532,17 +556,20 @@ public class MainActivity extends AppCompatActivity {
             }
             if (request != null) {
                 this.selectedModels = request.getModels();
+                binding.setSelectedModels(this.selectedModels);
             }
 
             modelField.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     selectedModels = Collections.singletonList(models.get(position));
+                    binding.setSelectedModels(selectedModels);
                 }
 
                 @Override
                 public void onNothingSelected(AdapterView<?> parent) {
                     selectedModels = new ArrayList<>();
+                    binding.setSelectedModels(selectedModels);
                 }
             });
 
