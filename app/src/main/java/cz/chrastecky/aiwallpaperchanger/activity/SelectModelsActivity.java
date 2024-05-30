@@ -2,7 +2,6 @@ package cz.chrastecky.aiwallpaperchanger.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -39,13 +38,18 @@ public class SelectModelsActivity extends AppCompatActivity {
 
     private void redrawModels(List<String> selectedModels, ActivitySelectModelsBinding binding) {
         binding.setHasSelectedModels(!selectedModels.isEmpty());
+        binding.selectedModelsWrapper.removeAllViews();
+        binding.availableModelsWrapper.removeAllViews();
 
         for (String model : selectedModels) {
             ModelItemBinding modelItem = ModelItemBinding.inflate(getLayoutInflater());
             modelItem.setModelName(model);
             modelItem.setDeleteButton(true);
             modelItem.actionButton.setOnClickListener(v -> {
-                Toast.makeText(this, "Remove - " + modelItem.getModelName(), Toast.LENGTH_LONG).show();
+                redrawModels(
+                        selectedModels.stream().filter(modelToFilter -> !modelToFilter.equals(model)).collect(Collectors.toList()),
+                        binding
+                );
             });
             binding.selectedModelsWrapper.addView(modelItem.getRoot());
         }
@@ -56,7 +60,8 @@ public class SelectModelsActivity extends AppCompatActivity {
             modelItem.setModelName(model);
             modelItem.setDeleteButton(false);
             modelItem.actionButton.setOnClickListener(v -> {
-                Toast.makeText(this, "Add - " + modelItem.getModelName(), Toast.LENGTH_LONG).show();
+                selectedModels.add(model);
+                redrawModels(selectedModels, binding);
             });
             binding.availableModelsWrapper.addView(modelItem.getRoot());
         }

@@ -58,13 +58,18 @@
                     android:id="@+id/selected_models_wrapper"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:visibility="@{hasSelectedModels ? View.VISIBLE : View.GONE}"
                     android:layout_marginTop="16dp"
                     android:orientation="vertical" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="16dp"
+                    android:visibility="@{hasSelectedModels ? View.VISIBLE : View.GONE}" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
                     android:textSize="24sp"
                     android:text="@string/app.select_models.all_models" />
                 <LinearLayout
