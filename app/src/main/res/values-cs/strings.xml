@@ -91,4 +91,7 @@
     <string name="app.select_models.all_models">Dostupné modely</string>
     <string name="app.save">Uložit</string>
     <string name="app.select_models.selecting_failed">Nezdařilo se uložit seznam modelů, zkuste to znovu, prosím.</string>
+    <string name="app.help.cfg_scale">CFG měřítko</string>
+    <string name="app.help.cfg_scale_description">CFG měřítko určuje, jak moc AI respektuje prompt. Čím vyšší hodnota, tím víc jej respektuje, přinejmenším teoreticky. Správná hodnota je většinou mezi 1 a 10, ale záleží to na modelu.</string>
+    <string name="app.help.cfg_hires_fix_description">HiRes fix nejdříve vygeneruje obrázek v nižším rozlišení a následně jej upscaluje. To může pomoci, když model neumí nativně vygenerovat obrázky ve vámi zvoleném rozlišení. Funguje pouze pro větší obrázky, u obrázků s malým rozlišením může generování selhat, případně bude na pozadí HiRes fix vypnut. Výjimkou je model Stable Cascade, u kterého HiRes fix funguje v každém rozlišení.</string>
 </resources>

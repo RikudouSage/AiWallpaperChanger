@@ -91,4 +91,7 @@
     <string name="app.select_models.all_models">Available models</string>
     <string name="app.save">Save</string>
     <string name="app.select_models.selecting_failed">Failed to save the models you selected, try again, please.</string>
+    <string name="app.help.cfg_scale">CFG scale</string>
+    <string name="app.help.cfg_scale_description">CFG scale controls how closely does the AI follow your prompt, the larger the value, the more it follows, at least in theory. Between 1 and 10 is usually a good value, but it really depends on the model.</string>
+    <string name="app.help.cfg_hires_fix_description">HiRes fix first generates your image at a lower resolution and then upscales it. This can help when the model can\'t natively generate images at your choosen resolution. Only works for larger images, low resolution images may fail generating or the HiRes fix might be silently turned off. Exception to that rule is Stable Cascade model where HiRes fix works at all resolutions.</string>
 </resources>
