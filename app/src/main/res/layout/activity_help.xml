@@ -203,6 +203,26 @@
                     android:layout_weight="1"
                     android:text="@string/app.help.upscaler_description" />
             </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:paddingBottom="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:minWidth="150dp"
+                    android:text="@string/app.help.cfg_scale"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/app.help.cfg_scale_description" />
+            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 
