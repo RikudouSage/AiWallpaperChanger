@@ -59,7 +59,7 @@ import cz.chrastecky.aiwallpaperchanger.exception.ContentCensoredException;
 import cz.chrastecky.aiwallpaperchanger.exception.RetryGenerationException;
 import cz.chrastecky.aiwallpaperchanger.helper.AlarmManagerHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.BillingHelper;
-import cz.chrastecky.aiwallpaperchanger.helper.GenerateRequestMigrationHelper;
+import cz.chrastecky.aiwallpaperchanger.helper.GenerateRequestHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.Logger;
 import cz.chrastecky.aiwallpaperchanger.helper.PermissionHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.SharedPreferencesHelper;
@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = new SharedPreferencesHelper().get(this);
         GenerateRequest request = null;
         if (sharedPreferences.contains("generationParameters")) {
-            request = GenerateRequestMigrationHelper.parse(sharedPreferences.getString("generationParameters", ""));
+            request = GenerateRequestHelper.parse(sharedPreferences.getString("generationParameters", ""));
         }
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());

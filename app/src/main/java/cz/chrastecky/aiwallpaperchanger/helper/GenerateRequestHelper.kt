@@ -4,7 +4,7 @@ import com.google.gson.Gson
 import cz.chrastecky.aiwallpaperchanger.dto.GenerateRequest
 import cz.chrastecky.aiwallpaperchanger.dto.GenerateRequestOld
 
-class GenerateRequestMigrationHelper {
+class GenerateRequestHelper {
 
     companion object {
         @JvmStatic
@@ -19,6 +19,11 @@ class GenerateRequestMigrationHelper {
             }
 
             return request
+        }
+
+        @JvmStatic
+        fun disableNsfw(request: GenerateRequest): GenerateRequest {
+            return request.copy(nsfw = false);
         }
     }
 

@@ -29,7 +29,7 @@ import cz.chrastecky.aiwallpaperchanger.exception.ContentCensoredException;
 import cz.chrastecky.aiwallpaperchanger.exception.RetryGenerationException;
 import cz.chrastecky.aiwallpaperchanger.helper.BillingHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.ContentResolverHelper;
-import cz.chrastecky.aiwallpaperchanger.helper.GenerateRequestMigrationHelper;
+import cz.chrastecky.aiwallpaperchanger.helper.GenerateRequestHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.History;
 import cz.chrastecky.aiwallpaperchanger.helper.Logger;
 import cz.chrastecky.aiwallpaperchanger.helper.SharedPreferencesHelper;
@@ -70,24 +70,9 @@ public class GenerateAndSetBackgroundWorker extends ListenableWorker {
 
                 String requestJson = preferences.getString("generationParameters", "");
                 logger.debug("WorkerJob", "Request: " + requestJson);
-                GenerateRequest request = GenerateRequestMigrationHelper.parse(preferences.getString("generationParameters", ""));
+                GenerateRequest request = GenerateRequestHelper.parse(preferences.getString("generationParameters", ""));
                 if (!BuildConfig.NSFW_ENABLED && request.getNsfw()) {
-                    request = new GenerateRequest(
-                            request.getPrompt(),
-                            request.getNegativePrompt(),
-                            request.getModels(),
-                            request.getSampler(),
-                            request.getSteps(),
-                            request.getClipSkip(),
-                            request.getWidth(),
-                            request.getHeight(),
-                            request.getFaceFixer(),
-                            request.getUpscaler(),
-                            request.getCfgScale(),
-                            false,
-                            request.getKarras(),
-                            request.getHiresFix()
-                    );
+                    request = GenerateRequestHelper.disableNsfw(request);
                 }
                 final GenerateRequest finalRequest = request;
 
