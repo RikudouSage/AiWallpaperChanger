@@ -43,6 +43,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -59,12 +61,14 @@ import cz.chrastecky.aiwallpaperchanger.exception.ContentCensoredException;
 import cz.chrastecky.aiwallpaperchanger.exception.RetryGenerationException;
 import cz.chrastecky.aiwallpaperchanger.helper.AlarmManagerHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.BillingHelper;
+import cz.chrastecky.aiwallpaperchanger.helper.FutureResolver;
 import cz.chrastecky.aiwallpaperchanger.helper.GenerateRequestHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.Logger;
 import cz.chrastecky.aiwallpaperchanger.helper.PermissionHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.SharedPreferencesHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.ShortcutManagerHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.ValueWrapper;
+import cz.chrastecky.aiwallpaperchanger.prompt_parameter_provider.TimeOfDayParameterProvider;
 import cz.chrastecky.aiwallpaperchanger.provider.AiHorde;
 import cz.chrastecky.aiwallpaperchanger.provider.AiProvider;
 
@@ -164,6 +168,16 @@ public class MainActivity extends AppCompatActivity {
             if (getCurrentFocus() != null) {
                 InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+            }
+            List<String> result;
+            try {
+                 result = CompletableFuture.supplyAsync(() -> {
+                    return FutureResolver.resolveFutures(Collections.singletonList(new TimeOfDayParameterProvider().getValue(this)), logger);
+                }).get();
+            } catch (ExecutionException e) {
+                throw new RuntimeException(e);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
             }
 
 //            File imageFile = new File(getFilesDir(), "currentImage.webp");
