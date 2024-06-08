@@ -85,7 +85,7 @@ public class PreviewActivity extends AppCompatActivity {
             History history = new History(this);
             history.addItem(new StoredRequest(
                     UUID.randomUUID(),
-                    new Gson().fromJson(intent.getStringExtra("generationParameters"), GenerateRequest.class),
+                    new Gson().fromJson(intent.getStringExtra("generationParametersReplaced"), GenerateRequest.class),
                     Objects.requireNonNull(intent.getStringExtra("seed")),
                     Objects.requireNonNull(intent.getStringExtra("workerId")),
                     Objects.requireNonNull(intent.getStringExtra("workerName")),

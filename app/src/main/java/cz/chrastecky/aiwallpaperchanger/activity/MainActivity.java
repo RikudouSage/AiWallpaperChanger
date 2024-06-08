@@ -43,8 +43,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -61,14 +60,13 @@ import cz.chrastecky.aiwallpaperchanger.exception.ContentCensoredException;
 import cz.chrastecky.aiwallpaperchanger.exception.RetryGenerationException;
 import cz.chrastecky.aiwallpaperchanger.helper.AlarmManagerHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.BillingHelper;
-import cz.chrastecky.aiwallpaperchanger.helper.FutureResolver;
 import cz.chrastecky.aiwallpaperchanger.helper.GenerateRequestHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.Logger;
 import cz.chrastecky.aiwallpaperchanger.helper.PermissionHelper;
+import cz.chrastecky.aiwallpaperchanger.helper.PromptReplacer;
 import cz.chrastecky.aiwallpaperchanger.helper.SharedPreferencesHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.ShortcutManagerHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.ValueWrapper;
-import cz.chrastecky.aiwallpaperchanger.prompt_parameter_provider.TimeOfDayParameterProvider;
 import cz.chrastecky.aiwallpaperchanger.provider.AiHorde;
 import cz.chrastecky.aiwallpaperchanger.provider.AiProvider;
 
@@ -169,16 +167,6 @@ public class MainActivity extends AppCompatActivity {
                 InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
             }
-            List<String> result;
-            try {
-                 result = CompletableFuture.supplyAsync(() -> {
-                    return FutureResolver.resolveFutures(Collections.singletonList(new TimeOfDayParameterProvider().getValue(this)), logger);
-                }).get();
-            } catch (ExecutionException e) {
-                throw new RuntimeException(e);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
 
 //            File imageFile = new File(getFilesDir(), "currentImage.webp");
 //            Intent intent = new Intent(this, PreviewActivity.class);
@@ -221,6 +209,7 @@ public class MainActivity extends AppCompatActivity {
                     Intent intent = new Intent(this, PreviewActivity.class);
                     intent.putExtra("imagePath", imageFile.getAbsolutePath());
                     intent.putExtra("generationParameters", new Gson().toJson(createGenerateRequest()));
+                    intent.putExtra("generationParametersReplaced", new Gson().toJson(createGenerateRequest(true)));
                     intent.putExtra("seed", response.getDetail().getSeed());
                     intent.putExtra("workerId", response.getDetail().getWorkerId());
                     intent.putExtra("workerName", response.getDetail().getWorkerName());
@@ -237,13 +226,22 @@ public class MainActivity extends AppCompatActivity {
             AtomicInteger censoredRetries = new AtomicInteger(3);
             onError.value = error -> {
                 if (error.getCause() instanceof RetryGenerationException) {
-                    aiProvider.generateImage(createGenerateRequest(), onProgress, onResponse, onError.value);
+                    GenerateRequest newRequest = createGenerateRequest(true);
+                    if (newRequest == null) {
+                        return;
+                    }
+                    aiProvider.generateImage(newRequest, onProgress, onResponse, onError.value);
                     return;
                 }
                 if (error.getCause() instanceof ContentCensoredException && censoredRetries.get() > 0) {
                     logger.debug("HordeError", "Request got censored, retrying");
                     censoredRetries.addAndGet(-1);
-                    aiProvider.generateImage(createGenerateRequest(), onProgress, onResponse, onError.value);
+
+                    GenerateRequest newRequest = createGenerateRequest(true);
+                    if (newRequest == null) {
+                        return;
+                    }
+                    aiProvider.generateImage(newRequest, onProgress, onResponse, onError.value);
                     return;
                 }
                 if (error instanceof AuthFailureError) {
@@ -262,7 +260,13 @@ public class MainActivity extends AppCompatActivity {
             };
 
             logger.debug("HordeRequest", new Gson().toJson(createGenerateRequest()));
-            aiProvider.generateImage(createGenerateRequest(), onProgress, onResponse, onError.value);
+            logger.debug("HordeRequestReplaced", new Gson().toJson(createGenerateRequest(true)));
+
+            GenerateRequest newRequest = createGenerateRequest(true);
+            if (newRequest == null) {
+                return;
+            }
+            aiProvider.generateImage(newRequest, onProgress, onResponse, onError.value);
 
             rootView.setVisibility(View.INVISIBLE);
             loader.setVisibility(View.VISIBLE);
@@ -596,6 +600,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private GenerateRequest createGenerateRequest() {
+        return createGenerateRequest(false);
+    }
+
+    @Nullable
+    private GenerateRequest  createGenerateRequest(boolean replacePrompt) {
         TextInputEditText prompt = findViewById(R.id.prompt_field);
         TextInputEditText negativePrompt = findViewById(R.id.negative_prompt_field);
         Spinner sampler = findViewById(R.id.sampler_field);
@@ -616,8 +625,17 @@ public class MainActivity extends AppCompatActivity {
         String selectedUpscaler = (String) upscaler.getSelectedItem();
         String noneOption = getString(R.string.app_select_empty_option);
 
+        String promptText = Objects.requireNonNull(prompt.getText()).toString();
+
+        if (replacePrompt) {
+            promptText = PromptReplacer.replacePrompt(this, promptText, true);
+            if (promptText == null) {
+                return null;
+            }
+        }
+
         return new GenerateRequest(
-                prompt.getText().toString(),
+                promptText,
                 negativePrompt.getText().length() > 0 ? negativePrompt.getText().toString() : null,
                 selectedModels,
                 advanced ? Sampler.valueOf((String) sampler.getSelectedItem()) : Sampler.k_dpmpp_sde,

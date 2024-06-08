@@ -25,6 +25,11 @@ class GenerateRequestHelper {
         fun disableNsfw(request: GenerateRequest): GenerateRequest {
             return request.copy(nsfw = false);
         }
+
+        @JvmStatic
+        fun withPrompt(request: GenerateRequest, prompt: String): GenerateRequest {
+            return request.copy(prompt = prompt)
+        }
     }
 
 }

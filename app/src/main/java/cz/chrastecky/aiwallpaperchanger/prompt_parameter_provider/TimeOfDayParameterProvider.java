@@ -8,6 +8,9 @@ import java.util.Calendar;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 
+import cz.chrastecky.annotationprocessor.InjectedPromptParameterProvider;
+
+@InjectedPromptParameterProvider
 public class TimeOfDayParameterProvider implements PromptParameterProvider {
     @NonNull
     @Override
