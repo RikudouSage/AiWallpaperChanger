@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -32,6 +33,7 @@ import cz.chrastecky.aiwallpaperchanger.helper.ContentResolverHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.GenerateRequestHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.History;
 import cz.chrastecky.aiwallpaperchanger.helper.Logger;
+import cz.chrastecky.aiwallpaperchanger.helper.PromptReplacer;
 import cz.chrastecky.aiwallpaperchanger.helper.SharedPreferencesHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.ValueWrapper;
 import cz.chrastecky.aiwallpaperchanger.provider.AiHorde;
@@ -71,6 +73,8 @@ public class GenerateAndSetBackgroundWorker extends ListenableWorker {
                 String requestJson = preferences.getString("generationParameters", "");
                 logger.debug("WorkerJob", "Request: " + requestJson);
                 GenerateRequest request = GenerateRequestHelper.parse(preferences.getString("generationParameters", ""));
+                request = GenerateRequestHelper.withPrompt(request, Objects.requireNonNull(PromptReplacer.replacePrompt(getApplicationContext(), request.getPrompt(), false)));
+
                 if (!BuildConfig.NSFW_ENABLED && request.getNsfw()) {
                     request = GenerateRequestHelper.disableNsfw(request);
                 }
