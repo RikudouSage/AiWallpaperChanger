@@ -16,6 +16,8 @@ import cz.chrastecky.aiwallpaperchanger.R;
 import cz.chrastecky.aiwallpaperchanger.prompt_parameter_provider.PromptParameterProvider;
 
 public class PromptReplacer {
+    private static final PromptParameterProviders parameterProviders = new PromptParameterProviders();
+
     @Nullable
     public static String replacePrompt(@NonNull Context context, @NonNull String prompt) {
         return replacePrompt(context, prompt, false);
@@ -27,7 +29,7 @@ public class PromptReplacer {
             return prompt;
         }
         final Logger logger = new Logger(context);
-        final List<PromptParameterProvider> providers = new PromptParameterProviders().getProviders();
+        final List<PromptParameterProvider> providers = parameterProviders.getProviders();
         final List<String> values;
         try {
             values = CompletableFuture.supplyAsync(() -> FutureResolver.resolveFutures(
