@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-        <variable name="name" type="java.lang.String" />
+        <variable name="item" type="cz.chrastecky.aiwallpaperchanger.dto.PremadePrompt" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -22,7 +22,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toStartOf="@id/imageButton"
             android:textSize="22sp"
-            android:text="@{name}"
+            android:text="@{item.name}"
             app:toggleVisibility="@{content}"
             app:toggleButtonRotation="@{imageButton}"
             />

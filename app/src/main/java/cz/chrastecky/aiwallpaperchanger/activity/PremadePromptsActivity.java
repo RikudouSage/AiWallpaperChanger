@@ -34,7 +34,7 @@ public class PremadePromptsActivity extends AppCompatActivity {
 
         for (PremadePrompt prompt : getPrompts()) {
             PremadePromptItemBinding item = PremadePromptItemBinding.inflate(getLayoutInflater());
-            item.setName(prompt.getName());
+            item.setItem(prompt);
 
             binding.rootView.addView(item.getRoot());
         }
