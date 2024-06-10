@@ -9,8 +9,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class BindingAdapters {
-    private static Map<Integer, ComposableOnClickListener> listenerMap = new HashMap<>();
+public class PremadePromptsBindingAdapters {
+    private static final Map<Integer, ComposableOnClickListener> listenerMap = new HashMap<>();
 
     @BindingAdapter("toggleVisibility")
     public static void toggleVisibility(View source, View target) {
