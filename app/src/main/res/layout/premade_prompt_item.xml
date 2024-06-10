@@ -25,6 +25,9 @@
             android:text="@{item.name}"
             app:toggleVisibility="@{content}"
             app:toggleButtonRotation="@{imageButton}"
+            app:exampleImagesTarget="@{content}"
+            app:exampleImagesGroupName="@{item.name}"
+            tools:text="Everchanging scene"
             />
 
         <ImageButton
@@ -39,6 +42,8 @@
             app:srcCompat="@android:drawable/ic_menu_more"
             app:toggleVisibility="@{content}"
             app:toggleButtonRotation="@{imageButton}"
+            app:exampleImagesTarget="@{content}"
+            app:exampleImagesGroupName="@{item.name}"
             />
 
         <LinearLayout
@@ -49,13 +54,9 @@
             app:layout_constraintTop_toBottomOf="@id/imageButton"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:visibility="gone"
-            >
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Hello there" />
-        </LinearLayout>
+            android:layout_marginTop="8dp"
+            tools:visibility="visible"
+            android:visibility="gone" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
