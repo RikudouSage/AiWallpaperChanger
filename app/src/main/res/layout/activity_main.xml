@@ -47,10 +47,10 @@
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/prompt_wrapper"
-                        android:layout_width="match_parent"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
-                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/select_prompt_button"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent">
 
@@ -61,6 +61,21 @@
                             android:hint="@string/app.generate.prompt"
                             android:minHeight="48dp" />
                     </com.google.android.material.textfield.TextInputLayout>
+
+                    <Button
+                        android:id="@+id/select_prompt_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintStart_toEndOf="@id/prompt_wrapper"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="@+id/prompt_wrapper"
+                        android:layout_marginTop="24dp"
+                        android:layout_marginStart="8dp"
+                        android:minHeight="48dp"
+                        android:text="..."
+                        android:contentDescription="@string/app.generate.select_prompt_button"
+                        />
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/negative_prompt_wrapper"

@@ -161,6 +161,10 @@ public class MainActivity extends AppCompatActivity {
         initializeForm(request);
         this.validate();
 
+        binding.selectPromptButton.setOnClickListener(view -> {
+            startActivity(new Intent(this, PremadePromptsActivity.class));
+        });
+
         Button previewButton = findViewById(R.id.preview_button);
         previewButton.setOnClickListener(button -> {
             if (getCurrentFocus() != null) {
