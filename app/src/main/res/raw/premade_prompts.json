@@ -1,0 +1,64 @@
+[
+  {
+    "name": "Abstract art woman",
+    "prompt": "beautiful woman, abstract, art",
+    "models": ["Lyriel"],
+    "negativePrompt": "deformed, ugly, nude"
+  },
+  {
+    "name": "Everchanging scene",
+    "models": ["Stable Cascade 1.0"],
+    "prompt": "A {cyberpunk|dieselpunk|steampunk|solarpunk} wallpaper, black and {violet|crimson|blue|dark green|gray} colors, {landscape|cityscape|towers}, masterpiece"
+  },
+  {
+    "name": "90s style anime landscape",
+    "prompt": "90s style anime landscape, dark art, {pixel art|impressionism|expressionism|abstract}",
+    "models": ["AlbedoBase XL (SDXL)"]
+  },
+  {
+    "name": "Abstract swirls",
+    "prompt": "abstract, swirls of color, dark, clean",
+    "models": ["ICBINP XL"]
+  },
+  {
+    "name": "Fantastic nebula",
+    "prompt": "a nebula, bright, colorful",
+    "models": ["JWST Deep Space Diffusion"],
+    "negativePrompt": "deformed, ugly, ground"
+  },
+  {
+    "name": "Cyberpunk city",
+    "prompt": "futuristic cityscape, dusk, {blue|green|yellow|pink} neon lights, towering skyscrapers, flying cars, cyberpunk outfits, vibrant streets, sleek, modern, high resolution, visually striking",
+    "models": ["ICBINP XL"]
+  },
+  {
+    "name": "Cuteness overload",
+    "prompt": "cute {puppy|kitten|otter|miniature pig|hedgehog}, happy, realistic",
+    "negativePrompt": "ugly, deformed",
+    "models": ["ICBINP XL"]
+  },
+  {
+    "name": "Fantasy landscape",
+    "prompt": "mystical forest, fantasy, ancient trees, mythical creatures, fairy lights, magical ambiance, misty atmosphere, sparkling streams, enchanted creatures, high resolution, serene and enchanting",
+    "negativePrompt": "ugly, deformed",
+    "models": ["ICBINP XL"]
+  },
+  {
+    "name": "Ocean scene",
+    "prompt": "tropical beach, crystal clear water, vibrant coral reefs, colorful fish, golden sands, palm trees, bright blue sky, sunny day, high resolution, tranquil and picturesque",
+    "negativePrompt": "ugly, deformed",
+    "models": ["ICBINP XL"]
+  },
+  {
+    "name": "Vintage travel poster",
+    "prompt": "retro travel poster, pastel colors, 1950s style, iconic landmarks, exotic location, nostalgic feel, clean lines, vintage aesthetics, high resolution, charming and timeless",
+    "negativePrompt": "ugly, deformed",
+    "models": ["ICBINP XL"]
+  },
+  {
+    "name": "Cozy Winter Cabin",
+    "prompt": "snow-covered cabin, serene forest, warm light from windows, smoke from chimney, starry night sky, peaceful ambiance, rustic charm, high resolution, cozy and inviting",
+    "negativePrompt": "ugly, deformed",
+    "models": ["ICBINP XL"]
+  }
+]

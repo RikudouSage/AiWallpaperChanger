@@ -1,0 +1,11 @@
+{
+    "require": {
+        "php": "^8.3",
+        "aws/aws-sdk-php": "^3.311"
+    },
+    "autoload": {
+        "psr-4": {
+            "Rikudou\\AiWallpaperChanger\\ExamplesGenerator\\": "src/"
+        }
+    }
+}
