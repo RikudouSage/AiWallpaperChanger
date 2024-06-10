@@ -31,13 +31,16 @@ $resolved = [];
 $toCheck = [];
 foreach ($configs as $config) {
     $hash = hash('sha256', serialize($config));
-    $objects = $s3client->listObjectsV2([
-        'Bucket' => $bucket,
-        'Prefix' => $config->name,
-    ])->get('Contents');
+    $objects = array_filter(
+        $s3client->listObjectsV2([
+            'Bucket' => $bucket,
+            'Prefix' => $config->name,
+        ])->get('Contents') ?? [],
+        fn (array $item) => !str_ends_with($item['Key'], 'json'),
+    );
 
     $create = 0;
-    if ($objects === null) {
+    if (!count($objects)) {
         echo "[{$config->name}] No objects for style, creating a new hash", PHP_EOL;
         $create = $maxImages;
         $s3client->putObject([
@@ -67,7 +70,7 @@ foreach ($configs as $config) {
             ]);
             $create = $maxImages;
         } else {
-            $create = $maxImages - count($objects) + 1;
+            $create = $maxImages - count($objects);
             foreach ($objects as $object) {
                 if ($object['Key'] === "{$config->name}/hash.json") {
                     continue;
@@ -161,4 +164,23 @@ while (count($resolved) !== count($toCheck)) {
     sleep(2);
 }
 
-echo "All done", PHP_EOL;
+echo "Downloading done, generating index", PHP_EOL;
+echo "===========================================", PHP_EOL;
+
+foreach ($configs as $config) {
+    $objects = $s3client->listObjectsV2([
+        'Bucket' => $bucket,
+        'Prefix' => $config->name,
+    ])->get('Contents');
+    $json = [];
+    foreach ($objects as $object) {
+        $json[] = pathinfo($object['Key'], PATHINFO_BASENAME);
+    }
+
+    echo "Generating index for {$config->name}", PHP_EOL;
+    $s3client->putObject([
+        'Bucket' => $bucket,
+        'Key' => "{$config->name}/index.json",
+        'Body' => json_encode($json),
+    ]);
+}
