@@ -1,4 +1,4 @@
-package cz.chrastecky.aiwallpaperchanger.helper;
+package cz.chrastecky.aiwallpaperchanger.databinding;
 
 import android.view.View;
 import android.widget.ImageButton;
@@ -8,6 +8,8 @@ import androidx.databinding.BindingAdapter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+
+import cz.chrastecky.aiwallpaperchanger.helper.ComposableOnClickListener;
 
 public class PremadePromptsBindingAdapters {
     private static final Map<Integer, ComposableOnClickListener> listenerMap = new HashMap<>();
