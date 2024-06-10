@@ -97,4 +97,6 @@
     <string name="app.error.prompt_parameter_invalid">Cannot use the parameter ${%s}, permissions are not granted.</string>
     <string name="app.premade_prompts.failed_getting">Failed getting list of premade styles, try again later.</string>
     <string name="app.generate.select_prompt_button">Select a predefined prompt</string>
+    <string name="app.title.premade_prompts">Premade prompts</string>
+    <string name="app.premade_prompts.show_examples">Show examples and use style</string>
 </resources>

@@ -3,11 +3,7 @@ package cz.chrastecky.aiwallpaperchanger.activity;
 import android.os.Bundle;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.google.gson.Gson;
 
@@ -18,6 +14,8 @@ import java.io.InputStreamReader;
 import java.util.stream.Collectors;
 
 import cz.chrastecky.aiwallpaperchanger.R;
+import cz.chrastecky.aiwallpaperchanger.databinding.ActivityPremadePromptsBinding;
+import cz.chrastecky.aiwallpaperchanger.databinding.PremadePromptItemBinding;
 import cz.chrastecky.aiwallpaperchanger.dto.PremadePrompt;
 import cz.chrastecky.aiwallpaperchanger.helper.Logger;
 
@@ -27,15 +25,19 @@ public class PremadePromptsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_premade_prompts);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
 
-        PremadePrompt[] prompts = getPrompts();
+        ActivityPremadePromptsBinding binding = ActivityPremadePromptsBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
+        setSupportActionBar(binding.toolbar);
+        setTitle(R.string.app_title_premade_prompts);
+
+        for (PremadePrompt prompt : getPrompts()) {
+            PremadePromptItemBinding item = PremadePromptItemBinding.inflate(getLayoutInflater());
+            item.setName(prompt.getName());
+
+            binding.rootView.addView(item.getRoot());
+        }
     }
 
     private PremadePrompt[] getPrompts() {

@@ -97,4 +97,6 @@
     <string name="app.error.prompt_parameter_invalid">Nelze použít parametr ${%s}, chybí nezbytná oprávnění.</string>
     <string name="app.premade_prompts.failed_getting">Nezdařilo se získat seznam stylů, zkuste to prosím později.</string>
     <string name="app.generate.select_prompt_button">Zvolit předdefinovaný prompt</string>
+    <string name="app.title.premade_prompts">Předdefinované prompty</string>
+    <string name="app.premade_prompts.show_examples">Zobrazit příklady a použít styl</string>
 </resources>
