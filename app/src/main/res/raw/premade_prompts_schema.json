@@ -33,6 +33,9 @@
           }
         },
         "additionalProperties": false
+      },
+      "author": {
+        "type": "string"
       }
     },
     "additionalProperties": false
