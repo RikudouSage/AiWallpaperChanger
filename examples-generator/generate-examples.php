@@ -168,10 +168,14 @@ echo "Downloading done, generating index", PHP_EOL;
 echo "===========================================", PHP_EOL;
 
 foreach ($configs as $config) {
-    $objects = $s3client->listObjectsV2([
-        'Bucket' => $bucket,
-        'Prefix' => $config->name,
-    ])->get('Contents');
+    $objects = array_filter(
+        $s3client->listObjectsV2([
+            'Bucket' => $bucket,
+            'Prefix' => $config->name,
+        ])->get('Contents') ?? [],
+        fn (array $item) => !str_ends_with($item['Key'], 'json'),
+    );
+
     $json = [];
     foreach ($objects as $object) {
         $json[] = pathinfo($object['Key'], PATHINFO_BASENAME);
@@ -182,5 +186,6 @@ foreach ($configs as $config) {
         'Bucket' => $bucket,
         'Key' => "{$config->name}/index.json",
         'Body' => json_encode($json),
+        'ContentType' => 'application/json',
     ]);
 }
