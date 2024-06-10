@@ -167,6 +167,7 @@ while (count($resolved) !== count($toCheck)) {
 echo "Downloading done, generating index", PHP_EOL;
 echo "===========================================", PHP_EOL;
 
+$indexes = [];
 foreach ($configs as $config) {
     $objects = array_filter(
         $s3client->listObjectsV2([
@@ -188,4 +189,17 @@ foreach ($configs as $config) {
         'Body' => json_encode($json),
         'ContentType' => 'application/json',
     ]);
+    $indexes[] = "{$config->name}/index.json";
 }
+
+echo "===========================================", PHP_EOL;
+echo "Creating global index", PHP_EOL;
+
+$s3client->putObject([
+    'Bucket' => $bucket,
+    'Key' => "index.json",
+    'Body' => json_encode($indexes),
+    'ContentType' => 'application/json',
+]);
+
+echo "All done", PHP_EOL;
