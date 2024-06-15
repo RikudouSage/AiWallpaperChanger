@@ -10,6 +10,7 @@ import java.util.GregorianCalendar;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 
+import cz.chrastecky.aiwallpaperchanger.R;
 import cz.chrastecky.annotationprocessor.InjectedPromptParameterProvider;
 
 @InjectedPromptParameterProvider
@@ -22,7 +23,7 @@ public class SeasonParameterProvider implements PromptParameterProvider {
 
     @Nullable
     @Override
-    public Future<String> getValue(Context context) {
+    public Future<String> getValue(@NonNull final Context context) {
         Calendar calendar = Calendar.getInstance();
         GregorianCalendar gregorianCalendar = new GregorianCalendar();
 
@@ -48,6 +49,12 @@ public class SeasonParameterProvider implements PromptParameterProvider {
         }
 
         return CompletableFuture.completedFuture(result);
+    }
+
+    @NonNull
+    @Override
+    public String getDescription(@NonNull final Context context) {
+        return context.getString(R.string.app_parameter_season_description);
     }
 
     private int monthDays(int monthNumber) {
