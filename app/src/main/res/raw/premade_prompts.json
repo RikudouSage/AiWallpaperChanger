@@ -111,5 +111,17 @@
     },
     "author": "Rikudou",
     "description": "A landscape that changes based on the current season and on the time of the day"
+  },
+  {
+    "name": "Fractal nebula",
+    "prompt": "A fractal nebula as seen from space",
+    "models": ["ICBINP - I Can't Believe It's Not Photography", "AlbedoBase XL (SDXL)", "Anything Diffusion", "Deliberate"],
+    "author": "Pinaz993"
+  },
+  {
+    "name": "A misty mountain",
+    "prompt": "A forested mountain, rising out of the mist.",
+    "models": ["ICBINP - I Can't Believe It's Not Photography", "AlbedoBase XL (SDXL)", "Anything Diffusion", "Deliberate", "Cheese Daddy's Landscape Mix"],
+    "author": "Pinaz993"
   }
 ]
