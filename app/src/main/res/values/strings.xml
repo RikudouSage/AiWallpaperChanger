@@ -97,4 +97,6 @@
     <string name="app.error.prompt_parameter_invalid">Cannot use the parameter ${%s}, permissions are not granted.</string>
     <string name="app.parameter.season.description">Resolves to the current season, spring, summer, autumn or winter.</string>
     <string name="app.parameter.time_of_day.description">Resolves to the current time of day: morning, noon, afternoon, evening, night or midnight</string>
+    <string name="app.help.prompt_parameters">Prompt parameters</string>
+    <string name="app.help.prompt_parameters.description">Prompt parameters are special tokens you can use in your prompt (or negative prompt) and when you make a request, they will be replaced by their current value. All parameters start with ${ and end with }.</string>
 </resources>

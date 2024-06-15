@@ -97,4 +97,6 @@
     <string name="app.error.prompt_parameter_invalid">Nelze použít parametr ${%s}, chybí nezbytná oprávnění.</string>
     <string name="app.parameter.season.description">Bude nahrazeno současným ročním obdobím v angličtině, spring, summer, autumn nebo winter.</string>
     <string name="app.parameter.time_of_day.description">Bude nahrazeno současnou částí dne v angličtině: morning, noon, afternoon, evening, night nebo midnight</string>
+    <string name="app.help.prompt_parameters">Parametry promptu</string>
+    <string name="app.help.prompt_parameters.description">Parametry promptu jsou speciální tokeny, které můžete využít v promptu (nebo negativním promptu) a při odeslání požadavku buoud nahrazeny jejich současnou hodnotou. Všechny parametry začínají na ${ a končí na }.</string>
 </resources>
