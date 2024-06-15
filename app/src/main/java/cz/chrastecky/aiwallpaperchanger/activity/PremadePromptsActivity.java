@@ -5,19 +5,14 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.gson.Gson;
-
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.stream.Collectors;
 
 import cz.chrastecky.aiwallpaperchanger.R;
 import cz.chrastecky.aiwallpaperchanger.databinding.ActivityPremadePromptsBinding;
 import cz.chrastecky.aiwallpaperchanger.databinding.PremadePromptItemBinding;
 import cz.chrastecky.aiwallpaperchanger.dto.PremadePrompt;
 import cz.chrastecky.aiwallpaperchanger.helper.Logger;
+import cz.chrastecky.aiwallpaperchanger.helper.PremadePromptHelper;
 
 public class PremadePromptsActivity extends AppCompatActivity {
     private final Logger logger = new Logger(this);
@@ -41,9 +36,8 @@ public class PremadePromptsActivity extends AppCompatActivity {
     }
 
     private PremadePrompt[] getPrompts() {
-        try(InputStream source = getResources().openRawResource(R.raw.premade_prompts)) {
-            String text = new BufferedReader(new InputStreamReader(source)).lines().collect(Collectors.joining("\n"));
-            return new Gson().fromJson(text, PremadePrompt[].class);
+        try {
+            return PremadePromptHelper.getPrompts(this);
         } catch (IOException e) {
             Toast.makeText(this, R.string.app_premade_prompts_failed_getting, Toast.LENGTH_LONG).show();
             logger.error("PremadePrompts", "Failed reading raw prompts file", e);

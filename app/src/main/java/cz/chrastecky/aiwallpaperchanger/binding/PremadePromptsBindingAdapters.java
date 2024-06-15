@@ -1,14 +1,21 @@
 package cz.chrastecky.aiwallpaperchanger.binding;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.databinding.BindingAdapter;
 
 import com.android.volley.RequestQueue;
@@ -26,6 +33,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import cz.chrastecky.aiwallpaperchanger.BuildConfig;
+import cz.chrastecky.aiwallpaperchanger.R;
 import cz.chrastecky.aiwallpaperchanger.helper.ComposableOnClickListener;
 import cz.chrastecky.aiwallpaperchanger.helper.Logger;
 
@@ -47,6 +55,11 @@ public class PremadePromptsBindingAdapters {
     @BindingAdapter({"exampleImagesTarget", "exampleImagesGroupName"})
     public static void loadExampleImages(View source, ViewGroup target, String name) {
         setOnClickListener(source, view -> {
+            target.removeAllViews();
+            if (cache.containsKey(name)) {
+                finalizeImageLoading(view.getContext(), target, cache.get(name), name, null);
+                return;
+            }
             if (loading.contains(name)) {
                 return;
             }
@@ -70,7 +83,7 @@ public class PremadePromptsBindingAdapters {
         loading.add(name);
         ProgressBar progressBar = new ProgressBar(context);
         progressBar.setIndeterminate(true);
-        progressBar.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
+        progressBar.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
         group.addView(progressBar);
 
         RequestQueue requestQueue = Volley.newRequestQueue(context);
@@ -96,7 +109,7 @@ public class PremadePromptsBindingAdapters {
                         image -> {
                             result.add(image);
                             if (result.size() == urls.size()) {
-                                finalizeImageLoading(context, group, name, result, progressBar);
+                                finalizeImageLoading(context, group, result, name, progressBar);
                             }
                         },
                         1_000_000,
@@ -115,7 +128,56 @@ public class PremadePromptsBindingAdapters {
         }));
     }
 
-    private static void finalizeImageLoading(Context context, ViewGroup group, String name, List<Bitmap> images, ProgressBar progressBar) {
-        group.removeView(progressBar);
+    private static void finalizeImageLoading(Context context, ViewGroup group, List<Bitmap> images, String name, @Nullable ProgressBar progressBar) {
+        final Logger logger = new Logger(context);
+
+        if (progressBar != null) {
+            group.removeView(progressBar);
+        }
+
+        HorizontalScrollView scrollView = new HorizontalScrollView(context);
+        scrollView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        group.addView(scrollView);
+
+        LinearLayout wrapper = new LinearLayout(context);
+        wrapper.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        scrollView.addView(wrapper);
+
+        int dp8 = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, context.getResources().getDisplayMetrics());
+
+        for (Bitmap image : images) {
+            ImageView imageView = new ImageView(context);
+
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            params.setMarginEnd(dp8);
+
+            imageView.setImageBitmap(image);
+            imageView.setLayoutParams(params);
+            wrapper.addView(imageView);
+        }
+
+        Button button = new Button(context);
+        LinearLayout.LayoutParams buttonParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        buttonParams.setMargins(0, dp8, 0, 0);
+        button.setLayoutParams(buttonParams);
+        button.setText(R.string.app_premade_prompts_use_style_button);
+        group.addView(button);
+        button.setOnClickListener(view -> {
+            if (!(view.getContext() instanceof Activity)) {
+                logger.error("PremadePrompts", "Context is not an activity");
+                Toast.makeText(view.getContext(), R.string.app_premade_prompts_error_setting_prompt, Toast.LENGTH_LONG).show();
+                return;
+            }
+
+            Intent result = new Intent();
+            result.putExtra("result", name);
+
+            Activity activity = (Activity) view.getContext();
+            activity.setResult(Activity.RESULT_OK, result);
+            activity.finish();
+        });
+
+        cache.put(name, images);
+        loading.remove(name);
     }
 }

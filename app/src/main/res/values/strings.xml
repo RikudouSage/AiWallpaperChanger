@@ -103,4 +103,7 @@
     <string name="app.parameter.time_of_day.description">Resolves to the current time of day: morning, noon, afternoon, evening, night or midnight</string>
     <string name="app.help.prompt_parameters">Prompt parameters</string>
     <string name="app.help.prompt_parameters.description">Prompt parameters are special tokens you can use in your prompt (or negative prompt) and when you make a request, they will be replaced by their current value. All parameters start with ${ and end with }.</string>
+    <string name="app.premade_prompts.use_style_button">Use style</string>
+    <string name="app.premade_prompts.error_setting_prompt">Error setting the style, please try again later.</string>
+    <string name="app.generate.style_successfully_set">The parameters from the style have been successfully set</string>
 </resources>
