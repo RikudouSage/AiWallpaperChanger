@@ -123,5 +123,11 @@
     "prompt": "A forested mountain, rising out of the mist.",
     "models": ["ICBINP - I Can't Believe It's Not Photography", "AlbedoBase XL (SDXL)", "Anything Diffusion", "Deliberate", "Cheese Daddy's Landscape Mix"],
     "author": "Pinaz993"
+  },
+  {
+    "name": "Desert canyon",
+    "prompt": "A view from the top of a long desert canyon, looking down the length of the canyon. Blooming saguaro cactus in foreground",
+    "models": ["ICBINP - I Can't Believe It's Not Photography", "AlbedoBase XL (SDXL)", "Anything Diffusion", "Deliberate", "Cheese Daddy's Landscape Mix"],
+    "author": "Pinaz993"
   }
 ]
