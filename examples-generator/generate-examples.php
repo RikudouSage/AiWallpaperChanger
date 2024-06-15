@@ -105,6 +105,7 @@ foreach ($configs as $config) {
                 'n' => $create,
                 'width' => 512,
                 'height' => 1024,
+                'seed_variation' => random_int(1, 1_000),
             ],
             'models' => $config->models,
             'slow_workers' => false,
