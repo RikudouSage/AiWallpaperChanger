@@ -25,6 +25,8 @@ $s3client = new S3Client([
 ]);
 $httpClient = new Client();
 
+$shouldGenerateIndex = false;
+
 /** @var array<string, array<string>> $resolved */
 $resolved = [];
 /** @var array<string, string> $toCheck */
@@ -91,6 +93,8 @@ foreach ($configs as $config) {
         echo "[{$config->name}] No new objects needed, skipping", PHP_EOL;
         continue;
     }
+
+    $shouldGenerateIndex = true;
 
     echo "[{$config->name}] Sending a request for {$create} images", PHP_EOL;
     $response = $httpClient->post('https://aihorde.net/api/v2/generate/async', [
@@ -164,42 +168,48 @@ while (count($resolved) !== count($toCheck)) {
     sleep(2);
 }
 
-echo "Downloading done, generating index", PHP_EOL;
-echo "===========================================", PHP_EOL;
+// todo make this smarter
+if ($shouldGenerateIndex) {
+    echo "Downloading done, generating index", PHP_EOL;
+    echo "===========================================", PHP_EOL;
 
-$indexes = [];
-foreach ($configs as $config) {
-    $objects = array_filter(
-        $s3client->listObjectsV2([
+    $indexes = [];
+    foreach ($configs as $config) {
+        $objects = array_filter(
+            $s3client->listObjectsV2([
+                'Bucket' => $bucket,
+                'Prefix' => $config->name,
+            ])->get('Contents') ?? [],
+            fn (array $item) => !str_ends_with($item['Key'], 'json'),
+        );
+
+        $json = [];
+        foreach ($objects as $object) {
+            $json[] = pathinfo($object['Key'], PATHINFO_BASENAME);
+        }
+
+        echo "Generating index for {$config->name}", PHP_EOL;
+        $s3client->putObject([
             'Bucket' => $bucket,
-            'Prefix' => $config->name,
-        ])->get('Contents') ?? [],
-        fn (array $item) => !str_ends_with($item['Key'], 'json'),
-    );
-
-    $json = [];
-    foreach ($objects as $object) {
-        $json[] = pathinfo($object['Key'], PATHINFO_BASENAME);
+            'Key' => "{$config->name}/index.json",
+            'Body' => json_encode($json),
+            'ContentType' => 'application/json',
+        ]);
+        $indexes[] = "{$config->name}/index.json";
     }
 
-    echo "Generating index for {$config->name}", PHP_EOL;
+    echo "===========================================", PHP_EOL;
+    echo "Creating global index", PHP_EOL;
+
     $s3client->putObject([
         'Bucket' => $bucket,
-        'Key' => "{$config->name}/index.json",
-        'Body' => json_encode($json),
+        'Key' => "index.json",
+        'Body' => json_encode($indexes),
         'ContentType' => 'application/json',
     ]);
-    $indexes[] = "{$config->name}/index.json";
+} else {
+    echo "No objects changed, no need to generate a new index.", PHP_EOL;
 }
 
 echo "===========================================", PHP_EOL;
-echo "Creating global index", PHP_EOL;
-
-$s3client->putObject([
-    'Bucket' => $bucket,
-    'Key' => "index.json",
-    'Body' => json_encode($indexes),
-    'ContentType' => 'application/json',
-]);
-
 echo "All done", PHP_EOL;
