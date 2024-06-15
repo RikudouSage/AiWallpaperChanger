@@ -75,5 +75,11 @@
     "name": "Black shapes",
     "prompt": "Black volumetric wallpaper with smooth and soft geometric shapes, computer background, phone background",
     "models": ["AlbedoBase XL (SDXL)"]
+  },
+  {
+    "name": "Epic fantasy princess",
+    "prompt": "Epic magical scene in a fantasy Landscape, full body image, cinematic model scene, detailed eyes, princess character with a very long {brown|red|blonde} hair, dark fantasy, dark comics, insanely detailed, perfect composition, beautiful, detailed, intricate, 8k artistic photography, photorealistic concept art, soft, natural, volumetric, cinematic, perfect light, masterpiece, oil on canvas",
+    "negativePrompt": "nude, nsfw",
+    "models": ["Edge Of Realism", "Realistic Vision", "RealBiter", "Analog Madness", "Photon"]
   }
 ]
