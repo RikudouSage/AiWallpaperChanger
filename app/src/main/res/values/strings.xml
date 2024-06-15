@@ -106,4 +106,5 @@
     <string name="app.premade_prompts.use_style_button">Use style</string>
     <string name="app.premade_prompts.error_setting_prompt">Error setting the style, please try again later.</string>
     <string name="app.generate.style_successfully_set">The parameters from the style have been successfully set</string>
+    <string name="app.premade_styles.downloading_failed">Downloading one or more images failed</string>
 </resources>

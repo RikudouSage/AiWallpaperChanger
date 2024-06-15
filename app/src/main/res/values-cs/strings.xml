@@ -106,4 +106,5 @@
     <string name="app.premade_prompts.use_style_button">Použít styl</string>
     <string name="app.premade_prompts.error_setting_prompt">Nezdařilo se nastavit styl, zkuste to znovu později.</string>
     <string name="app.generate.style_successfully_set">Parametry ze stylu byly úspěšně nastaveny</string>
+    <string name="app.premade_styles.downloading_failed">Stahování jednoho nebo více obrázků selhalo</string>
 </resources>

@@ -88,7 +88,8 @@ public class PremadePromptsBindingAdapters {
 
         RequestQueue requestQueue = Volley.newRequestQueue(context);
 
-        requestQueue.add(new JsonArrayRequest(BuildConfig.EXAMPLES_URL + "/" + name + "/index.json", response -> {
+        final String indexUrl = BuildConfig.EXAMPLES_URL + "/" + name + "/index.json";
+        requestQueue.add(new JsonArrayRequest(indexUrl, response -> {
             List<String> imageNames = new ArrayList<>();
             for (int i = 0; i < response.length(); ++i) {
                 try {
@@ -117,13 +118,14 @@ public class PremadePromptsBindingAdapters {
                         ImageView.ScaleType.CENTER,
                         Bitmap.Config.RGB_565,
                         error -> {
-                            // todo
+                            Toast.makeText(context, R.string.app_premade_styles_downloading_failed, Toast.LENGTH_LONG).show();
                             logger.error("ExampleRequestError", "Failed downloading example image " + url, error);
                         }
                 ));
             }
         }, error -> {
-            // todo
+            Toast.makeText(context, R.string.app_premade_styles_downloading_failed, Toast.LENGTH_LONG).show();
+            logger.error("ExampleRequestError", "Failed downloading example images json from " + indexUrl, error);
             group.removeView(progressBar);
         }));
     }
