@@ -3,83 +3,113 @@
     "name": "Abstract art woman",
     "prompt": "beautiful woman, abstract, art",
     "models": ["Lyriel"],
-    "negativePrompt": "deformed, ugly, nude"
+    "negativePrompt": "deformed, ugly, nude",
+    "author": "Rikudou"
   },
   {
     "name": "Everchanging scene",
     "models": ["Stable Cascade 1.0"],
-    "prompt": "A {cyberpunk|dieselpunk|steampunk|solarpunk} wallpaper, black and {violet|crimson|blue|dark green|gray} colors, {landscape|cityscape|towers}, masterpiece"
+    "prompt": "A {cyberpunk|dieselpunk|steampunk|solarpunk} wallpaper, black and {violet|crimson|blue|dark green|gray} colors, ${tod} {landscape|cityscape|towers}, masterpiece",
+    "author": "db0, Rikudou",
+    "description": "A prompt which makes the image never be the same!",
+    "params": {
+      "tod": ["morning", "afternoon", "noon", "evening", "night", "midnight"]
+    }
   },
   {
     "name": "90s style anime landscape",
     "prompt": "90s style anime landscape, dark art, {pixel art|impressionism|expressionism|abstract}",
-    "models": ["AlbedoBase XL (SDXL)"]
+    "models": ["AlbedoBase XL (SDXL)"],
+    "author": "spinagon"
   },
   {
     "name": "Abstract swirls",
     "prompt": "abstract, swirls of color, dark, clean",
-    "models": ["ICBINP XL"]
+    "models": ["ICBINP XL"],
+    "author": "spinagon"
   },
   {
     "name": "Fantastic nebula",
     "prompt": "a nebula, bright, colorful",
     "models": ["JWST Deep Space Diffusion"],
-    "negativePrompt": "deformed, ugly, ground"
+    "negativePrompt": "deformed, ugly, ground",
+    "author": "Kayl3igh"
   },
   {
     "name": "Cyberpunk city",
     "prompt": "futuristic cityscape, dusk, {blue|green|yellow|pink} neon lights, towering skyscrapers, flying cars, cyberpunk outfits, vibrant streets, sleek, modern, high resolution, visually striking",
-    "models": ["ICBINP XL"]
+    "models": ["ICBINP XL"],
+    "author": "Rikudou"
   },
   {
     "name": "Cuteness overload",
     "prompt": "cute {puppy|kitten|otter|miniature pig|hedgehog}, happy, realistic",
     "negativePrompt": "ugly, deformed",
-    "models": ["ICBINP XL"]
+    "models": ["ICBINP XL"],
+    "author": "Rikudou"
   },
   {
     "name": "Fantasy landscape",
     "prompt": "mystical forest, fantasy, ancient trees, mythical creatures, fairy lights, magical ambiance, misty atmosphere, sparkling streams, enchanted creatures, high resolution, serene and enchanting",
     "negativePrompt": "ugly, deformed",
-    "models": ["ICBINP XL"]
+    "models": ["ICBINP XL"],
+    "author": "Rikudou"
   },
   {
     "name": "Ocean scene",
     "prompt": "tropical beach, crystal clear water, vibrant coral reefs, colorful fish, golden sands, palm trees, bright blue sky, sunny day, high resolution, tranquil and picturesque",
     "negativePrompt": "ugly, deformed",
-    "models": ["ICBINP XL"]
+    "models": ["ICBINP XL"],
+    "author": "Rikudou"
   },
   {
     "name": "Vintage travel poster",
     "prompt": "retro travel poster, pastel colors, 1950s style, iconic landmarks, exotic location, nostalgic feel, clean lines, vintage aesthetics, high resolution, charming and timeless",
     "negativePrompt": "ugly, deformed",
-    "models": ["ICBINP XL"]
+    "models": ["ICBINP XL"],
+    "author": "Rikudou"
   },
   {
     "name": "Cozy Winter Cabin",
     "prompt": "snow-covered cabin, serene forest, warm light from windows, smoke from chimney, starry night sky, peaceful ambiance, rustic charm, high resolution, cozy and inviting",
     "negativePrompt": "ugly, deformed",
-    "models": ["ICBINP XL"]
+    "models": ["ICBINP XL"],
+    "author": "Rikudou"
   },
   {
     "name": "Pagan gods",
     "prompt": "a {male|female} {greek|spartan|roman|slavic|pagan|egyptian|celtic} god, digital wallpaper portrait, dark background, muted colors, brutal epic composition, dramatic, digital painting, expressionism",
-    "models": ["AlbedoBase XL (SDXL)"]
+    "models": ["AlbedoBase XL (SDXL)"],
+    "author": "Rikudou"
   },
   {
     "name": "Fruit slice",
     "prompt": "slices of {lemon|orange|kiwi|apple|lime|watermelon|pear} on black background, juicy, water droplets",
-    "models": ["ICBINP XL"]
+    "models": ["ICBINP XL"],
+    "author": "Rikudou"
   },
   {
     "name": "Black shapes",
     "prompt": "Black volumetric wallpaper with smooth and soft geometric shapes, computer background, phone background",
-    "models": ["AlbedoBase XL (SDXL)"]
+    "models": ["AlbedoBase XL (SDXL)"],
+    "author": "Rikudou"
   },
   {
     "name": "Epic fantasy princess",
     "prompt": "Epic magical scene in a fantasy Landscape, full body image, cinematic model scene, detailed eyes, princess character with a very long {brown|red|blonde} hair, dark fantasy, dark comics, insanely detailed, perfect composition, beautiful, detailed, intricate, 8k artistic photography, photorealistic concept art, soft, natural, volumetric, cinematic, perfect light, masterpiece, oil on canvas",
     "negativePrompt": "nude, nsfw",
-    "models": ["Edge Of Realism", "Realistic Vision", "RealBiter", "Analog Madness", "Photon"]
+    "models": ["Edge Of Realism", "Realistic Vision", "RealBiter", "Analog Madness", "Photon"],
+    "author": "Rikudou"
+  },
+  {
+    "name": "Dynamic landscape",
+    "prompt": "A beautiful ${season} landscape in the ${tod}, high quality, masterpiece, realistic",
+    "models": ["ICBINP XL", "AlbedoBase XL (SDXL)"],
+    "params": {
+      "season": ["spring", "summer", "autumn", "winter"],
+      "tod": ["morning", "noon", "afternoon", "evening", "night", "midnight"]
+    },
+    "author": "Rikudou",
+    "description": "A landscape that changes based on the current season and on the time of the day"
   }
 ]

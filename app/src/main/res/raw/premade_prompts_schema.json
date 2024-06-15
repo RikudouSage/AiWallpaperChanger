@@ -7,6 +7,9 @@
       "name": {
         "type": "string"
       },
+      "description": {
+        "type": "string"
+      },
       "prompt": {
         "type": "string"
       },
