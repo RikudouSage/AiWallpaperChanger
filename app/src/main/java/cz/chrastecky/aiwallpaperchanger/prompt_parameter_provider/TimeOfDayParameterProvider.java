@@ -8,6 +8,7 @@ import java.util.Calendar;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 
+import cz.chrastecky.aiwallpaperchanger.R;
 import cz.chrastecky.annotationprocessor.InjectedPromptParameterProvider;
 
 @InjectedPromptParameterProvider
@@ -20,7 +21,7 @@ public class TimeOfDayParameterProvider implements PromptParameterProvider {
 
     @NonNull
     @Override
-    public Future<String> getValue(final Context context) {
+    public Future<String> getValue(@NonNull final Context context) {
         final Calendar calendar = Calendar.getInstance();
         final int hour = calendar.get(Calendar.HOUR_OF_DAY);
         final String result;
@@ -39,5 +40,11 @@ public class TimeOfDayParameterProvider implements PromptParameterProvider {
             result = "evening";
         }
         return CompletableFuture.completedFuture(result);
+    }
+
+    @NonNull
+    @Override
+    public String getDescription(@NonNull final Context context) {
+        return context.getString(R.string.app_parameter_time_of_day_description);
     }
 }

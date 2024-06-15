@@ -11,5 +11,7 @@ public interface PromptParameterProvider {
     @NonNull
     String getParameterName();
     @Nullable
-    Future<String> getValue(final Context context);
+    Future<String> getValue(@NonNull final Context context);
+    @NonNull
+    String getDescription(@NonNull final Context context);
 }
