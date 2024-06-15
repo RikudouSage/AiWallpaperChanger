@@ -1,0 +1,43 @@
+{
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": ["prompt", "name", "models"],
+    "properties": {
+      "name": {
+        "type": "string"
+      },
+      "prompt": {
+        "type": "string"
+      },
+      "models": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "negativePrompt": {
+        "type": "string"
+      },
+      "hiresFix": {
+        "type": "boolean"
+      },
+      "params": {
+        "type": "object",
+        "patternProperties": {
+          "^.*$": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "author": {
+        "type": "string"
+      }
+    },
+    "additionalProperties": false
+  }
+}

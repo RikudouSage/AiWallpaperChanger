@@ -99,4 +99,12 @@
     <string name="app.parameter.time_of_day.description">Bude nahrazeno současnou částí dne v angličtině: morning, noon, afternoon, evening, night nebo midnight</string>
     <string name="app.help.prompt_parameters">Parametry promptu</string>
     <string name="app.help.prompt_parameters.description">Parametry promptu jsou speciální tokeny, které můžete využít v promptu (nebo negativním promptu) a při odeslání požadavku buoud nahrazeny jejich současnou hodnotou. Všechny parametry začínají na ${ a končí na }.</string>
+    <string name="app.premade_prompts.failed_getting">Nezdařilo se získat seznam stylů, zkuste to prosím později.</string>
+    <string name="app.generate.select_prompt_button">Zvolit předdefinovaný prompt</string>
+    <string name="app.title.premade_prompts">Předdefinované prompty</string>
+    <string name="app.premade_prompts.show_examples">Zobrazit příklady a použít styl</string>
+    <string name="app.premade_prompts.use_style_button">Použít styl</string>
+    <string name="app.premade_prompts.error_setting_prompt">Nezdařilo se nastavit styl, zkuste to znovu později.</string>
+    <string name="app.generate.style_successfully_set">Parametry ze stylu byly úspěšně nastaveny</string>
+    <string name="app.premade_styles.downloading_failed">Stahování jednoho nebo více obrázků selhalo</string>
 </resources>

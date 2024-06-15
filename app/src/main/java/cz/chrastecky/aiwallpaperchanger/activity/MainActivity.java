@@ -52,6 +52,7 @@ import cz.chrastecky.aiwallpaperchanger.BuildConfig;
 import cz.chrastecky.aiwallpaperchanger.R;
 import cz.chrastecky.aiwallpaperchanger.databinding.ActivityMainBinding;
 import cz.chrastecky.aiwallpaperchanger.dto.GenerateRequest;
+import cz.chrastecky.aiwallpaperchanger.dto.PremadePrompt;
 import cz.chrastecky.aiwallpaperchanger.dto.Sampler;
 import cz.chrastecky.aiwallpaperchanger.dto.Upscaler;
 import cz.chrastecky.aiwallpaperchanger.dto.response.ActiveModel;
@@ -63,6 +64,7 @@ import cz.chrastecky.aiwallpaperchanger.helper.BillingHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.GenerateRequestHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.Logger;
 import cz.chrastecky.aiwallpaperchanger.helper.PermissionHelper;
+import cz.chrastecky.aiwallpaperchanger.helper.PremadePromptHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.PromptReplacer;
 import cz.chrastecky.aiwallpaperchanger.helper.SharedPreferencesHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.ShortcutManagerHelper;
@@ -74,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String DEFAULT_MODEL = "ICBINP - I Can't Believe It's Not Photography";
     private static final String DEFAULT_SAMPLER = Sampler.k_dpmpp_sde.name();
     private AiProvider aiProvider;
-    private Logger logger = new Logger(this);
+    private final Logger logger = new Logger(this);
     private ActivityMainBinding binding;
 
     private Map<String, Boolean> formElementsValidation = new HashMap<>();
@@ -93,6 +95,36 @@ public class MainActivity extends AppCompatActivity {
                 assert result.getData() != null;
                 selectedModels = result.getData().getStringArrayListExtra("resultModels");
                 binding.setSelectedModels(selectedModels);
+            }
+    );
+    private final ActivityResultLauncher<Intent> selectStyleLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() != RESULT_OK) {
+                    return;
+                }
+                assert result.getData() != null;
+
+                Intent data = result.getData();
+                String styleName = data.getStringExtra("result");
+
+                try {
+                    PremadePrompt prompt = Arrays.stream(PremadePromptHelper.getPrompts(this))
+                            .filter(premadePrompt -> premadePrompt.getName().equals(styleName))
+                            .findFirst().orElse(null);
+                    if (prompt == null) {
+                        logger.error("AiWallpaperChanger", "Prompt with name " + styleName + "is null");
+                        Toast.makeText(this, R.string.app_premade_prompts_failed_getting, Toast.LENGTH_LONG).show();
+                        return;
+                    }
+
+                    GenerateRequest request = GenerateRequestHelper.withStyle(createGenerateRequest(), prompt);
+                    initializeForm(request);
+                    Toast.makeText(this, R.string.app_generate_style_successfully_set, Toast.LENGTH_LONG).show();
+                } catch (IOException e) {
+                    logger.error("AiWallpaperChanger", "Failed getting prompts", e);
+                    Toast.makeText(this, R.string.app_premade_prompts_failed_getting, Toast.LENGTH_LONG).show();
+                }
             }
     );
 
@@ -160,6 +192,10 @@ public class MainActivity extends AppCompatActivity {
         initializeValidations();
         initializeForm(request);
         this.validate();
+
+        binding.selectPromptButton.setOnClickListener(view -> {
+            selectStyleLauncher.launch(new Intent(this, PremadePromptsActivity.class));
+        });
 
         Button previewButton = findViewById(R.id.preview_button);
         previewButton.setOnClickListener(button -> {

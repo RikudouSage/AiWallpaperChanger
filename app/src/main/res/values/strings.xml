@@ -95,8 +95,16 @@
     <string name="app.help.cfg_scale_description">CFG scale controls how closely does the AI follow your prompt, the larger the value, the more it follows, at least in theory. Between 1 and 10 is usually a good value, but it really depends on the model.</string>
     <string name="app.help.cfg_hires_fix_description">HiRes fix first generates your image at a lower resolution and then upscales it. This can help when the model can\'t natively generate images at your choosen resolution. Only works for larger images, low resolution images may fail generating or the HiRes fix might be silently turned off. Exception to that rule is Stable Cascade model where HiRes fix works at all resolutions.</string>
     <string name="app.error.prompt_parameter_invalid">Cannot use the parameter ${%s}, permissions are not granted.</string>
+    <string name="app.premade_prompts.failed_getting">Failed getting list of premade styles, try again later.</string>
+    <string name="app.generate.select_prompt_button">Select a predefined prompt</string>
+    <string name="app.title.premade_prompts">Premade prompts</string>
+    <string name="app.premade_prompts.show_examples">Show examples and use style</string>
     <string name="app.parameter.season.description">Resolves to the current season, spring, summer, autumn or winter.</string>
     <string name="app.parameter.time_of_day.description">Resolves to the current time of day: morning, noon, afternoon, evening, night or midnight</string>
     <string name="app.help.prompt_parameters">Prompt parameters</string>
     <string name="app.help.prompt_parameters.description">Prompt parameters are special tokens you can use in your prompt (or negative prompt) and when you make a request, they will be replaced by their current value. All parameters start with ${ and end with }.</string>
+    <string name="app.premade_prompts.use_style_button">Use style</string>
+    <string name="app.premade_prompts.error_setting_prompt">Error setting the style, please try again later.</string>
+    <string name="app.generate.style_successfully_set">The parameters from the style have been successfully set</string>
+    <string name="app.premade_styles.downloading_failed">Downloading one or more images failed</string>
 </resources>
