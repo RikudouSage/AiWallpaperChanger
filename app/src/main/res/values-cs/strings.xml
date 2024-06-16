@@ -109,4 +109,7 @@
     <string name="app.premade_styles.downloading_failed">Stahování jednoho nebo více obrázků selhalo</string>
     <string name="app.parameter.dark_mode.description">Vrátí buď hodnotu dark nebo light, na základě vzhledu vašeho systému. Skvělé při gnerování pozadí.</string>
     <string name="app.parameter.battery.description">Bude nahrazeno \"high\", \"medium\", \"low\" nebo \"very low\" na základě úrovně nabití vaší baterie.</string>
+    <string name="app.error.unknown_style">Zadaný style nebyl nalezen.</string>
+    <string name="app.premade_prompt.author"><![CDATA[<b>Autor</b>: %s]]></string>
+    <string name="app.premade_prompt.description"><![CDATA[<b>Popis</b>: %s]]></string>
 </resources>

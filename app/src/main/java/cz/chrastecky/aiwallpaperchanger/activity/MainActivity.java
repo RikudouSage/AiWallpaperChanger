@@ -109,9 +109,7 @@ public class MainActivity extends AppCompatActivity {
                 String styleName = data.getStringExtra("result");
 
                 try {
-                    PremadePrompt prompt = Arrays.stream(PremadePromptHelper.getPrompts(this))
-                            .filter(premadePrompt -> premadePrompt.getName().equals(styleName))
-                            .findFirst().orElse(null);
+                    PremadePrompt prompt = PremadePromptHelper.findByName(this, styleName);
                     if (prompt == null) {
                         logger.error("AiWallpaperChanger", "Prompt with name " + styleName + "is null");
                         Toast.makeText(this, R.string.app_premade_prompts_failed_getting, Toast.LENGTH_LONG).show();
