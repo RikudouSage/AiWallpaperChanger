@@ -129,5 +129,23 @@
     "prompt": "A view from the top of a long desert canyon, looking down the length of the canyon. Blooming saguaro cactus in foreground",
     "models": ["ICBINP - I Can't Believe It's Not Photography", "AlbedoBase XL (SDXL)", "Anything Diffusion", "Deliberate", "Cheese Daddy's Landscape Mix"],
     "author": "Pinaz993"
+  },
+  {
+    "name": "Spaceship construction",
+    "prompt": "A view of a 3D spaceship construction yard floating in (space:1.5), as seen from space. Many small construction spacecraft are scattered about the image. In the background, a multicolored gas giant can be seen in the moderate distance.",
+    "models": ["AlbedoBase XL (SDXL)", "Deliberate", "Blank Canvas XL"],
+    "author": "Pinaz993"
+  },
+  {
+    "name": "Erupting volcano",
+    "prompt": "A volcano erupting in red lava, at night",
+    "models": ["AlbedoBase XL (SDXL)", "Anything Diffusion", "Deliberate", "Blank Canvas XL", "Cheese Daddy's Landscape Mix"],
+    "author": "Pinaz993"
+  },
+  {
+    "name": "Coral reef",
+    "prompt": "A bio-luminescent coral reef (at night:1.5). The water is very dark, almost black, with only the illumination coming from the reef. Highly detailed, cell shaded",
+    "models": ["AlbedoBase XL (SDXL)", "Deliberate", "Blank Canvas XL"],
+    "author": "Pinaz993"
   }
 ]
