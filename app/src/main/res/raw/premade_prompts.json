@@ -103,14 +103,15 @@
   },
   {
     "name": "Dynamic landscape",
-    "prompt": "A beautiful ${season} landscape in the ${tod}, high quality, masterpiece, realistic",
+    "prompt": "A beautiful ${season} landscape in the ${tod}, high quality, masterpiece, realistic, ${bg} background",
     "models": ["ICBINP XL", "AlbedoBase XL (SDXL)"],
     "params": {
       "season": ["spring", "summer", "autumn", "winter"],
-      "tod": ["morning", "noon", "afternoon", "evening", "night", "midnight"]
+      "tod": ["morning", "noon", "afternoon", "evening", "night", "midnight"],
+      "bg": ["light", "dark"]
     },
     "author": "Rikudou",
-    "description": "A landscape that changes based on the current season and on the time of the day"
+    "description": "A landscape that changes based on the current season, the time of the day and your dark mode preference."
   },
   {
     "name": "Fractal nebula",
