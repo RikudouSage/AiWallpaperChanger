@@ -107,4 +107,5 @@
     <string name="app.premade_prompts.error_setting_prompt">Nezdařilo se nastavit styl, zkuste to znovu později.</string>
     <string name="app.generate.style_successfully_set">Parametry ze stylu byly úspěšně nastaveny</string>
     <string name="app.premade_styles.downloading_failed">Stahování jednoho nebo více obrázků selhalo</string>
+    <string name="app.parameter.dark_mode.description">Vrátí buď hodnotu dark nebo light, na základě vzhledu vašeho systému. Skvělé při gnerování pozadí.</string>
 </resources>

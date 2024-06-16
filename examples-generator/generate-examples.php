@@ -8,7 +8,7 @@ use Rikudou\AiWallpaperChanger\ExamplesGenerator\Service\ModelDeserializer;
 require __DIR__ . '/vendor/autoload.php';
 
 $validity = new DateInterval('P7D');
-$maxImages = 4;
+$maxImages = 5;
 
 $deserializer = new ModelDeserializer();
 $file = __DIR__ . '/../app/src/main/res/raw/premade_prompts.json';
