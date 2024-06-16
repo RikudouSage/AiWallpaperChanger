@@ -108,4 +108,5 @@
     <string name="app.generate.style_successfully_set">The parameters from the style have been successfully set</string>
     <string name="app.premade_styles.downloading_failed">Downloading one or more images failed</string>
     <string name="app.parameter.dark_mode.description">Returns either dark or light depending on your system theme. Great for using with background.</string>
+    <string name="app.parameter.battery.description">Resolves to either \"high\", \"medium\", \"low\" or \"very low\" based on your current batter level.</string>
 </resources>
