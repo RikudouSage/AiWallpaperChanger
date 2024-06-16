@@ -99,12 +99,14 @@ android {
             versionNameSuffix 'B'
             buildConfigField "boolean", "BILLING_ENABLED", "true"
             buildConfigField "String", "PREMIUM_API_KEY", "\"" + (properties.getProperty('prod_api_key')) + "\""
+            buildConfigField "boolean", "NON_COMMERCIAL", "false"
         }
         billingDisabled {
             dimension 'billing'
             versionNameSuffix 'N'
             buildConfigField "boolean", "BILLING_ENABLED", "false"
             buildConfigField "String", "PREMIUM_API_KEY", "\"0000000000\""
+            buildConfigField "boolean", "NON_COMMERCIAL", "true"
         }
     }
 }
