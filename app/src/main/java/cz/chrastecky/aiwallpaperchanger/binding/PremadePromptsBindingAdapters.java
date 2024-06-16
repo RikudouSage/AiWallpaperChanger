@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.text.Html;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -25,6 +27,7 @@ import com.android.volley.toolbox.Volley;
 
 import org.json.JSONException;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,8 +37,11 @@ import java.util.stream.Collectors;
 
 import cz.chrastecky.aiwallpaperchanger.BuildConfig;
 import cz.chrastecky.aiwallpaperchanger.R;
+import cz.chrastecky.aiwallpaperchanger.dto.PremadePrompt;
+import cz.chrastecky.aiwallpaperchanger.exception.PromptNotFoundException;
 import cz.chrastecky.aiwallpaperchanger.helper.ComposableOnClickListener;
 import cz.chrastecky.aiwallpaperchanger.helper.Logger;
+import cz.chrastecky.aiwallpaperchanger.helper.PremadePromptHelper;
 
 public class PremadePromptsBindingAdapters {
     private static final Map<Integer, ComposableOnClickListener> listenerMap = new HashMap<>();
@@ -137,6 +143,22 @@ public class PremadePromptsBindingAdapters {
             group.removeView(progressBar);
         }
 
+        final PremadePrompt prompt;
+        try {
+            prompt = PremadePromptHelper.findByName(context, name);
+            if (prompt == null) {
+                throw new PromptNotFoundException();
+            }
+        } catch (IOException e) {
+            logger.error("PremadePrompts", "Failed getting prompts", e);
+            Toast.makeText(context, R.string.app_error_unknown_style, Toast.LENGTH_LONG).show();
+            return;
+        } catch (PromptNotFoundException e) {
+            logger.error("PremadePrompts", "Failed getting prompt " + name, e);
+            Toast.makeText(context, R.string.app_error_unknown_style, Toast.LENGTH_LONG).show();
+            return;
+        }
+
         HorizontalScrollView scrollView = new HorizontalScrollView(context);
         scrollView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         group.addView(scrollView);
@@ -178,6 +200,27 @@ public class PremadePromptsBindingAdapters {
             activity.setResult(Activity.RESULT_OK, result);
             activity.finish();
         });
+
+        if (prompt.getDescription() != null) {
+            TextView description = new TextView(context);
+            description.setText(Html.fromHtml(context.getString(R.string.app_premade_prompt_description, prompt.getDescription()), Html.FROM_HTML_MODE_COMPACT));
+            LinearLayout.LayoutParams descriptionParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            descriptionParams.setMargins(0, 0, 0, dp8);
+            descriptionParams.setMarginStart(dp8);
+            description.setLayoutParams(descriptionParams);
+            description.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
+            group.addView(description);
+        }
+
+        if (prompt.getAuthor() != null) {
+            TextView author = new TextView(context);
+            author.setText(Html.fromHtml(context.getString(R.string.app_premade_prompt_author, prompt.getAuthor()), Html.FROM_HTML_MODE_COMPACT));
+            LinearLayout.LayoutParams authorParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            authorParams.setMarginStart(dp8);
+            author.setLayoutParams(authorParams);
+            group.addView(author);
+        }
+
 
         cache.put(name, images);
         loading.remove(name);

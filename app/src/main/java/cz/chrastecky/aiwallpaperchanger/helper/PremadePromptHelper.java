@@ -2,6 +2,9 @@ package cz.chrastecky.aiwallpaperchanger.helper;
 
 import android.content.Context;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.google.gson.Gson;
 
 import java.io.BufferedReader;
@@ -25,5 +28,12 @@ public class PremadePromptHelper {
                     .sorted(Comparator.comparing(PremadePrompt::getName))
                     .toArray(PremadePrompt[]::new);
         }
+    }
+
+    @Nullable
+    public static PremadePrompt findByName(final Context context, @NonNull final String name) throws IOException {
+        return Arrays.stream(PremadePromptHelper.getPrompts(context))
+                .filter(premadePrompt -> premadePrompt.getName().equals(name))
+                .findFirst().orElse(null);
     }
 }
