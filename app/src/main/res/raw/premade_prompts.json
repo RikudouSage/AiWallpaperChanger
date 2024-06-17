@@ -8,7 +8,7 @@
   },
   {
     "name": "Everchanging scene",
-    "models": ["Stable Cascade 1.0"],
+    "models": ["AlbedoBase XL (SDXL)"],
     "prompt": "A {cyberpunk|dieselpunk|steampunk|solarpunk} wallpaper, black and {violet|crimson|blue|dark green|gray} colors, ${tod} {landscape|cityscape|towers}, masterpiece",
     "author": "db0, Rikudou",
     "description": "A prompt which makes the image never be the same!",
