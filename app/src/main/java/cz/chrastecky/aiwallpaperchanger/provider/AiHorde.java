@@ -102,6 +102,9 @@ public class AiHorde implements AiProvider {
                                 object.getInt("eta"),
                                 ModelType.valueOf(object.getString("type"))
                         );
+                        if (!BuildConfig.NON_COMMERCIAL && model.getName().equals("Stable Cascade 1.0")) {
+                            continue;
+                        }
                         result.add(model);
                     }
 
