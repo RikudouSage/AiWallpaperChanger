@@ -209,5 +209,11 @@
     "negativePrompt": "deformed face, deformed",
     "models": ["AlbedoBase XL (SDXL)", "ICBINP XL"],
     "author": "Paladin01101100, Rikudou"
+  },
+  {
+    "name": "Cosmic cat",
+    "prompt": "cosmic art, profile pic, cat",
+    "models": ["AlbedoBase XL (SDXL)"],
+    "author": "Kuren. K"
   }
 ]
