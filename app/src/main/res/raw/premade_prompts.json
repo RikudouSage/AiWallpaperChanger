@@ -148,5 +148,66 @@
     "prompt": "A bio-luminescent coral reef (at night:1.5). The water is very dark, almost black, with only the illumination coming from the reef. Highly detailed, cell shaded",
     "models": ["AlbedoBase XL (SDXL)", "Deliberate", "Blank Canvas XL"],
     "author": "Pinaz993"
+  },
+  {
+    "name": "Cartoon rainbow unicorn",
+    "prompt": "Masterpiece cartoon of a rainbow-colored unicorn in a meadow. Vibrant colors, dynamic pose, cheerful expression, comic-style outlines, whimsical background, detailed fur, playful atmosphere, inspired by classic comic art, energetic vibe, thick outlines, sparkling details, fantastical setting, friendly demeanor, lively composition.",
+    "models": ["AlbedoBase XL (SDXL)", "ICBINP XL"],
+    "author": "ResidentChiefNZ"
+  },
+  {
+    "name": "Kitten adventurer",
+    "prompt": "geared up kitten adventurer, epic fantasy painting",
+    "models": ["AlbedoBase XL (SDXL)", "ICBINP XL"],
+    "author": "Bozar"
+  },
+  {
+    "name": "Flaming tornado",
+    "prompt": "flaming tornado around a waterspout, dark fantasy, magic",
+    "models": ["AlbedoBase XL (SDXL)", "ICBINP XL"],
+    "author": "Efreak"
+  },
+  {
+    "name": "Bioluminescent flower",
+    "prompt": "Ink illustration, bioluminescent pink flower, fabulous night forest, magical radiance, Concept art,depth of fieldm, realistic, cinematic lighting, soft shadows,fractal, colorful, depth of field , vivid colors, volumetric lighting, ink stains, ink splatters, ink runs, ink spots, faded ink linquivera",
+    "models": ["AlbedoBase XL (SDXL)", "ICBINP XL"],
+    "author": "Efreak"
+  },
+  {
+    "name": "Watercolor painting",
+    "prompt": "Watercolor painting style with translucent layers, blending colors, and a fluid, organic feel, artistic, delicate, ethereal, painterly, {spacescape|landscape|heavy brushstrokes}",
+    "models": ["AlbedoBase XL (SDXL)", "ICBINP XL"],
+    "author": "Efreak"
+  },
+  {
+    "name": "Baby goats",
+    "prompt": "baby goats climbing {trees|rocks}",
+    "models": ["AlbedoBase XL (SDXL)", "ICBINP XL"],
+    "author": "Paladin01101100, Rikudou"
+  },
+  {
+    "name": "Fantasy caves",
+    "prompt": "deep inside the kobold caves, epic fantasy, realistic, impressive lighting",
+    "models": ["AlbedoBase XL (SDXL)", "ICBINP XL"],
+    "author": "Bozar"
+  },
+  {
+    "name": "Bottomless pit",
+    "prompt": "bottomless crevice of doom, dark fantasy, digital effects, gloomy, aerophoto",
+    "models": ["AlbedoBase XL (SDXL)", "ICBINP XL"],
+    "author": "Bozar"
+  },
+  {
+    "name": "Realistic ocean",
+    "prompt": "sunrise, ocean, (dutch angle)",
+    "models": ["AlbedoBase XL (SDXL)", "ICBINP XL"],
+    "author": "Paladin01101100"
+  },
+  {
+    "name": "1950s Retro future",
+    "prompt": "1950s retro future",
+    "negativePrompt": "deformed face, deformed",
+    "models": ["AlbedoBase XL (SDXL)", "ICBINP XL"],
+    "author": "Paladin01101100, Rikudou"
   }
 ]

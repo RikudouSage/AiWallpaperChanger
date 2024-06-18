@@ -197,7 +197,16 @@ while (count($flattenResolved($resolved)) !== count($flatToCheck)) {
                 fn (array $item) => $item['img'],
                 array_filter(
                     $body['generations'],
-                    fn (array $item) => !$item['censored'] && $item['img'],
+                    function (array $item) use ($name) {
+                        if ($item['censored']) {
+                            echo "[{$name}] Image got censored", PHP_EOL;
+                        }
+                        if (!$item['img']) {
+                            echo "[{$name}] Image link was not present", PHP_EOL;
+                        }
+
+                        return !$item['censored'] && $item['img'];
+                    },
                 )
             );
             echo "[{$name}] Got new images, storing them in R2", PHP_EOL;
