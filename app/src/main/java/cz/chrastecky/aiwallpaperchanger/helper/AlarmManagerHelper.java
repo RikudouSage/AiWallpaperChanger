@@ -27,10 +27,10 @@ public class AlarmManagerHelper {
 
     public static void scheduleAlarm(Context context) {
         SharedPreferences sharedPreferences = new SharedPreferencesHelper().get(context);
-        if (!sharedPreferences.contains("selectedInterval")) {
+        if (!sharedPreferences.contains(SharedPreferencesHelper.CONFIGURED_SCHEDULE_INTERVAL)) {
             throw new RuntimeException("Selected interval must be populated when scheduling alarm");
         }
-        int interval = sharedPreferences.getInt("selectedInterval", 0);
+        int interval = sharedPreferences.getInt(SharedPreferencesHelper.CONFIGURED_SCHEDULE_INTERVAL, 0);
 
         PendingIntent intent = getAlarmIntent(context);
 

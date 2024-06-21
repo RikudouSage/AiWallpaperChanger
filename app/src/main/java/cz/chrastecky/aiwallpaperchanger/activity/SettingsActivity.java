@@ -61,21 +61,21 @@ public class SettingsActivity extends AppCompatActivity {
 
             TextInputEditText apiKeyField = findViewById(R.id.api_key_field);
             if (apiKeyField.getText() == null) {
-                editor.remove("api_key");
+                editor.remove(SharedPreferencesHelper.API_KEY);
             } else {
                 String apiKey = apiKeyField.getText().toString();
                 if (apiKey.isEmpty()) {
-                    editor.remove("api_key");
+                    editor.remove(SharedPreferencesHelper.API_KEY);
                 } else {
-                    editor.putString("api_key", apiKey);
+                    editor.putString(SharedPreferencesHelper.API_KEY, apiKey);
                 }
             }
 
 
             if (directoryUri == null) {
-                editor.remove("storeWallpapersUri");
+                editor.remove(SharedPreferencesHelper.STORE_WALLPAPERS_URI);
             } else {
-                editor.putString("storeWallpapersUri", directoryUri.toString());
+                editor.putString(SharedPreferencesHelper.STORE_WALLPAPERS_URI, directoryUri.toString());
             }
 
             editor.apply();
@@ -94,11 +94,11 @@ public class SettingsActivity extends AppCompatActivity {
         SharedPreferences preferences = new SharedPreferencesHelper().get(this);
 
         TextInputEditText apiKey = findViewById(R.id.api_key_field);
-        apiKey.setText(preferences.getString("api_key", ""));
+        apiKey.setText(preferences.getString(SharedPreferencesHelper.API_KEY, ""));
 
         if (
-                preferences.contains("storeWallpapersUri")
-                && ContentResolverHelper.canAccessDirectory(this, Uri.parse(preferences.getString("storeWallpapersUri", "")))
+                preferences.contains(SharedPreferencesHelper.STORE_WALLPAPERS_URI)
+                && ContentResolverHelper.canAccessDirectory(this, Uri.parse(preferences.getString(SharedPreferencesHelper.STORE_WALLPAPERS_URI, "")))
         ) {
             SwitchCompat storeWallpapers = findViewById(R.id.save_wallpapers_switch);
             storeWallpapers.setChecked(true);
