@@ -354,6 +354,9 @@ public class MainActivity extends AppCompatActivity {
             PermissionHelper.askForDataSaverException(this);
             PermissionHelper.askForDozeModeException(this);
         }
+
+        binding.setMaxCfgScale(sharedPreferences.getBoolean(SharedPreferencesHelper.ALLOW_LARGE_NUMERIC_VALUES, false) ? 100 : 20);
+        binding.setMaxSteps(sharedPreferences.getBoolean(SharedPreferencesHelper.ALLOW_LARGE_NUMERIC_VALUES, false) ? 500 : 60);
     }
 
     @Override

@@ -9,7 +9,6 @@ import android.os.Bundle;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.SwitchCompat;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
@@ -33,7 +32,7 @@ public class SettingsActivity extends AppCompatActivity {
         setSupportActionBar(binding.toolbar);
         setTitle(R.string.app_title_settings);
 
-        initializeForm();
+        initializeForm(binding);
 
         @SuppressLint("WrongConstant")
         ActivityResultLauncher<Intent> activityLauncher = registerForActivityResult(
@@ -78,6 +77,8 @@ public class SettingsActivity extends AppCompatActivity {
                 editor.putString(SharedPreferencesHelper.STORE_WALLPAPERS_URI, directoryUri.toString());
             }
 
+            editor.putBoolean(SharedPreferencesHelper.ALLOW_LARGE_NUMERIC_VALUES, binding.allowLargeValues.isChecked());
+
             editor.apply();
             finish();
         });
@@ -90,18 +91,17 @@ public class SettingsActivity extends AppCompatActivity {
         });
     }
 
-    private void initializeForm() {
+    private void initializeForm(ActivitySettingsBinding binding) {
         SharedPreferences preferences = new SharedPreferencesHelper().get(this);
 
-        TextInputEditText apiKey = findViewById(R.id.api_key_field);
-        apiKey.setText(preferences.getString(SharedPreferencesHelper.API_KEY, ""));
+        binding.apiKeyField.setText(preferences.getString(SharedPreferencesHelper.API_KEY, ""));
+        binding.allowLargeValues.setChecked(preferences.getBoolean(SharedPreferencesHelper.ALLOW_LARGE_NUMERIC_VALUES, false));
 
         if (
                 preferences.contains(SharedPreferencesHelper.STORE_WALLPAPERS_URI)
                 && ContentResolverHelper.canAccessDirectory(this, Uri.parse(preferences.getString(SharedPreferencesHelper.STORE_WALLPAPERS_URI, "")))
         ) {
-            SwitchCompat storeWallpapers = findViewById(R.id.save_wallpapers_switch);
-            storeWallpapers.setChecked(true);
+            binding.saveWallpapersSwitch.setChecked(true);
         }
     }
 }
