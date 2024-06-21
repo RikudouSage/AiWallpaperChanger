@@ -20,14 +20,13 @@ public class PermissionHelper {
     }
 
     public static void askForDataSaverException(Context context) {
-        final String doNotAskAgainKey = "data_saver_exception_do_not_ask";
         SharedPreferences preferences = new SharedPreferencesHelper().get(context);
 
 //        SharedPreferences.Editor ed = preferences.edit();
 //        ed.remove(doNotAskAgainKey);
 //        ed.apply();
 
-        if (preferences.contains(doNotAskAgainKey)) {
+        if (preferences.contains(SharedPreferencesHelper.DATA_SAVER_DO_NOT_ASK)) {
             return;
         }
 
@@ -49,7 +48,7 @@ public class PermissionHelper {
         builder.setNeutralButton(R.string.app_permission_dialog_button_ignore, (dialog, which) -> {});
         builder.setNegativeButton(R.string.app_permission_dialog_button_dont_ask_again, (dialog, which) -> {
             SharedPreferences.Editor editor = preferences.edit();
-            editor.putBoolean(doNotAskAgainKey, true);
+            editor.putBoolean(SharedPreferencesHelper.DATA_SAVER_DO_NOT_ASK, true);
             editor.apply();
         });
 
@@ -58,10 +57,9 @@ public class PermissionHelper {
     }
 
     public static void askForDozeModeException(Context context) {
-        final String doNotAskAgainKey = "doze_mode_exception_do_not_ask";
         SharedPreferences preferences = new SharedPreferencesHelper().get(context);
 
-        if (preferences.contains(doNotAskAgainKey)) {
+        if (preferences.contains(SharedPreferencesHelper.DOZE_MODE_DO_NOT_ASK)) {
             return;
         }
 
@@ -85,7 +83,7 @@ public class PermissionHelper {
         builder.setNeutralButton(R.string.app_permission_dialog_button_ignore, (dialog, which) -> {});
         builder.setNegativeButton(R.string.app_permission_dialog_button_dont_ask_again, (dialog, which) -> {
             SharedPreferences.Editor editor = preferences.edit();
-            editor.putBoolean(doNotAskAgainKey, true);
+            editor.putBoolean(SharedPreferencesHelper.DOZE_MODE_DO_NOT_ASK, true);
             editor.apply();
         });
 

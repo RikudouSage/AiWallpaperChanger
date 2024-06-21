@@ -386,7 +386,7 @@ public class AiHorde implements AiProvider {
 
     private String apiKey() {
         SharedPreferences preferences = new SharedPreferencesHelper().get(context);
-        return preferences.getString("api_key", DEFAULT_API_KEY);
+        return preferences.getString(SharedPreferencesHelper.API_KEY, DEFAULT_API_KEY);
     }
 
     @Nullable

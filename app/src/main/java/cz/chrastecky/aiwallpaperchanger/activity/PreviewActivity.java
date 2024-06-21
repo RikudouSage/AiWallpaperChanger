@@ -64,18 +64,18 @@ public class PreviewActivity extends AppCompatActivity {
         okButton.setOnClickListener(view -> {
             SharedPreferences preferences = new SharedPreferencesHelper().get(this);
             SharedPreferences.Editor editor = preferences.edit();
-            editor.putString("generationParameters", intent.getStringExtra("generationParameters"));
+            editor.putString(SharedPreferencesHelper.STORED_GENERATION_PARAMETERS, intent.getStringExtra("generationParameters"));
             editor.apply();
 
             AsyncTask.execute(() -> {
                 try {
-                    if (preferences.contains("storeWallpapersUri")) {
-                        ContentResolverHelper.storeBitmap(this, Uri.parse(preferences.getString("storeWallpapersUri", "")), UUID.randomUUID() + ".png", image);
+                    if (preferences.contains(SharedPreferencesHelper.STORE_WALLPAPERS_URI)) {
+                        ContentResolverHelper.storeBitmap(this, Uri.parse(preferences.getString(SharedPreferencesHelper.STORE_WALLPAPERS_URI, "")), UUID.randomUUID() + ".png", image);
                     }
 
                     WallpaperManager wallpaperManager = WallpaperManager.getInstance(this);
                     wallpaperManager.setBitmap(image);
-                    editor.putString("lastChanged", DateFormat.getInstance().format(Calendar.getInstance().getTime()));
+                    editor.putString(SharedPreferencesHelper.WALLPAPER_LAST_CHANGED, DateFormat.getInstance().format(Calendar.getInstance().getTime()));
                     editor.apply();
                 } catch (IOException e) {
                     throw new RuntimeException(e);

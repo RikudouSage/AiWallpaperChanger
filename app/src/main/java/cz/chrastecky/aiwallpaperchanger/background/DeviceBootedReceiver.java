@@ -16,7 +16,7 @@ public class DeviceBootedReceiver extends BroadcastReceiver {
         }
 
         SharedPreferences preferences = new SharedPreferencesHelper().get(context);
-        if (!preferences.contains("selectedInterval")) {
+        if (!preferences.contains(SharedPreferencesHelper.CONFIGURED_SCHEDULE_INTERVAL)) {
             return;
         }
 

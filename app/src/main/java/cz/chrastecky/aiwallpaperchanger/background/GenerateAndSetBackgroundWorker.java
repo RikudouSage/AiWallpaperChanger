@@ -65,14 +65,14 @@ public class GenerateAndSetBackgroundWorker extends ListenableWorker {
                 AiHorde aiHorde = new AiHorde(getApplicationContext());
                 SharedPreferences preferences = new SharedPreferencesHelper().get(getApplicationContext());
 
-                if (!preferences.contains("generationParameters")) {
+                if (!preferences.contains(SharedPreferencesHelper.STORED_GENERATION_PARAMETERS)) {
                     completer.set(Result.failure());
                     return;
                 }
 
-                String requestJson = preferences.getString("generationParameters", "");
+                String requestJson = preferences.getString(SharedPreferencesHelper.STORED_GENERATION_PARAMETERS, "");
                 logger.debug("WorkerJob", "Request: " + requestJson);
-                GenerateRequest request = GenerateRequestHelper.parse(preferences.getString("generationParameters", ""));
+                GenerateRequest request = GenerateRequestHelper.parse(preferences.getString(SharedPreferencesHelper.STORED_GENERATION_PARAMETERS, ""));
                 request = GenerateRequestHelper.withPrompt(request, Objects.requireNonNull(PromptReplacer.replacePrompt(getApplicationContext(), request.getPrompt(), false)));
 
                 if (!BuildConfig.NSFW_ENABLED && request.getNsfw()) {
@@ -86,13 +86,13 @@ public class GenerateAndSetBackgroundWorker extends ListenableWorker {
                     logger.debug("WorkerJob", "Model: " + response.getDetail().getModel());
                     WallpaperManager wallpaperManager = WallpaperManager.getInstance(getApplicationContext());
                     try {
-                        if (preferences.contains("storeWallpapersUri")) {
-                            ContentResolverHelper.storeBitmap(getApplicationContext(), Uri.parse(preferences.getString("storeWallpapersUri", "")), UUID.randomUUID() + ".png", response.getImage());
+                        if (preferences.contains(SharedPreferencesHelper.STORE_WALLPAPERS_URI)) {
+                            ContentResolverHelper.storeBitmap(getApplicationContext(), Uri.parse(preferences.getString(SharedPreferencesHelper.STORE_WALLPAPERS_URI, "")), UUID.randomUUID() + ".png", response.getImage());
                         }
 
                         wallpaperManager.setBitmap(response.getImage());
                         SharedPreferences.Editor editor = preferences.edit();
-                        editor.putString("lastChanged", DateFormat.getInstance().format(Calendar.getInstance().getTime()));
+                        editor.putString(SharedPreferencesHelper.WALLPAPER_LAST_CHANGED, DateFormat.getInstance().format(Calendar.getInstance().getTime()));
                         editor.commit();
 
                         History history = new History(getApplicationContext());

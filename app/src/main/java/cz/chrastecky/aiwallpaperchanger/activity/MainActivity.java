@@ -135,8 +135,8 @@ public class MainActivity extends AppCompatActivity {
 
         SharedPreferences sharedPreferences = new SharedPreferencesHelper().get(this);
         GenerateRequest request = null;
-        if (sharedPreferences.contains("generationParameters")) {
-            request = GenerateRequestHelper.parse(sharedPreferences.getString("generationParameters", ""));
+        if (sharedPreferences.contains(SharedPreferencesHelper.STORED_GENERATION_PARAMETERS)) {
+            request = GenerateRequestHelper.parse(sharedPreferences.getString(SharedPreferencesHelper.STORED_GENERATION_PARAMETERS, ""));
         }
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
@@ -177,7 +177,7 @@ public class MainActivity extends AppCompatActivity {
 
         binding.nsfwSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putBoolean("nsfwToggled", isChecked);
+            editor.putBoolean(SharedPreferencesHelper.NSFW_TOGGLED, isChecked);
             editor.apply();
         });
 
@@ -321,7 +321,7 @@ public class MainActivity extends AppCompatActivity {
                 cancelButton.setVisibility(View.INVISIBLE);
 
                 SharedPreferences.Editor sharedPreferences = new SharedPreferencesHelper().get(this).edit();
-                sharedPreferences.remove("selectedInterval");
+                sharedPreferences.remove(SharedPreferencesHelper.CONFIGURED_SCHEDULE_INTERVAL);
                 sharedPreferences.apply();
 
                 ShortcutManagerHelper.hideShortcuts(this);
@@ -335,9 +335,9 @@ public class MainActivity extends AppCompatActivity {
         }
 
         SharedPreferences sharedPreferences = new SharedPreferencesHelper().get(this);
-        if (sharedPreferences.contains("lastChanged")) {
+        if (sharedPreferences.contains(SharedPreferencesHelper.WALLPAPER_LAST_CHANGED)) {
             TextView lastChanged = findViewById(R.id.last_changed);
-            String lastChangedTime = sharedPreferences.getString("lastChanged", "");
+            String lastChangedTime = sharedPreferences.getString(SharedPreferencesHelper.WALLPAPER_LAST_CHANGED, "");
             lastChanged.setText(getString(R.string.app_generate_last_generated, lastChangedTime));
             lastChanged.setVisibility(View.VISIBLE);
         }
@@ -537,13 +537,13 @@ public class MainActivity extends AppCompatActivity {
 
         advancedSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             SharedPreferences.Editor editor = preferences.edit();
-            editor.putBoolean("advanced", isChecked);
+            editor.putBoolean(SharedPreferencesHelper.ADVANCED_OPTIONS_TOGGLED, isChecked);
             editor.apply();
 
             ConstraintLayout advancedWrapper = findViewById(R.id.advanced_settings_wrapper);
             advancedWrapper.setVisibility(isChecked ? View.VISIBLE : View.GONE);
         });
-        advancedSwitch.setChecked(preferences.getBoolean("advanced", false));
+        advancedSwitch.setChecked(preferences.getBoolean(SharedPreferencesHelper.ADVANCED_OPTIONS_TOGGLED, false));
 
         stepsField.addOnChangeListener((slider, value, fromUser) -> stepsTitle.setText(getString(R.string.app_generate_steps, (int) value)));
         stepsTitle.setText(getString(R.string.app_generate_steps, 25));
@@ -559,7 +559,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (BuildConfig.NSFW_ENABLED) {
             nsfwField.setVisibility(View.VISIBLE);
-            nsfwField.setChecked(preferences.getBoolean("nsfwToggled", false));
+            nsfwField.setChecked(preferences.getBoolean(SharedPreferencesHelper.NSFW_TOGGLED, false));
         }
 
         multipleModelsSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {

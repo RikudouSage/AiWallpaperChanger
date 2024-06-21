@@ -25,10 +25,10 @@ public class History {
 
     public void addItem(StoredRequest item) {
         SharedPreferences preferences = new SharedPreferencesHelper().get(context);
-        Set<String> history = new HashSet<>(preferences.getStringSet("history", new HashSet<>()));
+        Set<String> history = new HashSet<>(preferences.getStringSet(SharedPreferencesHelper.GENERATION_HISTORY, new HashSet<>()));
         history.add(new Gson().toJson(item));
         SharedPreferences.Editor editor = preferences.edit();
-        editor.putStringSet("history", history);
+        editor.putStringSet(SharedPreferencesHelper.GENERATION_HISTORY, history);
         editor.apply();
     }
 
@@ -37,7 +37,7 @@ public class History {
     }
     public List<StoredRequest> getHistory(boolean sorted) {
         SharedPreferences preferences = new SharedPreferencesHelper().get(context);
-        Set<String> raw = preferences.getStringSet("history", new HashSet<>());
+        Set<String> raw = preferences.getStringSet(SharedPreferencesHelper.GENERATION_HISTORY, new HashSet<>());
 
         List<StoredRequest> result = new ArrayList<>();
         for (String item : raw) {
