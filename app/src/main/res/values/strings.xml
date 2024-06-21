@@ -112,4 +112,6 @@
     <string name="app.error.unknown_style">The provided style could not be found.</string>
     <string name="app.premade_prompt.author"><![CDATA[<b>Author</b>: %s]]></string>
     <string name="app.premade_prompt.description"><![CDATA[<b>Description</b>: %s]]></string>
+    <string name="app.settings.allow_large_values">Allow large values</string>
+    <string name="app.settings.allow_large_values.description">When toggled on, you can set larger values for steps, cfg scale etc. Unless you know you need it, you can safely turn this off.</string>
 </resources>

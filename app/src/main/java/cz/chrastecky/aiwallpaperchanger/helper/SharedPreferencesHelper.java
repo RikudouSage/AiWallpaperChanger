@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 public class SharedPreferencesHelper {
-    public static final String LARGE_NUMERIC_VALUES = "largeNumericValues";
+    public static final String ALLOW_LARGE_NUMERIC_VALUES = "allowLargeNumericValues";
     public static final String API_KEY = "api_key";
     public static final String STORE_WALLPAPERS_URI = "storeWallpapersUri";
     public static final String CONFIGURED_SCHEDULE_INTERVAL = "selectedInterval";

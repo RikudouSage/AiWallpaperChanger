@@ -112,4 +112,6 @@
     <string name="app.error.unknown_style">Zadaný style nebyl nalezen.</string>
     <string name="app.premade_prompt.author"><![CDATA[<b>Autor</b>: %s]]></string>
     <string name="app.premade_prompt.description"><![CDATA[<b>Popis</b>: %s]]></string>
+    <string name="app.settings.allow_large_values">Povolit velké hodnoty</string>
+    <string name="app.settings.allow_large_values.description">Pokud je zapnuto, můžete nastavit větší hodonty pro kroky, měřítko cfg apod. Pokud nevíte, jestli to potřebujete, můžete klidně nechat vypnuto.</string>
 </resources>

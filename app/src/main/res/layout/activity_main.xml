@@ -5,6 +5,8 @@
 
     <data>
         <variable name="selectedModels" type="java.util.List&lt;java.lang.String>" />
+        <variable name="maxSteps" type="int" />
+        <variable name="maxCfgScale" type="int" />
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -234,7 +236,8 @@
                             android:stepSize="1"
                             android:value="25"
                             android:valueFrom="1"
-                            android:valueTo="60"
+                            android:valueTo="@{maxSteps}"
+                            tools:valueTo="60"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@id/steps_title" />
@@ -356,7 +359,8 @@
                             android:stepSize="0.5"
                             android:value="7"
                             android:valueFrom="1"
-                            android:valueTo="100"
+                            android:valueTo="@{maxCfgScale}"
+                            tools:valueTo="20"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@id/cfg_scale_title" />
