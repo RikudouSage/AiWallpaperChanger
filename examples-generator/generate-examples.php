@@ -83,12 +83,16 @@ foreach ($configs as $config) {
                     echo "[{$config->name}] Found an old file, deleting", PHP_EOL;
                     $s3client->deleteObject([
                         'Bucket' => $bucket,
-                        'Key' => "{$config->name}/{$object['Key']}",
+                        'Key' => $object['Key'],
                     ]);
                     ++$create;
                 }
             }
         }
+    }
+
+    if ($create > $maxImages) {
+        $create = $maxImages;
     }
 
     if (!$create) {
