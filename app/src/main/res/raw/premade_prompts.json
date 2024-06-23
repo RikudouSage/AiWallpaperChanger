@@ -215,5 +215,11 @@
     "prompt": "cosmic art, profile pic, cat",
     "models": ["AlbedoBase XL (SDXL)"],
     "author": "Kuren. K"
+  },
+  {
+    "name": "Cosmic horror",
+    "prompt": "Space horror wallpaper, mysterious, {cthulhu|nyarlathotep|azathoth|yog-sothoth|shub-niggurath}, black and {violet|crimson|blue|dark green|gray} colors, {landscape|cityscape|towers|deep space}, masterpiece",
+    "models": ["AlbedoBase XL (SDXL)"],
+    "author": "Kayl3igh"
   }
 ]
