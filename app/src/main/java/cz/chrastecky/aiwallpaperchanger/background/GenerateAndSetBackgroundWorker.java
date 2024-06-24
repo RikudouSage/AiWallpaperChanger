@@ -72,7 +72,7 @@ public class GenerateAndSetBackgroundWorker extends ListenableWorker {
                 String requestJson = preferences.getString(SharedPreferencesHelper.STORED_GENERATION_PARAMETERS, "");
                 logger.debug("WorkerJob", "Request: " + requestJson);
                 GenerateRequest request = GenerateRequestHelper.parse(preferences.getString(SharedPreferencesHelper.STORED_GENERATION_PARAMETERS, ""));
-                PromptReplacer.replacePrompt(getApplicationContext(), request.getPrompt(), false, replaced -> {
+                PromptReplacer.replacePrompt(getApplicationContext(), request.getPrompt(), replaced -> {
                     if (replaced == null) {
                         logger.error("WorkerJob", "Failed replacing parameters");
                         return;

@@ -368,6 +368,7 @@ public class MainActivity extends AppCompatActivity {
                     runOnUiThread(() -> {
                         rootView.setVisibility(View.VISIBLE);
                         loader.setVisibility(View.INVISIBLE);
+                        Toast.makeText(this, R.string.app_error_parameter_replacing_failed, Toast.LENGTH_LONG).show();
                     });
                 };
 
@@ -823,16 +824,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        PromptReplacer.replacePrompt(this, promptText, true, result -> {
-            if (result == null) {
-                if (onFailed != null) {
-                    onFailed.onFailed();
-                }
-                return;
-            }
-
-            onCreated.onCreated(GenerateRequestHelper.withPrompt(request, promptText));
-        });
+        PromptReplacer.replacePrompt(this, promptText);
     }
 
     private void setButtonEnabled(Button button, boolean enabled) {

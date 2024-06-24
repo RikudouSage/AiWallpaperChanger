@@ -18,7 +18,7 @@ public class PromptReplacer {
 
     private static final PromptParameterProviders parameterProviders = new PromptParameterProviders();
 
-    public static void replacePrompt(@NonNull Context context, @NonNull String prompt, boolean showToast, OnPromptReplaced onPromptReplaced) {
+    public static void replacePrompt(@NonNull Context context, @NonNull String prompt, OnPromptReplaced onPromptReplaced) {
         if (!prompt.contains("${")) {
             onPromptReplaced.onReplaced(prompt);
             return;
