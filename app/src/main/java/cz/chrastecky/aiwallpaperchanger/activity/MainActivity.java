@@ -824,7 +824,16 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        PromptReplacer.replacePrompt(this, promptText);
+        PromptReplacer.replacePrompt(this, promptText, result -> {
+            if (result == null) {
+                if (onFailed != null) {
+                    onFailed.onFailed();
+                }
+                return;
+            }
+
+            onCreated.onCreated(GenerateRequestHelper.withPrompt(request, promptText));
+        });
     }
 
     private void setButtonEnabled(Button button, boolean enabled) {
