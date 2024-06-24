@@ -2,6 +2,7 @@ package cz.chrastecky.aiwallpaperchanger.prompt_parameter_provider;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Build;
 
 import androidx.annotation.NonNull;
@@ -16,13 +17,17 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import cz.chrastecky.aiwallpaperchanger.BuildConfig;
 import cz.chrastecky.aiwallpaperchanger.R;
 import cz.chrastecky.aiwallpaperchanger.dto.response.weather.WeatherResponse;
+import cz.chrastecky.aiwallpaperchanger.exception.FailedGettingLocationException;
 import cz.chrastecky.aiwallpaperchanger.exception.InvalidWeatherResponse;
+import cz.chrastecky.aiwallpaperchanger.helper.Logger;
+import cz.chrastecky.aiwallpaperchanger.helper.SharedPreferencesHelper;
 import cz.chrastecky.annotationprocessor.InjectedPromptParameterProvider;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -42,6 +47,7 @@ public class WeatherParameterProvider implements PromptParameterProvider {
     @Nullable
     @Override
     public CompletableFuture<String> getValue(@NonNull Context context) {
+        final Logger logger = new Logger(context);
         final CompletableFuture<String> future = new CompletableFuture<>();
 
         final Date now = new Date();
@@ -52,10 +58,36 @@ public class WeatherParameterProvider implements PromptParameterProvider {
                 FusedLocationProviderClient locationProviderClient = LocationServices.getFusedLocationProviderClient(context.getApplicationContext());
                 try {
                     locationProviderClient.getCurrentLocation(LocationRequest.PRIORITY_HIGH_ACCURACY, null).addOnSuccessListener(location -> {
+                        double latitude;
+                        double longitude;
+
+                        SharedPreferences preferences = new SharedPreferencesHelper().get(context);
+                        if (location == null) {
+                            if (preferences.contains(SharedPreferencesHelper.LAST_KNOWN_LOCATION)) {
+                                logger.debug("WeatherParameter", "Failed getting location, using cached version.");
+                                List<String> oldLocationRaw = new ArrayList<>(preferences.getStringSet(SharedPreferencesHelper.LAST_KNOWN_LOCATION, new HashSet<>(Arrays.asList("0", "0"))));
+                                latitude = Double.parseDouble(oldLocationRaw.get(0));
+                                longitude = Double.parseDouble(oldLocationRaw.get(1));
+                            } else {
+                                future.completeExceptionally(new FailedGettingLocationException());
+                                logger.error("WeatherParameter", "Failed getting location");
+                                return;
+
+                            }
+                        } else {
+                            latitude = location.getLatitude();
+                            longitude = location.getLongitude();
+
+                            SharedPreferences.Editor editor = preferences.edit();
+                            editor.putStringSet(SharedPreferencesHelper.LAST_KNOWN_LOCATION, new HashSet<>(Arrays.asList(String.valueOf(latitude), String.valueOf(longitude))));
+                            editor.apply();
+                        }
+
+
                         new Thread(() -> {
                             OkHttpClient client = new OkHttpClient();
                             Request request = new Request.Builder()
-                                    .url("https://api.openweathermap.org/data/2.5/weather?lat=" + location.getLatitude() + "&lon=" + location.getLongitude() + "&appid=" + BuildConfig.WEATHER_API_KEY)
+                                    .url("https://api.openweathermap.org/data/2.5/weather?lat=" + latitude + "&lon=" + longitude + "&appid=" + BuildConfig.WEATHER_API_KEY)
                                     .build();
 
                             try (Response response = client.newCall(request).execute()) {

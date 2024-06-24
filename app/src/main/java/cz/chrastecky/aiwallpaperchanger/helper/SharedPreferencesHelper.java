@@ -15,6 +15,7 @@ public class SharedPreferencesHelper {
     public static final String GENERATION_HISTORY = "history";
     public static final String DATA_SAVER_DO_NOT_ASK = "data_saver_exception_do_not_ask";
     public static final String DOZE_MODE_DO_NOT_ASK = "doze_mode_exception_do_not_ask";
+    public static final String LAST_KNOWN_LOCATION = "lastKnownLocation";
 
     public SharedPreferences get(Context context) {
         return context.getSharedPreferences("GlobalPreferences", Context.MODE_PRIVATE);
