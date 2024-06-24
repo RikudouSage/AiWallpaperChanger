@@ -5,6 +5,9 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PermissionInfo;
 import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
@@ -24,10 +27,13 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
 
 import com.android.volley.AuthFailureError;
 import com.google.android.material.slider.Slider;
@@ -49,6 +55,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import cz.chrastecky.aiwallpaperchanger.BuildConfig;
+import cz.chrastecky.aiwallpaperchanger.PromptParameterProviders;
 import cz.chrastecky.aiwallpaperchanger.R;
 import cz.chrastecky.aiwallpaperchanger.databinding.ActivityMainBinding;
 import cz.chrastecky.aiwallpaperchanger.dto.GenerateRequest;
@@ -69,10 +76,18 @@ import cz.chrastecky.aiwallpaperchanger.helper.PromptReplacer;
 import cz.chrastecky.aiwallpaperchanger.helper.SharedPreferencesHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.ShortcutManagerHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.ValueWrapper;
+import cz.chrastecky.aiwallpaperchanger.prompt_parameter_provider.PromptParameterProvider;
 import cz.chrastecky.aiwallpaperchanger.provider.AiHorde;
 import cz.chrastecky.aiwallpaperchanger.provider.AiProvider;
 
 public class MainActivity extends AppCompatActivity {
+    private interface OnGenerateRequestCreated {
+        void onCreated(@NonNull GenerateRequest request);
+    }
+    private interface OnGenerateRequestFailed {
+        void onFailed();
+    }
+
     private static final String DEFAULT_MODEL = "ICBINP - I Can't Believe It's Not Photography";
     private static final String DEFAULT_SAMPLER = Sampler.k_dpmpp_sde.name();
     private AiProvider aiProvider;
@@ -83,6 +98,8 @@ public class MainActivity extends AppCompatActivity {
 
     private List<String> selectedModels = new ArrayList<>();
     private List<String> allModels = new ArrayList<>();
+
+    private final PromptParameterProviders parameterProviders = new PromptParameterProviders();
 
     private final ActivityResultLauncher<Intent> selectModelsLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -116,13 +133,27 @@ public class MainActivity extends AppCompatActivity {
                         return;
                     }
 
-                    GenerateRequest request = GenerateRequestHelper.withStyle(createGenerateRequest(), prompt);
-                    initializeForm(request);
-                    Toast.makeText(this, R.string.app_generate_style_successfully_set, Toast.LENGTH_LONG).show();
+                    createGenerateRequest(request -> {
+                        request = GenerateRequestHelper.withStyle(request, prompt);
+                        initializeForm(request);
+                        Toast.makeText(this, R.string.app_generate_style_successfully_set, Toast.LENGTH_LONG).show();
+                    });
                 } catch (IOException e) {
                     logger.error("AiWallpaperChanger", "Failed getting prompts", e);
                     Toast.makeText(this, R.string.app_premade_prompts_failed_getting, Toast.LENGTH_LONG).show();
                 }
+            }
+    );
+    private final ActivityResultLauncher<String[]> requestPermissionLauncher = registerForActivityResult(
+            new ActivityResultContracts.RequestMultiplePermissions(),
+            isGranted -> {
+                if (isGranted.containsValue(false)) {
+                    Toast.makeText(this, R.string.app_error_missing_permissions, Toast.LENGTH_LONG).show();
+                    return;
+                }
+
+                Button preview = findViewById(R.id.preview_button);
+                preview.callOnClick();
             }
     );
 
@@ -202,6 +233,68 @@ public class MainActivity extends AppCompatActivity {
                 inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
             }
 
+            final String prompt = binding.promptField.getText() != null ? binding.promptField.getText().toString() : "";
+            final String negativePrompt = binding.negativePromptField.getText() != null ? binding.negativePromptField.getText().toString() : "";
+
+            Map<String, List<String>> neededPermissions = new HashMap<>();
+            for (PromptParameterProvider provider : parameterProviders.getProviders()) {
+                final String parameter = "${" + provider.getParameterName() + "}";
+                if (!prompt.contains(parameter) && !negativePrompt.contains(parameter)) {
+                    continue;
+                }
+
+                final List<String> requiredPermissions = provider.getRequiredPermissions(getGrantedPermissions());
+                if (requiredPermissions == null || requiredPermissions.isEmpty()) {
+                    continue;
+                }
+
+                final List<String> granted = new ArrayList<>();
+                final List<String> ungranted = new ArrayList<>();
+                for (String permission : requiredPermissions) {
+                    if (ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED) {
+                        granted.add(permission);
+                    } else {
+                        ungranted.add(permission);
+                    }
+                }
+
+                if (provider.permissionsSatisfied(granted)) {
+                    continue;
+                }
+
+                neededPermissions.put(provider.getParameterName(), ungranted);
+            }
+
+            if (!neededPermissions.isEmpty()) {
+                AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+                dialogBuilder.setTitle(R.string.app_generate_prompt_permissions_title);
+
+                StringBuilder permissions = new StringBuilder();
+                PackageManager packageManager = getPackageManager();
+                for (String parameter : neededPermissions.keySet()) {
+                    permissions.append("- ${").append(parameter).append("}: ");
+                    for (String permissionName : neededPermissions.get(parameter)) {
+                        try {
+                            PermissionInfo info = packageManager.getPermissionInfo(permissionName, PackageManager.GET_META_DATA);
+                            permissions.append(info.loadLabel(packageManager)).append(", ");
+                        } catch (PackageManager.NameNotFoundException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                    permissions = new StringBuilder(permissions.substring(0, permissions.length() - 2) + "\n\n");
+                }
+
+                dialogBuilder.setMessage(getString(R.string.app_generate_prompt_permissions, permissions.toString()));
+                dialogBuilder.setPositiveButton(android.R.string.ok, (dialog, which) -> {
+                    requestPermissionLauncher.launch(neededPermissions.values().stream().flatMap(List::stream).toArray(String[]::new));
+                });
+                dialogBuilder.setNegativeButton(android.R.string.cancel, (dialog, which) -> {
+                    // do nothing
+                });
+                dialogBuilder.create().show();
+                return;
+            }
+
 //            File imageFile = new File(getFilesDir(), "currentImage.webp");
 //            Intent intent = new Intent(this, PreviewActivity.class);
 //            intent.putExtra("imagePath", imageFile.getAbsolutePath());
@@ -230,52 +323,66 @@ public class MainActivity extends AppCompatActivity {
             };
 
             AiHorde.OnResponse<GenerationDetailWithBitmap> onResponse = response -> {
-                try {
-                    File imageFile = new File(getFilesDir(), "currentImage.webp");
-                    if (imageFile.exists()) {
-                        imageFile.delete();
-                    }
-                    imageFile.createNewFile();
-                    FileOutputStream imageOutputStream = new FileOutputStream(imageFile, false);
-                    response.getImage().compress(Bitmap.CompressFormat.WEBP, 100, imageOutputStream);
-                    imageOutputStream.close();
+                createGenerateRequest(unreplacedRequest -> {
+                    createGenerateRequest(replacedRequest -> {
+                        try {
+                            File imageFile = new File(getFilesDir(), "currentImage.webp");
+                            if (imageFile.exists()) {
+                                imageFile.delete();
+                            }
+                            imageFile.createNewFile();
+                            FileOutputStream imageOutputStream = new FileOutputStream(imageFile, false);
+                            response.getImage().compress(Bitmap.CompressFormat.WEBP, 100, imageOutputStream);
+                            imageOutputStream.close();
 
-                    Intent intent = new Intent(this, PreviewActivity.class);
-                    intent.putExtra("imagePath", imageFile.getAbsolutePath());
-                    intent.putExtra("generationParameters", new Gson().toJson(createGenerateRequest()));
-                    intent.putExtra("generationParametersReplaced", new Gson().toJson(createGenerateRequest(true)));
-                    intent.putExtra("seed", response.getDetail().getSeed());
-                    intent.putExtra("workerId", response.getDetail().getWorkerId());
-                    intent.putExtra("workerName", response.getDetail().getWorkerName());
-                    startActivity(intent);
-                } catch (IOException e) {
-                    Toast.makeText(this, R.string.app_error_create_tmp_file, Toast.LENGTH_LONG).show();
-                }
+                            Intent intent = new Intent(this, PreviewActivity.class);
+                            intent.putExtra("imagePath", imageFile.getAbsolutePath());
+                            intent.putExtra("generationParameters", new Gson().toJson(unreplacedRequest));
+                            intent.putExtra("generationParametersReplaced", new Gson().toJson(replacedRequest));
+                            intent.putExtra("seed", response.getDetail().getSeed());
+                            intent.putExtra("workerId", response.getDetail().getWorkerId());
+                            intent.putExtra("workerName", response.getDetail().getWorkerName());
+                            startActivity(intent);
+                        } catch (IOException e) {
+                            Toast.makeText(this, R.string.app_error_create_tmp_file, Toast.LENGTH_LONG).show();
+                        }
 
-                rootView.setVisibility(View.VISIBLE);
-                loader.setVisibility(View.INVISIBLE);
+                        runOnUiThread(() -> {
+                            rootView.setVisibility(View.VISIBLE);
+                            loader.setVisibility(View.INVISIBLE);
+                        });
+                    }, () -> {
+                        Toast.makeText(this, R.string.app_error_parameter_replacing_failed, Toast.LENGTH_LONG).show();
+                        runOnUiThread(() -> {
+                            rootView.setVisibility(View.VISIBLE);
+                            loader.setVisibility(View.INVISIBLE);
+                        });
+                    });
+                });
             };
 
             ValueWrapper<AiHorde.OnError> onError = new ValueWrapper<>();
             AtomicInteger censoredRetries = new AtomicInteger(3);
             onError.value = error -> {
+                Runnable errorHandler = () -> {
+                    runOnUiThread(() -> {
+                        rootView.setVisibility(View.VISIBLE);
+                        loader.setVisibility(View.INVISIBLE);
+                    });
+                };
+
                 if (error.getCause() instanceof RetryGenerationException) {
-                    GenerateRequest newRequest = createGenerateRequest(true);
-                    if (newRequest == null) {
-                        return;
-                    }
-                    aiProvider.generateImage(newRequest, onProgress, onResponse, onError.value);
+                    createGenerateRequest(newRequest -> {
+                        aiProvider.generateImage(newRequest, onProgress, onResponse, onError.value);
+                    }, errorHandler::run);
                     return;
                 }
                 if (error.getCause() instanceof ContentCensoredException && censoredRetries.get() > 0) {
-                    logger.debug("HordeError", "Request got censored, retrying");
-                    censoredRetries.addAndGet(-1);
-
-                    GenerateRequest newRequest = createGenerateRequest(true);
-                    if (newRequest == null) {
-                        return;
-                    }
-                    aiProvider.generateImage(newRequest, onProgress, onResponse, onError.value);
+                    createGenerateRequest(newRequest -> {
+                        logger.debug("HordeError", "Request got censored, retrying");
+                        censoredRetries.addAndGet(-1);
+                        aiProvider.generateImage(newRequest, onProgress, onResponse, onError.value);
+                    }, errorHandler::run);
                     return;
                 }
                 if (error instanceof AuthFailureError) {
@@ -289,23 +396,50 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     Toast.makeText(this, R.string.app_error_generating_failed, Toast.LENGTH_LONG).show();
                 }
-                rootView.setVisibility(View.VISIBLE);
-                loader.setVisibility(View.INVISIBLE);
+
+                errorHandler.run();
             };
-
-            logger.debug("HordeRequest", new Gson().toJson(createGenerateRequest()));
-            logger.debug("HordeRequestReplaced", new Gson().toJson(createGenerateRequest(true)));
-
-            GenerateRequest newRequest = createGenerateRequest(true);
-            if (newRequest == null) {
-                return;
-            }
-            aiProvider.generateImage(newRequest, onProgress, onResponse, onError.value);
 
             rootView.setVisibility(View.INVISIBLE);
             loader.setVisibility(View.VISIBLE);
             progressText.setText(R.string.app_generate_estimated_time_pre_start);
+
+            createGenerateRequest(rawRequest -> {
+                logger.debug("HordeRequest", new Gson().toJson(rawRequest));
+                createGenerateRequest(newRequest -> {
+                    logger.debug("HordeRequestReplaced", new Gson().toJson(newRequest));
+                    aiProvider.generateImage(newRequest, onProgress, onResponse, onError.value);
+                }, () -> {
+                    Toast.makeText(this, R.string.app_error_parameter_replacing_failed, Toast.LENGTH_LONG).show();
+                    runOnUiThread(() -> {
+                        rootView.setVisibility(View.VISIBLE);
+                        loader.setVisibility(View.INVISIBLE);
+                    });
+                });
+            });
         });
+    }
+
+    @NonNull
+    private List<String> getGrantedPermissions() {
+        try {
+            final List<String> grantedPermissions = new ArrayList<>();
+            final PackageInfo packageInfo = getPackageManager().getPackageInfo(BuildConfig.APPLICATION_ID, PackageManager.GET_PERMISSIONS);
+            final String[] requestedPermissions = packageInfo.requestedPermissions;
+            final int[] grantResults = packageInfo.requestedPermissionsFlags;
+
+            if (requestedPermissions != null) {
+                for (int i = 0; i < requestedPermissions.length; i++) {
+                    if ((grantResults[i] & PackageInfo.REQUESTED_PERMISSION_GRANTED) != 0) {
+                        grantedPermissions.add(requestedPermissions[i]);
+                    }
+                }
+            }
+
+            return grantedPermissions;
+        } catch (PackageManager.NameNotFoundException e) {
+            return new ArrayList<>();
+        }
     }
 
     @Override
@@ -636,12 +770,15 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private GenerateRequest createGenerateRequest() {
-        return createGenerateRequest(false);
+    private void createGenerateRequest(OnGenerateRequestCreated onCreated) {
+        createGenerateRequest(onCreated, null, false);
     }
 
-    @Nullable
-    private GenerateRequest  createGenerateRequest(boolean replacePrompt) {
+    private void createGenerateRequest(OnGenerateRequestCreated onCreated, OnGenerateRequestFailed onFailed) {
+        createGenerateRequest(onCreated, onFailed, true);
+    }
+
+    private void createGenerateRequest(OnGenerateRequestCreated onCreated, @Nullable OnGenerateRequestFailed onFailed, boolean replace) {
         TextInputEditText prompt = findViewById(R.id.prompt_field);
         TextInputEditText negativePrompt = findViewById(R.id.negative_prompt_field);
         Spinner sampler = findViewById(R.id.sampler_field);
@@ -664,14 +801,7 @@ public class MainActivity extends AppCompatActivity {
 
         String promptText = Objects.requireNonNull(prompt.getText()).toString();
 
-        if (replacePrompt) {
-            promptText = PromptReplacer.replacePrompt(this, promptText, true);
-            if (promptText == null) {
-                return null;
-            }
-        }
-
-        return new GenerateRequest(
+        GenerateRequest request = new GenerateRequest(
                 promptText,
                 negativePrompt.getText().length() > 0 ? negativePrompt.getText().toString() : null,
                 selectedModels,
@@ -687,6 +817,22 @@ public class MainActivity extends AppCompatActivity {
                 true,
                 advanced && hiresFix.isChecked()
         );
+
+        if (!replace) {
+            onCreated.onCreated(request);
+            return;
+        }
+
+        PromptReplacer.replacePrompt(this, promptText, true, result -> {
+            if (result == null) {
+                if (onFailed != null) {
+                    onFailed.onFailed();
+                }
+                return;
+            }
+
+            onCreated.onCreated(GenerateRequestHelper.withPrompt(request, promptText));
+        });
     }
 
     private void setButtonEnabled(Button button, boolean enabled) {

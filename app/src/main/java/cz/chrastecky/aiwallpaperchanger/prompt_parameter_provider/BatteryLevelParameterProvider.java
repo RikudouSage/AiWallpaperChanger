@@ -8,8 +8,8 @@ import android.os.BatteryManager;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Future;
 
 import cz.chrastecky.aiwallpaperchanger.R;
 import cz.chrastecky.aiwallpaperchanger.helper.Logger;
@@ -25,7 +25,7 @@ public class BatteryLevelParameterProvider implements PromptParameterProvider {
 
     @Nullable
     @Override
-    public Future<String> getValue(@NonNull Context context) {
+    public CompletableFuture<String> getValue(@NonNull Context context) {
         final Logger logger = new Logger(context);
 
         final IntentFilter filter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
@@ -62,5 +62,11 @@ public class BatteryLevelParameterProvider implements PromptParameterProvider {
     @Override
     public String getDescription(@NonNull Context context) {
         return context.getString(R.string.app_parameter_battery_description);
+    }
+
+    @Nullable
+    @Override
+    public List<String> getRequiredPermissions(@NonNull List<String> grantedPermissions) {
+        return null;
     }
 }

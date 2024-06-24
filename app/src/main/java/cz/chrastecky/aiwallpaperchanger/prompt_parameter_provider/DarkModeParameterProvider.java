@@ -6,8 +6,8 @@ import android.content.res.Configuration;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Future;
 
 import cz.chrastecky.aiwallpaperchanger.R;
 import cz.chrastecky.annotationprocessor.InjectedPromptParameterProvider;
@@ -22,7 +22,7 @@ public class DarkModeParameterProvider implements PromptParameterProvider {
 
     @Nullable
     @Override
-    public Future<String> getValue(@NonNull Context context) {
+    public CompletableFuture<String> getValue(@NonNull Context context) {
         final String result;
         if ((context.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES) {
             result = "dark";
@@ -37,5 +37,11 @@ public class DarkModeParameterProvider implements PromptParameterProvider {
     @Override
     public String getDescription(@NonNull Context context) {
         return context.getString(R.string.app_parameter_dark_mode_description);
+    }
+
+    @Nullable
+    @Override
+    public List<String> getRequiredPermissions(@NonNull List<String> grantedPermissions) {
+        return null;
     }
 }
