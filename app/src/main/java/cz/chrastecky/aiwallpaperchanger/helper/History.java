@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 import cz.chrastecky.aiwallpaperchanger.dto.StoredRequest;
 
 public class History {
+    private final int MAX_ITEMS = 96;
     private final Context context;
 
     public History(Context context) {
@@ -52,6 +53,16 @@ public class History {
 
                 return a.getCreated().after(b.getCreated()) ? -1 : 1;
             });
+
+
+            if (result.size() > MAX_ITEMS + 14) { // add some random buffer
+                Set<String> capped = result.subList(0, MAX_ITEMS).stream().map(
+                        storedRequest -> new Gson().toJson(storedRequest)
+                ).collect(Collectors.toSet());
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putStringSet(SharedPreferencesHelper.GENERATION_HISTORY, capped);
+                editor.apply();
+            }
         }
 
         return result;
