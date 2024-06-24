@@ -832,7 +832,7 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
 
-            onCreated.onCreated(GenerateRequestHelper.withPrompt(request, promptText));
+            onCreated.onCreated(GenerateRequestHelper.withPrompt(request, result));
         });
     }
 
