@@ -221,5 +221,17 @@
     "prompt": "Space horror wallpaper, mysterious, {cthulhu|nyarlathotep|azathoth|yog-sothoth|shub-niggurath}, black and {violet|crimson|blue|dark green|gray} colors, {landscape|cityscape|towers|deep space}, masterpiece",
     "models": ["AlbedoBase XL (SDXL)"],
     "author": "Kayl3igh"
+  },
+  {
+    "name": "Current weather",
+    "prompt": "photograph of an empty field, ${weather} ${tod} sky, realistic, masterpiece",
+    "negativePrompt": "painting, 3d, 2d",
+    "models": ["AlbedoBase XL (SDXL)", "ICBINP XL"],
+    "author": "Rikudou",
+    "description": "Uses your phone's location to determine the current weather and use it as part of the prompt",
+    "params": {
+      "tod": ["morning", "afternoon", "noon", "evening", "night", "midnight"],
+      "weather": ["stormy", "rainy", "snowy", "foggy", "cloudy", "clear"]
+    }
   }
 ]
