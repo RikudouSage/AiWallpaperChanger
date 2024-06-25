@@ -120,4 +120,5 @@
     <string name="app.error.parameter_replacing_failed">Failed replacing parameters, try again later.</string>
     <string name="app.parameter.weather.description">Resolves to the current weather condition, like \'cloudy\', \'clear\', \'foggy\' etc. Requires access to location.</string>
     <string name="app.parameter.country.description">Returns the name of the country you\'re in based on your current location.</string>
+    <string name="app.settings.custom_parameters">Custom parameters</string>
 </resources>

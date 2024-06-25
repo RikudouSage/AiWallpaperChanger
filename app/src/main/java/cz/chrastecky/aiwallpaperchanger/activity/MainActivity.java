@@ -497,7 +497,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = new MenuInflater(this);
-        inflater.inflate(R.menu.menu, menu);
+        inflater.inflate(R.menu.main_menu, menu);
 
         if (BuildConfig.BILLING_ENABLED) {
             menu.findItem(R.id.premium_menu_item).setVisible(true);

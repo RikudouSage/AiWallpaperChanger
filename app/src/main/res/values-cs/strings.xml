@@ -120,4 +120,5 @@
     <string name="app.error.parameter_replacing_failed">Nahrazení parametrů se nezdařilo, zkuste to později.</string>
     <string name="app.parameter.weather.description">Bude nahrazeno současným počasím v angličtině, například \'cloudy\', \'clear\' nebo \'foggy\'. Vyžaduje přístup k poloze.</string>
     <string name="app.parameter.country.description">Vrací název země, ve které se nacházíte, na základě vaší polohy.</string>
+    <string name="app.settings.custom_parameters">Vlastní parametry</string>
 </resources>
