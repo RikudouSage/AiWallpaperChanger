@@ -258,5 +258,15 @@
       "tod": ["morning", "afternoon", "noon", "evening", "night", "midnight"],
       "weather": ["stormy", "rainy", "snowy", "foggy", "cloudy", "clear"]
     }
+  },
+  {
+    "name": "Typical country scenery",
+    "prompt": "a typical scenery from ${country}",
+    "negativePrompt": "painting, 3d, 2d",
+    "models": ["ICBINP XL"],
+    "author": "Rikudou",
+    "params": {
+      "country": ["Czechia", "United States", "Great Britain", "Netherlands", "France", "Egypt", "Spain", "Italy", "Germany", "Mexico", "Japan"]
+    }
   }
 ]

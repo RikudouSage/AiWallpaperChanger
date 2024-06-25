@@ -135,6 +135,7 @@ foreach ($configs as $config) {
                     $negativePrompt = str_replace(sprintf('${%s}', $key), $config->params[$key][array_rand($values)], $negativePrompt);
                 }
             }
+            echo " - ", $prompt, PHP_EOL;
             $response = $httpClient->post('https://aihorde.net/api/v2/generate/async', [
                 'json' => [
                     'prompt' => $negativePrompt ? ("{$prompt} ### {$negativePrompt}") : $prompt,
