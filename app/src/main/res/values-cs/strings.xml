@@ -114,4 +114,9 @@
     <string name="app.premade_prompt.description"><![CDATA[<b>Popis</b>: %s]]></string>
     <string name="app.settings.allow_large_values">Povolit velké hodnoty</string>
     <string name="app.settings.allow_large_values.description">Pokud je zapnuto, můžete nastavit větší hodonty pro kroky, měřítko cfg apod. Pokud nevíte, jestli to potřebujete, můžete klidně nechat vypnuto.</string>
+    <string name="app.generate.prompt_permissions">Váš prompt nebo negativní prompt využívá funkčností, které vyžadují následující oprávnění:\n\n%s</string>
+    <string name="app.generate.prompt_permissions.title">Jsou vyžadována oprávnění</string>
+    <string name="app.error.missing_permissions">Vyžadovaná oprávnění nebyla udělena.</string>
+    <string name="app.error.parameter_replacing_failed">Nahrazení parametrů se nezdařilo, zkuste to později.</string>
+    <string name="app.parameter.weather.description">Bude nahrazeno současným počasím v angličtině, například \'cloudy\', \'clear\' nebo \'foggy\'. Vyžaduje přístup k poloze.</string>
 </resources>

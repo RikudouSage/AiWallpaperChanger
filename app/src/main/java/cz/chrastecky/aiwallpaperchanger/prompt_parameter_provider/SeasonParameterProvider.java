@@ -7,8 +7,8 @@ import androidx.annotation.Nullable;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Future;
 
 import cz.chrastecky.aiwallpaperchanger.R;
 import cz.chrastecky.annotationprocessor.InjectedPromptParameterProvider;
@@ -23,7 +23,7 @@ public class SeasonParameterProvider implements PromptParameterProvider {
 
     @Nullable
     @Override
-    public Future<String> getValue(@NonNull final Context context) {
+    public CompletableFuture<String> getValue(@NonNull final Context context) {
         Calendar calendar = Calendar.getInstance();
         GregorianCalendar gregorianCalendar = new GregorianCalendar();
 
@@ -55,6 +55,12 @@ public class SeasonParameterProvider implements PromptParameterProvider {
     @Override
     public String getDescription(@NonNull final Context context) {
         return context.getString(R.string.app_parameter_season_description);
+    }
+
+    @Nullable
+    @Override
+    public List<String> getRequiredPermissions(@NonNull List<String> grantedPermissions) {
+        return null;
     }
 
     private int monthDays(int monthNumber) {

@@ -40,6 +40,7 @@ jobs:
           echo "dev_api_key=0000000000" >> local.properties
           echo "support_email=${{ secrets.SUPPORT_EMAIL }}" >> local.properties
           echo "examples_url=${{ secrets.EXAMPLES_URL }}" >> local.properties
+          echo "weather_api_key=${{ secrets.WEATHER_API_KEY }}" >> local.properties
       - name: Setup build tool version variable
         shell: bash
         run: |

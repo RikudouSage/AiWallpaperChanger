@@ -17,7 +17,6 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -73,69 +72,75 @@ public class GenerateAndSetBackgroundWorker extends ListenableWorker {
                 String requestJson = preferences.getString(SharedPreferencesHelper.STORED_GENERATION_PARAMETERS, "");
                 logger.debug("WorkerJob", "Request: " + requestJson);
                 GenerateRequest request = GenerateRequestHelper.parse(preferences.getString(SharedPreferencesHelper.STORED_GENERATION_PARAMETERS, ""));
-                request = GenerateRequestHelper.withPrompt(request, Objects.requireNonNull(PromptReplacer.replacePrompt(getApplicationContext(), request.getPrompt(), false)));
+                PromptReplacer.replacePrompt(getApplicationContext(), request.getPrompt(), replaced -> {
+                    if (replaced == null) {
+                        logger.error("WorkerJob", "Failed replacing parameters");
+                        return;
+                    }
+                    GenerateRequest newRequest = GenerateRequestHelper.withPrompt(request, replaced);
 
-                if (!BuildConfig.NSFW_ENABLED && request.getNsfw()) {
-                    request = GenerateRequestHelper.disableNsfw(request);
-                }
-                final GenerateRequest finalRequest = request;
+                    if (!BuildConfig.NSFW_ENABLED && newRequest.getNsfw()) {
+                        newRequest = GenerateRequestHelper.disableNsfw(newRequest);
+                    }
+                    final GenerateRequest finalRequest = newRequest;
 
-                AiProvider.OnProgress onProgress = status -> logger.debug("WorkerJob", "OnProgress: " + status.getWaitTime());
-                AiProvider.OnResponse<GenerationDetailWithBitmap> onResponse = response -> {
-                    logger.debug("WorkerJob", "Finished");
-                    logger.debug("WorkerJob", "Model: " + response.getDetail().getModel());
-                    WallpaperManager wallpaperManager = WallpaperManager.getInstance(getApplicationContext());
-                    try {
-                        if (preferences.contains(SharedPreferencesHelper.STORE_WALLPAPERS_URI)) {
-                            ContentResolverHelper.storeBitmap(getApplicationContext(), Uri.parse(preferences.getString(SharedPreferencesHelper.STORE_WALLPAPERS_URI, "")), UUID.randomUUID() + ".png", response.getImage());
+                    AiProvider.OnProgress onProgress = status -> logger.debug("WorkerJob", "OnProgress: " + status.getWaitTime());
+                    AiProvider.OnResponse<GenerationDetailWithBitmap> onResponse = response -> {
+                        logger.debug("WorkerJob", "Finished");
+                        logger.debug("WorkerJob", "Model: " + response.getDetail().getModel());
+                        WallpaperManager wallpaperManager = WallpaperManager.getInstance(getApplicationContext());
+                        try {
+                            if (preferences.contains(SharedPreferencesHelper.STORE_WALLPAPERS_URI)) {
+                                ContentResolverHelper.storeBitmap(getApplicationContext(), Uri.parse(preferences.getString(SharedPreferencesHelper.STORE_WALLPAPERS_URI, "")), UUID.randomUUID() + ".png", response.getImage());
+                            }
+
+                            wallpaperManager.setBitmap(response.getImage());
+                            SharedPreferences.Editor editor = preferences.edit();
+                            editor.putString(SharedPreferencesHelper.WALLPAPER_LAST_CHANGED, DateFormat.getInstance().format(Calendar.getInstance().getTime()));
+                            editor.commit();
+
+                            History history = new History(getApplicationContext());
+                            history.addItem(new StoredRequest(
+                                    UUID.randomUUID(),
+                                    finalRequest,
+                                    response.getDetail().getSeed(),
+                                    response.getDetail().getWorkerId(),
+                                    response.getDetail().getWorkerName(),
+                                    new Date()
+                            ));
+
+                            completer.set(Result.success());
+                        } catch (IOException e) {
+                            logger.error("AIWallpaperError", "Failed setting new wallpaper", e);
+                            completer.setException(e);
+                        }
+                    };
+                    AtomicInteger censoredRetries = new AtomicInteger(3);
+                    ValueWrapper<AiHorde.OnError> onError = new ValueWrapper<>();
+                    onError.value = error -> {
+                        if (error.getCause() instanceof RetryGenerationException) {
+                            logger.debug("WorkerJob", "A recoverable error was caught, trying again", error.getCause());
+                            aiHorde.generateImage(finalRequest, onProgress, onResponse, onError.value);
+                            return;
+                        }
+                        if (error.getCause() instanceof ContentCensoredException && censoredRetries.get() > 0) {
+                            logger.debug("HordeError", "Request got censored, retrying, remaining tries: " + censoredRetries.get());
+                            censoredRetries.addAndGet(-1);
+                            aiHorde.generateImage(finalRequest, onProgress, onResponse, onError.value);
+                            return;
                         }
 
-                        wallpaperManager.setBitmap(response.getImage());
-                        SharedPreferences.Editor editor = preferences.edit();
-                        editor.putString(SharedPreferencesHelper.WALLPAPER_LAST_CHANGED, DateFormat.getInstance().format(Calendar.getInstance().getTime()));
-                        editor.commit();
+                        logger.error("AIWallpaperError", "Failed generating AI image (" + error.getClass() + ")", error);
+                        if (error.networkResponse != null) {
+                            logger.debug("AIWallpaperError", new String(error.networkResponse.data));
+                        } else {
+                            logger.debug("AIWallpaperError", error.getMessage(), error.getCause());
+                        }
+                        completer.setException(error);
+                    };
 
-                        History history = new History(getApplicationContext());
-                        history.addItem(new StoredRequest(
-                                UUID.randomUUID(),
-                                finalRequest,
-                                response.getDetail().getSeed(),
-                                response.getDetail().getWorkerId(),
-                                response.getDetail().getWorkerName(),
-                                new Date()
-                        ));
-
-                        completer.set(Result.success());
-                    } catch (IOException e) {
-                        logger.error("AIWallpaperError", "Failed setting new wallpaper", e);
-                        completer.setException(e);
-                    }
-                };
-                AtomicInteger censoredRetries = new AtomicInteger(3);
-                ValueWrapper<AiHorde.OnError> onError = new ValueWrapper<>();
-                onError.value = error -> {
-                    if (error.getCause() instanceof RetryGenerationException) {
-                        logger.debug("WorkerJob", "A recoverable error was caught, trying again", error.getCause());
-                        aiHorde.generateImage(finalRequest, onProgress, onResponse, onError.value);
-                        return;
-                    }
-                    if (error.getCause() instanceof ContentCensoredException && censoredRetries.get() > 0) {
-                        logger.debug("HordeError", "Request got censored, retrying, remaining tries: " + censoredRetries.get());
-                        censoredRetries.addAndGet(-1);
-                        aiHorde.generateImage(finalRequest, onProgress, onResponse, onError.value);
-                        return;
-                    }
-
-                    logger.error("AIWallpaperError", "Failed generating AI image (" + error.getClass() + ")", error);
-                    if (error.networkResponse != null) {
-                        logger.debug("AIWallpaperError", new String(error.networkResponse.data));
-                    } else {
-                        logger.debug("AIWallpaperError", error.getMessage(), error.getCause());
-                    }
-                    completer.setException(error);
-                };
-
-                aiHorde.generateImage(finalRequest, onProgress, onResponse, onError.value);
+                    aiHorde.generateImage(finalRequest, onProgress, onResponse, onError.value);
+                });
             });
 
             return "BillingManagerEnqueued";

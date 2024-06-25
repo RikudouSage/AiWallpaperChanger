@@ -3,10 +3,11 @@ package cz.chrastecky.aiwallpaperchanger.prompt_parameter_provider;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import java.util.Calendar;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Future;
 
 import cz.chrastecky.aiwallpaperchanger.R;
 import cz.chrastecky.annotationprocessor.InjectedPromptParameterProvider;
@@ -21,7 +22,7 @@ public class TimeOfDayParameterProvider implements PromptParameterProvider {
 
     @NonNull
     @Override
-    public Future<String> getValue(@NonNull final Context context) {
+    public CompletableFuture<String> getValue(@NonNull final Context context) {
         final Calendar calendar = Calendar.getInstance();
         final int hour = calendar.get(Calendar.HOUR_OF_DAY);
         final String result;
@@ -46,5 +47,11 @@ public class TimeOfDayParameterProvider implements PromptParameterProvider {
     @Override
     public String getDescription(@NonNull final Context context) {
         return context.getString(R.string.app_parameter_time_of_day_description);
+    }
+
+    @Nullable
+    @Override
+    public List<String> getRequiredPermissions(@NonNull List<String> grantedPermissions) {
+        return null;
     }
 }

@@ -114,4 +114,9 @@
     <string name="app.premade_prompt.description"><![CDATA[<b>Description</b>: %s]]></string>
     <string name="app.settings.allow_large_values">Allow large values</string>
     <string name="app.settings.allow_large_values.description">When toggled on, you can set larger values for steps, cfg scale etc. Unless you know you need it, you can safely turn this off.</string>
+    <string name="app.generate.prompt_permissions">Your prompt or negative prompt uses features that require access to the following permissions:\n\n%s</string>
+    <string name="app.generate.prompt_permissions.title">Permissions needed</string>
+    <string name="app.error.missing_permissions">Required permissions weren\'t granted.</string>
+    <string name="app.error.parameter_replacing_failed">Failed replacing parameters, try again later.</string>
+    <string name="app.parameter.weather.description">Resolves to the current weather condition, like \'cloudy\', \'clear\', \'foggy\' etc. Requires access to location.</string>
 </resources>
