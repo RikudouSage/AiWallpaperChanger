@@ -233,5 +233,30 @@
       "tod": ["morning", "afternoon", "noon", "evening", "night", "midnight"],
       "weather": ["stormy", "rainy", "snowy", "foggy", "cloudy", "clear"]
     }
+  },
+  {
+    "name": "Double exposure - face in a forest",
+    "prompt": "double exposure, face in profile, forest in ${season}",
+    "models": ["AlbedoBase XL (SDXL)", "ICBINP XL"],
+    "author": "Paladin01101100, Rikudou",
+    "params": {
+      "season": ["spring", "summer", "autumn", "winter"]
+    }
+  },
+  {
+    "name": "Woodburning pattern",
+    "prompt": "Intricate woodburning pattern of a {cat|dog|mouse|dragon|pig|hedgehog|crow|eagle|horse|boy|girl}",
+    "models": ["AlbedoBase XL (SDXL)", "ICBINP XL"],
+    "author": "Efreak"
+  },
+  {
+    "name": "Woman silhouette",
+    "prompt": "lonesome road and woman silhouette in the sky, ${tod}, ${weather} sky, fantasy, nostalgic",
+    "models": ["AlbedoBase XL (SDXL)", "ICBINP XL"],
+    "author": "Bozar, Rikudou",
+    "params": {
+      "tod": ["morning", "afternoon", "noon", "evening", "night", "midnight"],
+      "weather": ["stormy", "rainy", "snowy", "foggy", "cloudy", "clear"]
+    }
   }
 ]
