@@ -126,4 +126,14 @@
     <string name="app.custom_parameters.create_title">Vytvořit parametr</string>
     <string name="app.custom_parameters.edit_title">Upravit parametr</string>
     <string name="app.custom_parameters.parameter_not_found">Parametr neexistuje, restartujte prosím aplikaci.</string>
+    <string name="app.custom_parameters.add.name">Název parametru</string>
+    <string name="app.custom_parameters.add.description">Popisek (nepovinné)</string>
+    <string name="app.custom_parameters.explanation">Díky vlastním parametrům můžete využívat vlastní parametry, které jsou založené na jiných parametrech. Je možno využít jakýkoliv zabudovaný nebo vlastní parametr. Jako výraz můžete použít například \"${bg}\" (bez uvozovek), což může nabývat hodnot \"dark\" nebo \"light\". Pomocí podmínek můžete váš parametr nastavit na \"black\", pokud se výraz rovná \"dark\" a na \"white\", pokud se rovná \"light\".</string>
+    <string name="app.custom_parameters.edit.expression">Výraz</string>
+    <string name="app.custom_parameters.conditions">Podmínky</string>
+    <string name="app.custom_parameters.conditions.add">Přidat podmínku</string>
+    <string name="app.custom_parameters.conditions.delete">Odstranit podmínku</string>
+    <string name="app.custom_parameters.condition.if_equals">pokud se výraz rovná této hodnotě</string>
+    <string name="app.custom_parameters.condition.then">nastavit parametr na tuto hodnotu</string>
+    <string name="app.custom_parameters.condition.else">pokud žádná podmínka nesedí, použít tuto hodnotu</string>
 </resources>

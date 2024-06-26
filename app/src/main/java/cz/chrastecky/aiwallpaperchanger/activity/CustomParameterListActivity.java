@@ -49,12 +49,14 @@ public class CustomParameterListActivity extends AppCompatActivity {
             AtomicBoolean isEmpty = new AtomicBoolean(true);
             for (CustomParameterWithValues parameter : parameters) {
                 isEmpty.set(false);
-                CustomParameterItemBinding itemBinding = CustomParameterItemBinding.inflate(getLayoutInflater());
+                runOnUiThread(() -> {
+                    CustomParameterItemBinding itemBinding = CustomParameterItemBinding.inflate(getLayoutInflater());
 
-                itemBinding.setName(parameter.customParameter.name);
-                itemBinding.setDescription(parameter.customParameter.description);
+                    itemBinding.setName(parameter.customParameter.name);
+                    itemBinding.setDescription(parameter.customParameter.description);
 
-                runOnUiThread(() -> binding.rootView.addView(itemBinding.getRoot()));
+                    binding.rootView.addView(itemBinding.getRoot());
+                });
             }
 
             runOnUiThread(() -> {

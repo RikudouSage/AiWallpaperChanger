@@ -13,7 +13,7 @@ import cz.chrastecky.aiwallpaperchanger.data.relation.CustomParameterWithValues;
 @Dao
 public interface CustomParameterDao {
     @Insert
-    void create(CustomParameter customParameter);
+    long create(CustomParameter customParameter);
 
     @Transaction
     @Query("select * from CustomParameter")

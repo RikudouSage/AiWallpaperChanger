@@ -15,18 +15,10 @@ public class CustomParameterValue {
     public String expression;
     public String value;
     public ConditionType type;
-    public int customParameterId;
+    public long customParameterId;
 
     public CustomParameterValue() {}
-    public CustomParameterValue(
-            String expression,
-            String value,
-            ConditionType type,
-            int customParameterId
-    ) {
-        this.expression = expression;
-        this.value = value;
+    public CustomParameterValue(ConditionType type) {
         this.type = type;
-        this.customParameterId = customParameterId;
     }
 }

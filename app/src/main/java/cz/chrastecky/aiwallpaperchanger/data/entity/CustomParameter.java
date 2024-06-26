@@ -9,10 +9,7 @@ public class CustomParameter {
     public int id;
     public String name;
     public String description;
+    public String expression;
 
     public CustomParameter() {}
-    public CustomParameter(String name, String description) {
-        this.name = name;
-        this.description = description;
-    }
 }
