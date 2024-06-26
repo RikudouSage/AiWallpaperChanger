@@ -91,10 +91,14 @@ public class GenerateAndSetBackgroundWorker extends ListenableWorker {
                         WallpaperManager wallpaperManager = WallpaperManager.getInstance(getApplicationContext());
                         try {
                             if (preferences.contains(SharedPreferencesHelper.STORE_WALLPAPERS_URI)) {
+                                logger.debug("WorkerJob", "Storing image on the filesystem");
                                 ContentResolverHelper.storeBitmap(getApplicationContext(), Uri.parse(preferences.getString(SharedPreferencesHelper.STORE_WALLPAPERS_URI, "")), UUID.randomUUID() + ".png", response.getImage());
                             }
 
-                            wallpaperManager.setBitmap(response.getImage());
+                            int status = wallpaperManager.setBitmap(response.getImage(), null, true);
+                            logger.debug("WorkerJob", "The wallpaper has been set");
+                            logger.debug("WorkerJob", "Set wallpaper status: " + status);
+
                             SharedPreferences.Editor editor = preferences.edit();
                             editor.putString(SharedPreferencesHelper.WALLPAPER_LAST_CHANGED, DateFormat.getInstance().format(Calendar.getInstance().getTime()));
                             editor.commit();
@@ -108,6 +112,7 @@ public class GenerateAndSetBackgroundWorker extends ListenableWorker {
                                     response.getDetail().getWorkerName(),
                                     new Date()
                             ));
+                            logger.debug("WorkerJob", "Adding the item to the history");
 
                             completer.set(Result.success());
                         } catch (IOException e) {
