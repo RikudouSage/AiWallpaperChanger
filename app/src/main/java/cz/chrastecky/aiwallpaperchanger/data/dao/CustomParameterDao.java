@@ -18,4 +18,8 @@ public interface CustomParameterDao {
     @Transaction
     @Query("select * from CustomParameter")
     List<CustomParameterWithValues> getAll();
+
+    @Transaction
+    @Query("select * from CustomParameter where id = :id")
+    CustomParameterWithValues find(int id);
 }

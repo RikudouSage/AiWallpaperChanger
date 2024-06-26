@@ -20,6 +20,9 @@
         android:theme="@style/AppTheme"
         tools:targetApi="31">
         <activity
+            android:name=".activity.AddOrEditCustomParameterActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.CustomParameterListActivity"
             android:exported="false" />
         <activity

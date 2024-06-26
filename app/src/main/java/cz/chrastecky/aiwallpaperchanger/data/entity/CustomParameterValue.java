@@ -16,4 +16,17 @@ public class CustomParameterValue {
     public String value;
     public ConditionType type;
     public int customParameterId;
+
+    public CustomParameterValue() {}
+    public CustomParameterValue(
+            String expression,
+            String value,
+            ConditionType type,
+            int customParameterId
+    ) {
+        this.expression = expression;
+        this.value = value;
+        this.type = type;
+        this.customParameterId = customParameterId;
+    }
 }
