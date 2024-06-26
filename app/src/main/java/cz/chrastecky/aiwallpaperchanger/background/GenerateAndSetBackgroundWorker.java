@@ -95,8 +95,9 @@ public class GenerateAndSetBackgroundWorker extends ListenableWorker {
                                 ContentResolverHelper.storeBitmap(getApplicationContext(), Uri.parse(preferences.getString(SharedPreferencesHelper.STORE_WALLPAPERS_URI, "")), UUID.randomUUID() + ".png", response.getImage());
                             }
 
-                            wallpaperManager.setBitmap(response.getImage());
-                            logger.debug("WorkerJob", "The wallpaper has been successfully set");
+                            int status = wallpaperManager.setBitmap(response.getImage(), null, true);
+                            logger.debug("WorkerJob", "The wallpaper has been set");
+                            logger.debug("WorkerJob", "Set wallpaper status: " + status);
 
                             SharedPreferences.Editor editor = preferences.edit();
                             editor.putString(SharedPreferencesHelper.WALLPAPER_LAST_CHANGED, DateFormat.getInstance().format(Calendar.getInstance().getTime()));
