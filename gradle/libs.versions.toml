@@ -19,6 +19,7 @@ materialVersion = "1.12.0"
 navigationFragment = "2.7.7"
 navigationUi = "2.7.7"
 okhttp = "4.12.0"
+roomRuntime = "2.6.1"
 volley = "1.2.1"
 activity = "1.9.0"
 workRuntime = "2.9.0"
@@ -26,6 +27,8 @@ workRuntime = "2.9.0"
 [libraries]
 androidx-concurrent-futures = { module = "androidx.concurrent:concurrent-futures", version.ref = "concurrentFutures" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomRuntime" }
+androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomRuntime" }
 androidx-work-runtime = { module = "androidx.work:work-runtime", version.ref = "workRuntime" }
 billing = { module = "com.android.billingclient:billing", version.ref = "billing" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
