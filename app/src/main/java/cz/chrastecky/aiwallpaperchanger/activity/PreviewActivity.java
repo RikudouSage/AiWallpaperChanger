@@ -89,7 +89,8 @@ public class PreviewActivity extends AppCompatActivity {
                     Objects.requireNonNull(intent.getStringExtra("seed")),
                     Objects.requireNonNull(intent.getStringExtra("workerId")),
                     Objects.requireNonNull(intent.getStringExtra("workerName")),
-                    new Date()
+                    new Date(),
+                    intent.getStringExtra("model")
             ));
 
             Intent configureIntent = new Intent(this, ConfigureScheduleActivity.class);

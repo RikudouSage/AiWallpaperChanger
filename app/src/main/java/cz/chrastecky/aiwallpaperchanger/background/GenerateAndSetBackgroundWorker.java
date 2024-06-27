@@ -110,7 +110,8 @@ public class GenerateAndSetBackgroundWorker extends ListenableWorker {
                                     response.getDetail().getSeed(),
                                     response.getDetail().getWorkerId(),
                                     response.getDetail().getWorkerName(),
-                                    new Date()
+                                    new Date(),
+                                    response.getDetail().getModel()
                             ));
                             logger.debug("WorkerJob", "Adding the item to the history");
 

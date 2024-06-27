@@ -10,4 +10,5 @@ data class StoredRequest(
     val workerId: String,
     val workerName: String,
     val created: Date,
+    val model: String?,
 )

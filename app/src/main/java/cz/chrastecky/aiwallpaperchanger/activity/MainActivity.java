@@ -342,6 +342,7 @@ public class MainActivity extends AppCompatActivity {
                             intent.putExtra("seed", response.getDetail().getSeed());
                             intent.putExtra("workerId", response.getDetail().getWorkerId());
                             intent.putExtra("workerName", response.getDetail().getWorkerName());
+                            intent.putExtra("model", response.getDetail().getModel());
                             startActivity(intent);
                         } catch (IOException e) {
                             Toast.makeText(this, R.string.app_error_create_tmp_file, Toast.LENGTH_LONG).show();
