@@ -24,9 +24,12 @@ public class HelpActivity extends AppCompatActivity {
         setTitle(R.string.app_title_help);
 
         for (final PromptParameterProvider provider : providers.getProviders()) {
-            PromptParameterDescriptionItemBinding template = PromptParameterDescriptionItemBinding.inflate(getLayoutInflater());
-            template.setProvider(provider);
-            binding.parameterProvidersRoot.addView(template.getRoot());
+            for (String parameterName : provider.getParameterNames()) {
+                PromptParameterDescriptionItemBinding template = PromptParameterDescriptionItemBinding.inflate(getLayoutInflater());
+                template.setProvider(provider);
+                template.setParameterName(parameterName);
+                binding.parameterProvidersRoot.addView(template.getRoot());
+            }
         }
     }
 }

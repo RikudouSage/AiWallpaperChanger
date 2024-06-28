@@ -7,6 +7,8 @@ import androidx.annotation.NonNull;
 import com.google.gson.Gson;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import cz.chrastecky.aiwallpaperchanger.BuildConfig;
@@ -23,18 +25,18 @@ import okhttp3.Response;
 public class WeatherParameterProvider extends AbstractLocationParameterProvider {
     @NonNull
     @Override
-    public String getParameterName() {
-        return "weather";
+    public List<String> getParameterNames() {
+        return Collections.singletonList("weather");
     }
 
     @NonNull
     @Override
-    public String getDescription(@NonNull Context context) {
+    public String getDescription(@NonNull Context context, @NonNull String parameterName) {
         return context.getString(R.string.app_parameter_weather_description);
     }
 
     @Override
-    protected void completeValue(@NonNull CompletableFuture<String> future, @NonNull Context context, @NonNull LatitudeLongitude coordinates) {
+    protected void completeValue(@NonNull CompletableFuture<String> future, @NonNull Context context, @NonNull LatitudeLongitude coordinates, @NonNull String parameterName) {
         new Thread(() -> {
             OkHttpClient client = new OkHttpClient();
             Request request = new Request.Builder()
@@ -82,7 +84,7 @@ public class WeatherParameterProvider extends AbstractLocationParameterProvider 
                     future.complete("unknown");
                 }
 
-                setCache(future.join());
+                setCache(future.join(), parameterName);
             } catch (IOException | NullPointerException e) {
                 future.completeExceptionally(e);
             }

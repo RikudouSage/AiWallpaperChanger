@@ -238,31 +238,33 @@ public class MainActivity extends AppCompatActivity {
 
             Map<String, List<String>> neededPermissions = new HashMap<>();
             for (PromptParameterProvider provider : parameterProviders.getProviders()) {
-                final String parameter = "${" + provider.getParameterName() + "}";
-                if (!prompt.contains(parameter) && !negativePrompt.contains(parameter)) {
-                    continue;
-                }
-
-                final List<String> requiredPermissions = provider.getRequiredPermissions(getGrantedPermissions());
-                if (requiredPermissions == null || requiredPermissions.isEmpty()) {
-                    continue;
-                }
-
-                final List<String> granted = new ArrayList<>();
-                final List<String> ungranted = new ArrayList<>();
-                for (String permission : requiredPermissions) {
-                    if (ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED) {
-                        granted.add(permission);
-                    } else {
-                        ungranted.add(permission);
+                for (String parameterName : provider.getParameterNames()) {
+                    final String parameter = "${" + parameterName + "}";
+                    if (!prompt.contains(parameter) && !negativePrompt.contains(parameter)) {
+                        continue;
                     }
-                }
 
-                if (provider.permissionsSatisfied(granted)) {
-                    continue;
-                }
+                    final List<String> requiredPermissions = provider.getRequiredPermissions(getGrantedPermissions(), parameterName);
+                    if (requiredPermissions == null || requiredPermissions.isEmpty()) {
+                        continue;
+                    }
 
-                neededPermissions.put(provider.getParameterName(), ungranted);
+                    final List<String> granted = new ArrayList<>();
+                    final List<String> ungranted = new ArrayList<>();
+                    for (String permission : requiredPermissions) {
+                        if (ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED) {
+                            granted.add(permission);
+                        } else {
+                            ungranted.add(permission);
+                        }
+                    }
+
+                    if (provider.permissionsSatisfied(granted, parameterName)) {
+                        continue;
+                    }
+
+                    neededPermissions.put(parameterName, ungranted);
+                }
             }
 
             if (!neededPermissions.isEmpty()) {

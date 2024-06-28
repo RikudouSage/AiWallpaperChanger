@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -16,13 +17,13 @@ import cz.chrastecky.annotationprocessor.InjectedPromptParameterProvider;
 public class TimeOfDayParameterProvider implements PromptParameterProvider {
     @NonNull
     @Override
-    public String getParameterName() {
-        return "tod";
+    public List<String> getParameterNames() {
+        return Collections.singletonList("tod");
     }
 
     @NonNull
     @Override
-    public CompletableFuture<String> getValue(@NonNull final Context context) {
+    public CompletableFuture<String> getValue(@NonNull final Context context, @NonNull String parameterName) {
         final Calendar calendar = Calendar.getInstance();
         final int hour = calendar.get(Calendar.HOUR_OF_DAY);
         final String result;
@@ -45,13 +46,13 @@ public class TimeOfDayParameterProvider implements PromptParameterProvider {
 
     @NonNull
     @Override
-    public String getDescription(@NonNull final Context context) {
+    public String getDescription(@NonNull final Context context, @NonNull String parameterName) {
         return context.getString(R.string.app_parameter_time_of_day_description);
     }
 
     @Nullable
     @Override
-    public List<String> getRequiredPermissions(@NonNull List<String> grantedPermissions) {
+    public List<String> getRequiredPermissions(@NonNull List<String> grantedPermissions, @NonNull String parameterName) {
         return null;
     }
 }

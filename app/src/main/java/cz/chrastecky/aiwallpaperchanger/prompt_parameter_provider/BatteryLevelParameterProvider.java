@@ -8,6 +8,7 @@ import android.os.BatteryManager;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -19,13 +20,13 @@ import cz.chrastecky.annotationprocessor.InjectedPromptParameterProvider;
 public class BatteryLevelParameterProvider implements PromptParameterProvider {
     @NonNull
     @Override
-    public String getParameterName() {
-        return "battery";
+    public List<String> getParameterNames() {
+        return Collections.singletonList("battery");
     }
 
     @Nullable
     @Override
-    public CompletableFuture<String> getValue(@NonNull Context context) {
+    public CompletableFuture<String> getValue(@NonNull Context context, @NonNull String parameterName) {
         final Logger logger = new Logger(context);
 
         final IntentFilter filter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
@@ -60,13 +61,13 @@ public class BatteryLevelParameterProvider implements PromptParameterProvider {
 
     @NonNull
     @Override
-    public String getDescription(@NonNull Context context) {
+    public String getDescription(@NonNull Context context, @NonNull String parameterName) {
         return context.getString(R.string.app_parameter_battery_description);
     }
 
     @Nullable
     @Override
-    public List<String> getRequiredPermissions(@NonNull List<String> grantedPermissions) {
+    public List<String> getRequiredPermissions(@NonNull List<String> grantedPermissions, @NonNull String parameterName) {
         return null;
     }
 }

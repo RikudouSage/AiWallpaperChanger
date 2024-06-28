@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -17,13 +18,13 @@ import cz.chrastecky.annotationprocessor.InjectedPromptParameterProvider;
 public class SeasonParameterProvider implements PromptParameterProvider {
     @NonNull
     @Override
-    public String getParameterName() {
-        return "season";
+    public List<String> getParameterNames() {
+        return Collections.singletonList("season");
     }
 
     @Nullable
     @Override
-    public CompletableFuture<String> getValue(@NonNull final Context context) {
+    public CompletableFuture<String> getValue(@NonNull final Context context, @NonNull String parameterName) {
         Calendar calendar = Calendar.getInstance();
         GregorianCalendar gregorianCalendar = new GregorianCalendar();
 
@@ -53,13 +54,13 @@ public class SeasonParameterProvider implements PromptParameterProvider {
 
     @NonNull
     @Override
-    public String getDescription(@NonNull final Context context) {
+    public String getDescription(@NonNull final Context context, @NonNull String parameterName) {
         return context.getString(R.string.app_parameter_season_description);
     }
 
     @Nullable
     @Override
-    public List<String> getRequiredPermissions(@NonNull List<String> grantedPermissions) {
+    public List<String> getRequiredPermissions(@NonNull List<String> grantedPermissions, @NonNull String parameterName) {
         return null;
     }
 

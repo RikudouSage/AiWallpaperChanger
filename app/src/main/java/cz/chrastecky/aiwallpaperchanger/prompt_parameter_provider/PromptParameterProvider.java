@@ -11,15 +11,19 @@ import java.util.concurrent.CompletableFuture;
 
 public interface PromptParameterProvider {
     @NonNull
-    String getParameterName();
+    List<String> getParameterNames();
+
     @Nullable
-    CompletableFuture<String> getValue(@NonNull final Context context);
+    CompletableFuture<String> getValue(@NonNull final Context context, @NonNull final String parameterName);
+
     @NonNull
-    String getDescription(@NonNull final Context context);
+    String getDescription(@NonNull final Context context, @NonNull final String parameterName);
+
     @Nullable
-    List<String> getRequiredPermissions(@NonNull List<String> grantedPermissions);
-    default boolean permissionsSatisfied(@NonNull List<String> grantedPermissions) {
-        final List<String> requiredPermissions = getRequiredPermissions(grantedPermissions);
+    List<String> getRequiredPermissions(@NonNull List<String> grantedPermissions, @NonNull final String parameterName);
+
+    default boolean permissionsSatisfied(@NonNull List<String> grantedPermissions, @NonNull final String parameterName) {
+        final List<String> requiredPermissions = getRequiredPermissions(grantedPermissions, parameterName);
         if (requiredPermissions == null) {
             return true;
         }
