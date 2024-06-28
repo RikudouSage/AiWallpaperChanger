@@ -35,8 +35,8 @@ public class CountryParameterProvider extends AbstractLocationParameterProvider 
 
     @NonNull
     @Override
-    public List<String> getParameterNames() {
-        return Collections.singletonList("country");
+    public CompletableFuture<List<String>> getParameterNames(@NonNull Context context) {
+        return CompletableFuture.completedFuture(Collections.singletonList("country"));
     }
 
     @NonNull

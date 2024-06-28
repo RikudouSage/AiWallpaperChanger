@@ -11,7 +11,7 @@ import java.util.concurrent.CompletableFuture;
 
 public interface PromptParameterProvider {
     @NonNull
-    List<String> getParameterNames();
+    CompletableFuture<List<String>> getParameterNames(@NonNull final Context context);
 
     @Nullable
     CompletableFuture<String> getValue(@NonNull final Context context, @NonNull final String parameterName);

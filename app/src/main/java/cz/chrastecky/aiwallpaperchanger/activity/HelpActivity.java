@@ -24,7 +24,7 @@ public class HelpActivity extends AppCompatActivity {
         setTitle(R.string.app_title_help);
 
         for (final PromptParameterProvider provider : providers.getProviders()) {
-            for (String parameterName : provider.getParameterNames()) {
+            for (String parameterName : provider.getParameterNames(this).join()) {
                 PromptParameterDescriptionItemBinding template = PromptParameterDescriptionItemBinding.inflate(getLayoutInflater());
                 template.setProvider(provider);
                 template.setParameterName(parameterName);

@@ -17,8 +17,8 @@ import cz.chrastecky.annotationprocessor.InjectedPromptParameterProvider;
 public class DarkModeParameterProvider implements PromptParameterProvider {
     @NonNull
     @Override
-    public List<String> getParameterNames() {
-        return Collections.singletonList("bg");
+    public CompletableFuture<List<String>> getParameterNames(@NonNull Context context) {
+        return CompletableFuture.completedFuture(Collections.singletonList("bg"));
     }
 
     @Nullable

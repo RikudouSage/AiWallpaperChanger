@@ -238,7 +238,7 @@ public class MainActivity extends AppCompatActivity {
 
             Map<String, List<String>> neededPermissions = new HashMap<>();
             for (PromptParameterProvider provider : parameterProviders.getProviders()) {
-                for (String parameterName : provider.getParameterNames()) {
+                for (String parameterName : provider.getParameterNames(this).join()) {
                     final String parameter = "${" + parameterName + "}";
                     if (!prompt.contains(parameter) && !negativePrompt.contains(parameter)) {
                         continue;

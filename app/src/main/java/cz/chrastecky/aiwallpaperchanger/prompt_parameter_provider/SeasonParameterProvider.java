@@ -18,8 +18,8 @@ import cz.chrastecky.annotationprocessor.InjectedPromptParameterProvider;
 public class SeasonParameterProvider implements PromptParameterProvider {
     @NonNull
     @Override
-    public List<String> getParameterNames() {
-        return Collections.singletonList("season");
+    public CompletableFuture<List<String>> getParameterNames(@NonNull Context context) {
+        return CompletableFuture.completedFuture(Collections.singletonList("season"));
     }
 
     @Nullable

@@ -20,8 +20,8 @@ import cz.chrastecky.annotationprocessor.InjectedPromptParameterProvider;
 public class BatteryLevelParameterProvider implements PromptParameterProvider {
     @NonNull
     @Override
-    public List<String> getParameterNames() {
-        return Collections.singletonList("battery");
+    public CompletableFuture<List<String>> getParameterNames(@NonNull Context context) {
+        return CompletableFuture.completedFuture(Collections.singletonList("battery"));
     }
 
     @Nullable

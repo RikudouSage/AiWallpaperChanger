@@ -25,8 +25,8 @@ import okhttp3.Response;
 public class WeatherParameterProvider extends AbstractLocationParameterProvider {
     @NonNull
     @Override
-    public List<String> getParameterNames() {
-        return Collections.singletonList("weather");
+    public CompletableFuture<List<String>> getParameterNames(@NonNull Context context) {
+        return CompletableFuture.completedFuture(Collections.singletonList("weather"));
     }
 
     @NonNull
