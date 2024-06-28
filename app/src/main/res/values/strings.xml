@@ -136,4 +136,9 @@
     <string name="app.custom_parameters.condition.if_equals">if expression equals this value</string>
     <string name="app.custom_parameters.condition.then">set the parameter to this value</string>
     <string name="app.custom_parameters.condition.else">if no condition matches, use this value</string>
+    <string name="app.custom_parameters.no_description">No parameter description has been provided.</string>
+    <string name="app.custom_parameters.edit_parameter">Edit custom parameter</string>
+    <string name="app.custom_parameters.delete_parameter">Delete custom parameter</string>
+    <string name="app.generic.delete_title">Are you sure?</string>
+    <string name="app.generic.delete_content">When you delete this item, it\'s gone forever. Are you sure you want to do it?</string>
 </resources>

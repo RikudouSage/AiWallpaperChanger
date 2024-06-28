@@ -136,4 +136,9 @@
     <string name="app.custom_parameters.condition.if_equals">pokud se výraz rovná této hodnotě</string>
     <string name="app.custom_parameters.condition.then">nastavit parametr na tuto hodnotu</string>
     <string name="app.custom_parameters.condition.else">pokud žádná podmínka nesedí, použít tuto hodnotu</string>
+    <string name="app.custom_parameters.no_description">U parametru nebyl zadán žádný popisek.</string>
+    <string name="app.custom_parameters.edit_parameter">Upravit vlastní parametr</string>
+    <string name="app.custom_parameters.delete_parameter">Smazat vlastní parametr</string>
+    <string name="app.generic.delete_title">Jste si jisti?</string>
+    <string name="app.generic.delete_content">Pokud tuto položku smažete, nejde to vrátit zpátky. Jste si jisti, že to chcete udělat?</string>
 </resources>

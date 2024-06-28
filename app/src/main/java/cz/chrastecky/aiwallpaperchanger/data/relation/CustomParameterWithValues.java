@@ -4,6 +4,7 @@ import androidx.annotation.Nullable;
 import androidx.room.Embedded;
 import androidx.room.Relation;
 
+import java.util.Collections;
 import java.util.List;
 
 import cz.chrastecky.aiwallpaperchanger.data.entity.CustomParameter;
@@ -23,8 +24,10 @@ public class CustomParameterWithValues {
     public List<CustomParameterValue> values;
 
     public CustomParameterWithValues() {}
-    public CustomParameterWithValues(@Nullable CustomParameter customParameter, @Nullable List<CustomParameterValue> values) {
-        this.customParameter = customParameter;
-        this.values = values;
+
+    public void sortValues() {
+        if (values != null) {
+            Collections.sort(values);
+        }
     }
 }

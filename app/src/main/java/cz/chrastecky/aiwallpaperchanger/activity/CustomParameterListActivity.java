@@ -4,9 +4,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import cz.chrastecky.aiwallpaperchanger.R;
@@ -38,9 +40,15 @@ public class CustomParameterListActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        binding.loader.setVisibility(View.VISIBLE);
-        binding.noParameters.setVisibility(View.GONE);
-        binding.rootView.removeAllViews();
+        loadData();
+    }
+
+    private void loadData() {
+        runOnUiThread(() -> {
+            binding.loader.setVisibility(View.VISIBLE);
+            binding.noParameters.setVisibility(View.GONE);
+            binding.rootView.removeAllViews();
+        });
 
         new Thread(() -> {
             AppDatabase database = DatabaseHelper.getDatabase(this);
@@ -51,9 +59,28 @@ public class CustomParameterListActivity extends AppCompatActivity {
                 isEmpty.set(false);
                 runOnUiThread(() -> {
                     CustomParameterItemBinding itemBinding = CustomParameterItemBinding.inflate(getLayoutInflater());
+                    itemBinding.setItem(parameter);
 
-                    itemBinding.setName(parameter.customParameter.name);
-                    itemBinding.setDescription(parameter.customParameter.description);
+                    itemBinding.deleteButton.setOnClickListener(view -> {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                        builder.setTitle(R.string.app_generic_delete_title);
+                        builder.setMessage(R.string.app_generic_delete_content);
+                        builder.setPositiveButton(R.string.app_delete, (dialog, which) -> {
+                            new Thread(() -> {
+                                database.customParameters().delete(parameter);
+                                loadData();
+                            }).start();
+                        });
+                        builder.setNegativeButton(android.R.string.cancel, (dialog, which) -> {
+                            // do nothing
+                        });
+                        builder.show();
+                    });
+                    itemBinding.editButton.setOnClickListener(view -> {
+                        Intent intent = new Intent(this, AddOrEditCustomParameterActivity.class);
+                        intent.putExtra("id", Objects.requireNonNull(parameter.customParameter).id);
+                        startActivity(intent);
+                    });
 
                     binding.rootView.addView(itemBinding.getRoot());
                 });

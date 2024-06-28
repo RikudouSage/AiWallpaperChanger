@@ -88,12 +88,16 @@ public class AddOrEditCustomParameterActivity extends AppCompatActivity {
                 assert !model.values.isEmpty();
 
                 AppDatabase database = DatabaseHelper.getDatabase(this);
-                long id = database.customParameters().create(model.customParameter);
+                long id = database.customParameters().upsert(model.customParameter);
+                if (!isNew) {
+                    assert model.customParameter != null;
+                    id = model.customParameter.id;
+                }
 
                 for (CustomParameterValue value : model.values) {
                     value.customParameterId = id;
                 }
-                database.customParameterValues().createMultiple(model.values);
+                database.customParameterValues().upsertMultiple(model.values);
                 runOnUiThread(this::finish);
             }).start();
         });
@@ -107,9 +111,21 @@ public class AddOrEditCustomParameterActivity extends AppCompatActivity {
 
             renderConditions();
         });
+        binding.removeConditionButton.setOnClickListener(view -> {
+            assert model.values != null;
+            assert !model.values.isEmpty();
+
+            if (model.values.size() == 1) {
+                return;
+            }
+
+            model.values.remove(model.values.size() - 2);
+            renderConditions();
+        });
     }
 
     private void onLoad() {
+        model.sortValues();
         initializeForm();
         binding.loader.setVisibility(View.GONE);
         binding.rootView.setVisibility(View.VISIBLE);
@@ -120,6 +136,12 @@ public class AddOrEditCustomParameterActivity extends AppCompatActivity {
 
         formElementsValidation.put("name", model.customParameter != null && model.customParameter.name != null && !model.customParameter.name.isEmpty());
         formElementsValidation.put("expression", model.customParameter != null && model.customParameter.expression != null && !model.customParameter.expression.isEmpty());
+
+        if (model.customParameter != null) {
+            binding.parameterName.setText(model.customParameter.name);
+            binding.parameterDescription.setText(model.customParameter.description);
+            binding.parameterExpression.setText(model.customParameter.expression);
+        }
 
         binding.parameterName.addTextChangedListener(new TextWatcher() {
             @Override

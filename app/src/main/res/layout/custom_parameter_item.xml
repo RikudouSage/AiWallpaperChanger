@@ -5,8 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-        <variable name="name" type="java.lang.String" />
-        <variable name="description" type="java.lang.String" />
+        <variable name="item" type="cz.chrastecky.aiwallpaperchanger.data.relation.CustomParameterWithValues" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -14,6 +13,49 @@
         android:layout_height="match_parent"
         android:paddingBottom="16dp"
         >
+
+        <TextView
+            android:id="@+id/parameter_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:paddingTop="4dp"
+            android:text="@{item.customParameter.name}"
+            android:textSize="26sp"
+            app:layout_constraintEnd_toStartOf="@+id/edit_button"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="custom_parameter" />
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/parameter_name"
+            tools:text="This is some custom description of a custom parameter, it might potentially be this long or even longer."
+            android:text="@{item.customParameter.description != null &amp;&amp; !item.customParameter.description.empty ? item.customParameter.description : @string/app_custom_parameters_no_description}" />
+
+        <ImageButton
+            android:id="@+id/edit_button"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="@null"
+            android:contentDescription="@string/app.custom_parameters.edit_parameter"
+            android:src="@android:drawable/ic_menu_edit"
+            app:layout_constraintEnd_toStartOf="@+id/delete_button"
+            app:layout_constraintStart_toEndOf="@+id/parameter_name"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageButton
+            android:id="@+id/delete_button"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="@null"
+            android:contentDescription="@string/app.custom_parameters.delete_parameter"
+            android:src="@android:drawable/ic_delete"
+            app:layout_constraintStart_toEndOf="@+id/edit_button"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
