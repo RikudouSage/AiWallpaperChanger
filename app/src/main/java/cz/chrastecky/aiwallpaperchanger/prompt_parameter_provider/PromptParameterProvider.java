@@ -20,10 +20,10 @@ public interface PromptParameterProvider {
     String getDescription(@NonNull final Context context, @NonNull final String parameterName);
 
     @Nullable
-    List<String> getRequiredPermissions(@NonNull List<String> grantedPermissions, @NonNull final String parameterName);
+    List<String> getRequiredPermissions(@NonNull final Context context, @NonNull List<String> grantedPermissions, @NonNull final String parameterName);
 
-    default boolean permissionsSatisfied(@NonNull List<String> grantedPermissions, @NonNull final String parameterName) {
-        final List<String> requiredPermissions = getRequiredPermissions(grantedPermissions, parameterName);
+    default boolean permissionsSatisfied(@NonNull final Context context, @NonNull List<String> grantedPermissions, @NonNull final String parameterName) {
+        final List<String> requiredPermissions = getRequiredPermissions(context, grantedPermissions, parameterName);
         if (requiredPermissions == null) {
             return true;
         }

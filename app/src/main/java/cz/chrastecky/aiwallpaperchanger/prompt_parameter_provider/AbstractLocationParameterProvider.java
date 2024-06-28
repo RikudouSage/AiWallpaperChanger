@@ -86,7 +86,7 @@ public abstract class AbstractLocationParameterProvider implements PromptParamet
 
     @Nullable
     @Override
-    public List<String> getRequiredPermissions(@NonNull List<String> grantedPermissions, @NonNull String parameterName) {
+    public List<String> getRequiredPermissions(@NonNull Context context, @NonNull List<String> grantedPermissions, @NonNull String parameterName) {
         final List<String> result = new ArrayList<>(Arrays.asList(
                 Manifest.permission.ACCESS_COARSE_LOCATION,
                 Manifest.permission.ACCESS_FINE_LOCATION
@@ -105,7 +105,7 @@ public abstract class AbstractLocationParameterProvider implements PromptParamet
     }
 
     @Override
-    public boolean permissionsSatisfied(@NonNull List<String> grantedPermissions, @NonNull String parameterName) {
+    public boolean permissionsSatisfied(@NonNull Context context, @NonNull List<String> grantedPermissions, @NonNull String parameterName) {
         boolean result = grantedPermissions.contains(Manifest.permission.ACCESS_COARSE_LOCATION)
                 || grantedPermissions.contains(Manifest.permission.ACCESS_FINE_LOCATION);
 

@@ -244,7 +244,7 @@ public class MainActivity extends AppCompatActivity {
                         continue;
                     }
 
-                    final List<String> requiredPermissions = provider.getRequiredPermissions(getGrantedPermissions(), parameterName);
+                    final List<String> requiredPermissions = provider.getRequiredPermissions(this, getGrantedPermissions(), parameterName);
                     if (requiredPermissions == null || requiredPermissions.isEmpty()) {
                         continue;
                     }
@@ -259,7 +259,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
 
-                    if (provider.permissionsSatisfied(granted, parameterName)) {
+                    if (provider.permissionsSatisfied(this, granted, parameterName)) {
                         continue;
                     }
 
@@ -421,9 +421,6 @@ public class MainActivity extends AppCompatActivity {
                 });
             });
         });
-
-
-        startActivity(new Intent(this, CustomParameterListActivity.class));
     }
 
     @NonNull

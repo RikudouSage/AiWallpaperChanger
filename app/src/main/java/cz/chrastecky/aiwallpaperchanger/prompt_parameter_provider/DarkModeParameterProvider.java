@@ -42,7 +42,7 @@ public class DarkModeParameterProvider implements PromptParameterProvider {
 
     @Nullable
     @Override
-    public List<String> getRequiredPermissions(@NonNull List<String> grantedPermissions, @NonNull String parameterName) {
+    public List<String> getRequiredPermissions(@NonNull Context context, @NonNull List<String> grantedPermissions, @NonNull String parameterName) {
         return null;
     }
 }
