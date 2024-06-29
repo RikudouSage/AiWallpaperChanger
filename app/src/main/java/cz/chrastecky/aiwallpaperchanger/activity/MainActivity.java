@@ -238,31 +238,33 @@ public class MainActivity extends AppCompatActivity {
 
             Map<String, List<String>> neededPermissions = new HashMap<>();
             for (PromptParameterProvider provider : parameterProviders.getProviders()) {
-                final String parameter = "${" + provider.getParameterName() + "}";
-                if (!prompt.contains(parameter) && !negativePrompt.contains(parameter)) {
-                    continue;
-                }
-
-                final List<String> requiredPermissions = provider.getRequiredPermissions(getGrantedPermissions());
-                if (requiredPermissions == null || requiredPermissions.isEmpty()) {
-                    continue;
-                }
-
-                final List<String> granted = new ArrayList<>();
-                final List<String> ungranted = new ArrayList<>();
-                for (String permission : requiredPermissions) {
-                    if (ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED) {
-                        granted.add(permission);
-                    } else {
-                        ungranted.add(permission);
+                for (String parameterName : provider.getParameterNames(this).join()) {
+                    final String parameter = "${" + parameterName + "}";
+                    if (!prompt.contains(parameter) && !negativePrompt.contains(parameter)) {
+                        continue;
                     }
-                }
 
-                if (provider.permissionsSatisfied(granted)) {
-                    continue;
-                }
+                    final List<String> requiredPermissions = provider.getRequiredPermissions(this, getGrantedPermissions(), parameterName);
+                    if (requiredPermissions == null || requiredPermissions.isEmpty()) {
+                        continue;
+                    }
 
-                neededPermissions.put(provider.getParameterName(), ungranted);
+                    final List<String> granted = new ArrayList<>();
+                    final List<String> ungranted = new ArrayList<>();
+                    for (String permission : requiredPermissions) {
+                        if (ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED) {
+                            granted.add(permission);
+                        } else {
+                            ungranted.add(permission);
+                        }
+                    }
+
+                    if (provider.permissionsSatisfied(this, granted, parameterName)) {
+                        continue;
+                    }
+
+                    neededPermissions.put(parameterName, ungranted);
+                }
             }
 
             if (!neededPermissions.isEmpty()) {
@@ -498,7 +500,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = new MenuInflater(this);
-        inflater.inflate(R.menu.menu, menu);
+        inflater.inflate(R.menu.main_menu, menu);
 
         if (BuildConfig.BILLING_ENABLED) {
             menu.findItem(R.id.premium_menu_item).setVisible(true);

@@ -3,8 +3,11 @@ package cz.chrastecky.aiwallpaperchanger.activity;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -89,6 +92,24 @@ public class SettingsActivity extends AppCompatActivity {
                 activityLauncher.launch(intent);
             }
         });
+
+        binding.toolbar.getOverflowIcon().setColorFilter(getColor(R.color.md_theme_onPrimary), PorterDuff.Mode.SRC_ATOP);
+        binding.toolbar.setOnMenuItemClickListener(item -> {
+            if (item.getItemId() == R.id.custom_parameters_menu_item) {
+                startActivity(new Intent(this, CustomParameterListActivity.class));
+                return true;
+            }
+
+            return false;
+        });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = new MenuInflater(this);
+        inflater.inflate(R.menu.settings_menu, menu);
+
+        return true;
     }
 
     private void initializeForm(ActivitySettingsBinding binding) {

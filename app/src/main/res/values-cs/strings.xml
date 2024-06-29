@@ -120,4 +120,25 @@
     <string name="app.error.parameter_replacing_failed">Nahrazení parametrů se nezdařilo, zkuste to později.</string>
     <string name="app.parameter.weather.description">Bude nahrazeno současným počasím v angličtině, například \'cloudy\', \'clear\' nebo \'foggy\'. Vyžaduje přístup k poloze.</string>
     <string name="app.parameter.country.description">Vrací název země, ve které se nacházíte, na základě vaší polohy.</string>
+    <string name="app.settings.custom_parameters">Vlastní parametry</string>
+    <string name="app.custom_parameters.add">Přidat parametr</string>
+    <string name="app.custom_parameters.no_parameters">Nemáte žádné vlastní parametry. Proč nějaký nevytvoříte?</string>
+    <string name="app.custom_parameters.create_title">Vytvořit parametr</string>
+    <string name="app.custom_parameters.edit_title">Upravit parametr</string>
+    <string name="app.custom_parameters.parameter_not_found">Parametr neexistuje, restartujte prosím aplikaci.</string>
+    <string name="app.custom_parameters.add.name">Název parametru</string>
+    <string name="app.custom_parameters.add.description">Popisek (nepovinné)</string>
+    <string name="app.custom_parameters.explanation">Díky vlastním parametrům můžete využívat vlastní parametry, které jsou založené na jiných parametrech. Je možno využít jakýkoliv zabudovaný nebo vlastní parametr. Jako výraz můžete použít například \"${bg}\" (bez uvozovek), což může nabývat hodnot \"dark\" nebo \"light\". Pomocí podmínek můžete váš parametr nastavit na \"black\", pokud se výraz rovná \"dark\" a na \"white\", pokud se rovná \"light\".</string>
+    <string name="app.custom_parameters.edit.expression">Výraz</string>
+    <string name="app.custom_parameters.conditions">Podmínky</string>
+    <string name="app.custom_parameters.conditions.add">Přidat podmínku</string>
+    <string name="app.custom_parameters.conditions.delete">Odstranit podmínku</string>
+    <string name="app.custom_parameters.condition.if_equals">pokud se výraz rovná této hodnotě</string>
+    <string name="app.custom_parameters.condition.then">nastavit parametr na tuto hodnotu</string>
+    <string name="app.custom_parameters.condition.else">pokud žádná podmínka nesedí, použít tuto hodnotu</string>
+    <string name="app.custom_parameters.no_description">U parametru nebyl zadán žádný popisek.</string>
+    <string name="app.custom_parameters.edit_parameter">Upravit vlastní parametr</string>
+    <string name="app.custom_parameters.delete_parameter">Smazat vlastní parametr</string>
+    <string name="app.generic.delete_title">Jste si jisti?</string>
+    <string name="app.generic.delete_content">Pokud tuto položku smažete, nejde to vrátit zpátky. Jste si jisti, že to chcete udělat?</string>
 </resources>

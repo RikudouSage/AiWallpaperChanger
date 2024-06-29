@@ -30,16 +30,16 @@ import cz.chrastecky.aiwallpaperchanger.helper.Tuple;
 public abstract class AbstractLocationParameterProvider implements PromptParameterProvider {
     private static final Map<String, Tuple<String, Date>> cache = new HashMap<>();
 
-    abstract protected void completeValue(@NonNull CompletableFuture<String> future, @NonNull final Context context, @NonNull LatitudeLongitude coordinates);
+    abstract protected void completeValue(@NonNull CompletableFuture<String> future, @NonNull final Context context, @NonNull LatitudeLongitude coordinates, @NonNull String parameterName);
 
     @Nullable
     @Override
-    public CompletableFuture<String> getValue(@NonNull Context context) {
+    public CompletableFuture<String> getValue(@NonNull Context context, @NonNull String parameterName) {
         final Logger logger = new Logger(context);
         final CompletableFuture<String> future = new CompletableFuture<>();
 
         final Date now = new Date();
-        @Nullable Tuple<String, Date> cacheItem = cache.getOrDefault(getParameterName(), null);
+        @Nullable Tuple<String, Date> cacheItem = cache.getOrDefault(parameterName, null);
         if (cacheItem != null && now.before(cacheItem.value2)) {
             future.complete(cacheItem.value1);
         } else {
@@ -73,7 +73,7 @@ public abstract class AbstractLocationParameterProvider implements PromptParamet
 
                         LatitudeLongitude result = new LatitudeLongitude(latitude, longitude);
 
-                        completeValue(future, context, result);
+                        completeValue(future, context, result, parameterName);
                     });
                 } catch (SecurityException e) {
                     future.completeExceptionally(e);
@@ -86,7 +86,7 @@ public abstract class AbstractLocationParameterProvider implements PromptParamet
 
     @Nullable
     @Override
-    public List<String> getRequiredPermissions(@NonNull List<String> grantedPermissions) {
+    public List<String> getRequiredPermissions(@NonNull Context context, @NonNull List<String> grantedPermissions, @NonNull String parameterName) {
         final List<String> result = new ArrayList<>(Arrays.asList(
                 Manifest.permission.ACCESS_COARSE_LOCATION,
                 Manifest.permission.ACCESS_FINE_LOCATION
@@ -105,7 +105,7 @@ public abstract class AbstractLocationParameterProvider implements PromptParamet
     }
 
     @Override
-    public boolean permissionsSatisfied(@NonNull List<String> grantedPermissions) {
+    public boolean permissionsSatisfied(@NonNull Context context, @NonNull List<String> grantedPermissions, @NonNull String parameterName) {
         boolean result = grantedPermissions.contains(Manifest.permission.ACCESS_COARSE_LOCATION)
                 || grantedPermissions.contains(Manifest.permission.ACCESS_FINE_LOCATION);
 
@@ -116,11 +116,11 @@ public abstract class AbstractLocationParameterProvider implements PromptParamet
         return result;
     }
 
-    protected void setCache(@NonNull String value) {
-        setCache(value, new Date(new Date().getTime() + 300_000));
+    protected void setCache(@NonNull String value, @NonNull String parameterName) {
+        setCache(value, new Date(new Date().getTime() + 300_000), parameterName);
     }
 
-    protected void setCache(@NonNull String value, @NonNull Date validUntil) {
-        cache.put(getParameterName(), new Tuple<>(value, validUntil));
+    protected void setCache(@NonNull String value, @NonNull Date validUntil, @NonNull String parameterName) {
+        cache.put(parameterName, new Tuple<>(value, validUntil));
     }
 }

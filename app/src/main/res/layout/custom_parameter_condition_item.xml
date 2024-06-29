@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <import type="android.view.View" />
+        <import type="cz.chrastecky.aiwallpaperchanger.data.entity.CustomParameterValue" />
+
+        <variable name="model" type="CustomParameterValue" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingBottom="16dp"
+        >
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/if_wrapper"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:hint="@string/app.custom_parameters.condition.if_equals"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginBottom="8dp"
+            android:visibility="@{model.type == CustomParameterValue.ConditionType.Else ? View.GONE : View.VISIBLE}">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/if_field"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@{model.expression}"
+                android:minHeight="48dp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/value_wrapper"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:hint="@{model.type == CustomParameterValue.ConditionType.Else ? @string/app_custom_parameters_condition_else : @string/app_custom_parameters_condition_then}"
+            tools:hint="@string/app.custom_parameters.condition.then"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/if_wrapper"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/value_field"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@{model.value}"
+                android:minHeight="48dp" />
+        </com.google.android.material.textfield.TextInputLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

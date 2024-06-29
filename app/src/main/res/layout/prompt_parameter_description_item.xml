@@ -3,6 +3,7 @@
 
     <data>
         <variable name="provider" type="cz.chrastecky.aiwallpaperchanger.prompt_parameter_provider.PromptParameterProvider" />
+        <variable name="parameterName" type="java.lang.String" />
     </data>
 
     <LinearLayout
@@ -15,13 +16,13 @@
             android:layout_width="170dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@{`${` + provider.parameterName + `}`}"
+            android:text="@{`${` + parameterName + `}`}"
             android:textStyle="bold" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@{provider.getDescription(context)}" />
+            android:text="@{provider.getDescription(context, parameterName)}" />
     </LinearLayout>
 </layout>
