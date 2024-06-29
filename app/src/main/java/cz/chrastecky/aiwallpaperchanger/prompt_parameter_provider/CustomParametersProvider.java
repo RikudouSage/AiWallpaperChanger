@@ -28,7 +28,7 @@ import cz.chrastecky.aiwallpaperchanger.helper.PromptReplacer;
 import cz.chrastecky.annotationprocessor.InjectedPromptParameterProvider;
 
 @InjectedPromptParameterProvider
-public class CustomParameters implements PromptParameterProvider {
+public class CustomParametersProvider implements PromptParameterProvider {
     private List<CustomParameterWithValues> parameters;
 
     @NonNull
@@ -67,7 +67,7 @@ public class CustomParameters implements PromptParameterProvider {
                 parameter.sortValues();
                 for (CustomParameterValue value : parameter.values) {
                     if (value.type == CustomParameterValue.ConditionType.Else || value.expression.equals(expression)) {
-                        future.complete(value.value);
+                        PromptReplacer.replacePrompt(context, value.value, future::complete);
                         return;
                     }
                 }
