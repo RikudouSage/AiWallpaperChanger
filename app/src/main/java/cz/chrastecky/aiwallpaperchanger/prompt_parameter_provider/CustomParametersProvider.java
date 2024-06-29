@@ -91,7 +91,7 @@ public class CustomParametersProvider implements PromptParameterProvider {
         }
 
         assert parameter.customParameter != null;
-        return parameter.customParameter.description.isEmpty() ? context.getString(R.string.app_custom_parameters_no_description) : parameter.customParameter.description;
+        return parameter.customParameter.description == null || parameter.customParameter.description.isEmpty() ? context.getString(R.string.app_custom_parameters_no_description) : parameter.customParameter.description;
     }
 
     @Nullable

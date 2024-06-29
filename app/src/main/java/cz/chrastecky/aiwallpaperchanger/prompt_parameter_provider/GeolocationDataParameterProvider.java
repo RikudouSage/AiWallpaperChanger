@@ -7,24 +7,35 @@ import android.location.Geocoder;
 import androidx.annotation.NonNull;
 
 import java.io.IOException;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.CompletableFuture;
 
 import cz.chrastecky.aiwallpaperchanger.R;
 import cz.chrastecky.aiwallpaperchanger.dto.LatitudeLongitude;
+import cz.chrastecky.aiwallpaperchanger.helper.Logger;
 import cz.chrastecky.annotationprocessor.InjectedPromptParameterProvider;
 
 @InjectedPromptParameterProvider
-public class CountryParameterProvider extends AbstractLocationParameterProvider {
+public class GeolocationDataParameterProvider extends AbstractLocationParameterProvider {
+    private final static String PARAMETER_COUNTRY = "country";
+    private final static String PARAMETER_TOWN = "town";
+
     @Override
     protected void completeValue(@NonNull CompletableFuture<String> future, @NonNull Context context, @NonNull LatitudeLongitude coordinates, @NonNull String parameterName) {
         Geocoder geocoder = new Geocoder(context, Locale.ENGLISH);
         try {
             List<Address> addresses = geocoder.getFromLocation(coordinates.getLatitude(), coordinates.getLongitude(), 1);
             if (addresses != null) {
-                future.complete(addresses.get(0).getCountryName());
+                Address address = addresses.get(0);
+                if (parameterName.equals(PARAMETER_COUNTRY)) {
+                    future.complete(address.getCountryName());
+                } else if (parameterName.equals(PARAMETER_TOWN)) {
+                    future.complete(address.getLocality());
+                } else {
+                    future.completeExceptionally(new RuntimeException("Unknown parameter: " + parameterName));
+                }
             } else {
                 future.completeExceptionally(new RuntimeException("Failed getting address from location"));
             }
@@ -36,12 +47,19 @@ public class CountryParameterProvider extends AbstractLocationParameterProvider 
     @NonNull
     @Override
     public CompletableFuture<List<String>> getParameterNames(@NonNull Context context) {
-        return CompletableFuture.completedFuture(Collections.singletonList("country"));
+        return CompletableFuture.completedFuture(Arrays.asList(PARAMETER_COUNTRY, PARAMETER_TOWN));
     }
 
     @NonNull
     @Override
     public String getDescription(@NonNull Context context, @NonNull String parameterName) {
-        return context.getString(R.string.app_parameter_country_description);
+        if (parameterName.equals(PARAMETER_COUNTRY)) {
+            return context.getString(R.string.app_parameter_country_description);
+        } else if (parameterName.equals(PARAMETER_TOWN)) {
+            return context.getString(R.string.app_parameter_town_description);
+        }
+
+        new Logger(context).error("GeolocationParameter", "Unsupported parameter somehow got returned: " + parameterName);
+        return "";
     }
 }

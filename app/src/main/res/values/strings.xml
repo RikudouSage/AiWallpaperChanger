@@ -141,4 +141,5 @@
     <string name="app.custom_parameters.delete_parameter">Delete custom parameter</string>
     <string name="app.generic.delete_title">Are you sure?</string>
     <string name="app.generic.delete_content">When you delete this item, it\'s gone forever. Are you sure you want to do it?</string>
+    <string name="app.parameter.town_description">The current town you\'re in. If it can\'t be determined, empty text is used.</string>
 </resources>
