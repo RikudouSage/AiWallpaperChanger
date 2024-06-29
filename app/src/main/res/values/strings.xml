@@ -142,4 +142,5 @@
     <string name="app.generic.delete_title">Are you sure?</string>
     <string name="app.generic.delete_content">When you delete this item, it\'s gone forever. Are you sure you want to do it?</string>
     <string name="app.parameter.town_description">The current town you\'re in. If it can\'t be determined, empty text is used.</string>
+    <string name="app.parameter.state_description">Returns the current admin area you\'re in, for example the US state you\'re in, or generally the larger region you\'re currently in in other countries.</string>
 </resources>
