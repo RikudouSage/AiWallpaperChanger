@@ -142,4 +142,5 @@
     <string name="app.generic.delete_title">Jste si jisti?</string>
     <string name="app.generic.delete_content">Pokud tuto položku smažete, nejde to vrátit zpátky. Jste si jisti, že to chcete udělat?</string>
     <string name="app.parameter.town_description">Město, ve kterém se nacházíte, pokud to nelze zjistit, vrátí se prázdný text.</string>
+    <string name="app.parameter.state_description">Vrací současnou administrativní oblast, například stát USA, ve kterém se nacházíte, v jiných zemích vrací obecně region, ve kterém se nacházíte (v ČR vrací název kraje).</string>
 </resources>

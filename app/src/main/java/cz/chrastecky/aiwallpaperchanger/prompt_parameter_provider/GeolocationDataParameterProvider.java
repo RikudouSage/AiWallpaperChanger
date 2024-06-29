@@ -21,6 +21,7 @@ import cz.chrastecky.annotationprocessor.InjectedPromptParameterProvider;
 public class GeolocationDataParameterProvider extends AbstractLocationParameterProvider {
     private final static String PARAMETER_COUNTRY = "country";
     private final static String PARAMETER_TOWN = "town";
+    private final static String PARAMETER_STATE = "state";
 
     @Override
     protected void completeValue(@NonNull CompletableFuture<String> future, @NonNull Context context, @NonNull LatitudeLongitude coordinates, @NonNull String parameterName) {
@@ -29,12 +30,19 @@ public class GeolocationDataParameterProvider extends AbstractLocationParameterP
             List<Address> addresses = geocoder.getFromLocation(coordinates.getLatitude(), coordinates.getLongitude(), 1);
             if (addresses != null) {
                 Address address = addresses.get(0);
-                if (parameterName.equals(PARAMETER_COUNTRY)) {
-                    future.complete(address.getCountryName());
-                } else if (parameterName.equals(PARAMETER_TOWN)) {
-                    future.complete(address.getLocality());
-                } else {
-                    future.completeExceptionally(new RuntimeException("Unknown parameter: " + parameterName));
+                switch (parameterName) {
+                    case PARAMETER_COUNTRY:
+                        future.complete(address.getCountryName());
+                        break;
+                    case PARAMETER_TOWN:
+                        future.complete(address.getLocality());
+                        break;
+                    case PARAMETER_STATE:
+                        future.complete(address.getAdminArea());
+                        break;
+                    default:
+                        future.completeExceptionally(new RuntimeException("Unknown parameter: " + parameterName));
+                        break;
                 }
             } else {
                 future.completeExceptionally(new RuntimeException("Failed getting address from location"));
@@ -47,16 +55,19 @@ public class GeolocationDataParameterProvider extends AbstractLocationParameterP
     @NonNull
     @Override
     public CompletableFuture<List<String>> getParameterNames(@NonNull Context context) {
-        return CompletableFuture.completedFuture(Arrays.asList(PARAMETER_COUNTRY, PARAMETER_TOWN));
+        return CompletableFuture.completedFuture(Arrays.asList(PARAMETER_COUNTRY, PARAMETER_TOWN, PARAMETER_STATE));
     }
 
     @NonNull
     @Override
     public String getDescription(@NonNull Context context, @NonNull String parameterName) {
-        if (parameterName.equals(PARAMETER_COUNTRY)) {
-            return context.getString(R.string.app_parameter_country_description);
-        } else if (parameterName.equals(PARAMETER_TOWN)) {
-            return context.getString(R.string.app_parameter_town_description);
+        switch (parameterName) {
+            case PARAMETER_COUNTRY:
+                return context.getString(R.string.app_parameter_country_description);
+            case PARAMETER_TOWN:
+                return context.getString(R.string.app_parameter_town_description);
+            case PARAMETER_STATE:
+                return context.getString(R.string.app_parameter_state_description);
         }
 
         new Logger(context).error("GeolocationParameter", "Unsupported parameter somehow got returned: " + parameterName);

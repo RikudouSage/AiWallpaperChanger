@@ -268,5 +268,16 @@
     "params": {
       "country": ["Czechia", "United States", "Great Britain", "Netherlands", "France", "Egypt", "Spain", "Italy", "Germany", "Mexico", "Japan"]
     }
+  },
+  {
+    "name": "Typical US state scenery",
+    "prompt": "a typical scenery from ${state}",
+    "negativePrompt": "painting, 3d, 2d",
+    "models": ["ICBINP XL"],
+    "author": "Rikudou",
+    "params": {
+      "state": ["California", "Texas", "Florida", "New York", "Pennsylvania", "Illinois", "Ohio", "Georgia", "North Carolina", "Michigan"]
+    },
+    "description": "Uses your current location to determine the state you're in. Outside US it uses the general administrative area which might or might not yield good results."
   }
 ]
