@@ -141,4 +141,5 @@
     <string name="app.custom_parameters.delete_parameter">Smazat vlastní parametr</string>
     <string name="app.generic.delete_title">Jste si jisti?</string>
     <string name="app.generic.delete_content">Pokud tuto položku smažete, nejde to vrátit zpátky. Jste si jisti, že to chcete udělat?</string>
+    <string name="app.parameter.town_description">Město, ve kterém se nacházíte, pokud to nelze zjistit, vrátí se prázdný text.</string>
 </resources>
