@@ -57,6 +57,11 @@
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="cz.chrastecky.aiwallpaperchanger.debug.GENERATE_NEXT" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".activity.AboutActivity"
@@ -105,6 +110,9 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="cz.chrastecky.aiwallpaperchanger.ALARM_ACTION" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="cz.chrastecky.aiwallpaperchanger.debug.ALARM_ACTION" />
             </intent-filter>
         </receiver>
 
