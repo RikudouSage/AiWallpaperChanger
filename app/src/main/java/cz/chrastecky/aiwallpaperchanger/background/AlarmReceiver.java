@@ -9,10 +9,11 @@ import androidx.work.NetworkType;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 
+import cz.chrastecky.aiwallpaperchanger.BuildConfig;
 import cz.chrastecky.aiwallpaperchanger.helper.Logger;
 
 public class AlarmReceiver extends BroadcastReceiver {
-    public static final String ACTION_NAME = "cz.chrastecky.aiwallpaperchanger.ALARM_ACTION";
+    public static final String ACTION_NAME = BuildConfig.APPLICATION_ID + ".ALARM_ACTION";
 
     @Override
     public void onReceive(Context context, Intent intent) {

@@ -7,12 +7,13 @@ import android.graphics.Bitmap;
 import androidx.annotation.NonNull;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import cz.chrastecky.aiwallpaperchanger.BuildConfig;
 import cz.chrastecky.annotationprocessor.InjectedWallpaperAction;
 
 @InjectedWallpaperAction
 public class LiveWallpaperAction implements WallpaperAction {
     public static final String ID = "live";
-    public static final String INTENT_ACTION = "cz.chrastecky.aiwallpaperchanger.UPDATE_LIVE_WALLPAPER";
+    public static final String INTENT_ACTION = BuildConfig.APPLICATION_ID + ".UPDATE_LIVE_WALLPAPER";
 
     @NonNull
     @Override

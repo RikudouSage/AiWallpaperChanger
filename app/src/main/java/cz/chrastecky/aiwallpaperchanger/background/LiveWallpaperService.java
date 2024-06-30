@@ -109,22 +109,14 @@ public class LiveWallpaperService extends WallpaperService {
             int targetWidth = image.getWidth();
             int targetHeight = image.getHeight();
 
-            while (targetWidth / width > 1 || targetHeight / height > 1) {
-                targetWidth /= 2;
-                targetHeight /= 2;
-            }
+            if ((double) width / targetWidth != 1 || (double) height / targetHeight != 1) {
+                double coefficientWidth = (double) width / targetWidth;
+                double coefficientHeight = (double) height / targetHeight;
 
-            if (targetWidth < width || targetHeight < height) {
-                double coefficientWidth = (double) targetWidth / width;
-                double coefficientHeight = (double) targetHeight / height;
+                double coefficient = Math.max(coefficientWidth, coefficientHeight);
 
-                if (coefficientWidth < coefficientHeight) {
-                    targetWidth = width;
-                    targetHeight = (int) (targetHeight * coefficientWidth);
-                } else {
-                    targetWidth = (int) (targetWidth * coefficientHeight);
-                    targetHeight = height;
-                }
+                targetWidth = (int) (targetWidth * coefficient);
+                targetHeight = (int) (targetHeight * coefficient);
             }
 
             canvas.drawBitmap(image, null, new RectF(0, 0, targetWidth, targetHeight), null);

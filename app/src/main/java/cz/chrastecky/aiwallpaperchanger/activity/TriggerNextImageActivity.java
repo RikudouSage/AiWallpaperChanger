@@ -14,7 +14,7 @@ import cz.chrastecky.aiwallpaperchanger.helper.AlarmManagerHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.ShortcutManagerHelper;
 
 public class TriggerNextImageActivity extends AppCompatActivity {
-    public static final String ACTION_NAME = "cz.chrastecky.aiwallpaperchanger.GENERATE_NEXT";
+    public static final String ACTION_NAME = BuildConfig.APPLICATION_ID + ".GENERATE_NEXT";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
