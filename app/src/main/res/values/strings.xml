@@ -143,4 +143,7 @@
     <string name="app.generic.delete_content">When you delete this item, it\'s gone forever. Are you sure you want to do it?</string>
     <string name="app.parameter.town_description">The current town you\'re in. If it can\'t be determined, empty text is used.</string>
     <string name="app.parameter.state_description">Returns the current admin area you\'re in, for example the US state you\'re in, or generally the larger region you\'re currently in in other countries.</string>
+    <string name="app.live_wallpaper.description">Have a new AI generated wallpaper multiple times a day.</string>
+    <string name="app.settings.use_live_wallpaper">Use live wallpaper</string>
+    <string name="app.settings.use_live_wallpaper.description">On some devices there are problems with the wallpaper not being changed even though everything seems to work. You can check this toggle to enable live wallpaper which could mitigate the problem.</string>
 </resources>

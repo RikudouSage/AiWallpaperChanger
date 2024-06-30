@@ -3,6 +3,7 @@ package cz.chrastecky.aiwallpaperchanger.background;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.net.Uri;
 
 import androidx.annotation.NonNull;
@@ -12,6 +13,9 @@ import androidx.work.WorkerParameters;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -90,6 +94,20 @@ public class GenerateAndSetBackgroundWorker extends ListenableWorker {
                     AiProvider.OnResponse<GenerationDetailWithBitmap> onResponse = response -> {
                         logger.debug("WorkerJob", "Finished");
                         logger.debug("WorkerJob", "Model: " + response.getDetail().getModel());
+
+                        File imageFile = new File(getApplicationContext().getFilesDir(), "currentImage.webp");
+                        if (imageFile.exists()) {
+                            imageFile.delete();
+                        }
+                        try {
+                            imageFile.createNewFile();
+                            FileOutputStream imageOutputStream = new FileOutputStream(imageFile, false);
+                            response.getImage().compress(Bitmap.CompressFormat.WEBP, 100, imageOutputStream);
+                            imageOutputStream.close();
+                        } catch (IOException e) {
+                            logger.error("WorkerJob", "Failed saving the current image", e);
+                        }
+
                         WallpaperAction wallpaperAction = wallpaperActionCollection.findById(
                                 preferences.getString(SharedPreferencesHelper.WALLPAPER_ACTION, StaticWallpaperAction.ID)
                         );
