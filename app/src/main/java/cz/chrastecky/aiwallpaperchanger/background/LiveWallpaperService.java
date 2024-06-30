@@ -18,7 +18,6 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import java.io.File;
 
 import cz.chrastecky.aiwallpaperchanger.action.LiveWallpaperAction;
-import cz.chrastecky.aiwallpaperchanger.helper.Logger;
 
 public class LiveWallpaperService extends WallpaperService {
     @Override
@@ -33,18 +32,20 @@ public class LiveWallpaperService extends WallpaperService {
         public void onCreate(SurfaceHolder surfaceHolder) {
             super.onCreate(surfaceHolder);
 
-            receiver = new BroadcastReceiver() {
-                @Override
-                public void onReceive(Context context, Intent intent) {
-                    if (intent.getAction() == null || !intent.getAction().equals(LiveWallpaperAction.INTENT_ACTION)) {
-                        return;
-                    }
+            if (!isPreview()) {
+                receiver = new BroadcastReceiver() {
+                    @Override
+                    public void onReceive(Context context, Intent intent) {
+                        if (intent.getAction() == null || !intent.getAction().equals(LiveWallpaperAction.INTENT_ACTION)) {
+                            return;
+                        }
 
-                    updateWallpaper();
-                }
-            };
-            IntentFilter intentFilter = new IntentFilter(LiveWallpaperAction.INTENT_ACTION);
-            LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(receiver, intentFilter);
+                        updateWallpaper();
+                    }
+                };
+                IntentFilter intentFilter = new IntentFilter(LiveWallpaperAction.INTENT_ACTION);
+                LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(receiver, intentFilter);
+            }
         }
 
         @Override
