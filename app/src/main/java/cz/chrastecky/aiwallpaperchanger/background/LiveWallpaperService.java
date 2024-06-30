@@ -27,7 +27,6 @@ public class LiveWallpaperService extends WallpaperService {
     }
 
     private class LiveWallpaperEngine extends Engine {
-        private final Logger logger = new Logger(getApplicationContext());
         private BroadcastReceiver receiver;
 
         @Override
