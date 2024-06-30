@@ -1,5 +1,6 @@
 package cz.chrastecky.aiwallpaperchanger.background;
 
+import android.app.WallpaperColors;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -8,11 +9,13 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.RectF;
+import android.os.Build;
 import android.service.wallpaper.WallpaperService;
 import android.util.DisplayMetrics;
 import android.view.SurfaceHolder;
 import android.view.WindowManager;
 
+import androidx.annotation.Nullable;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import java.io.File;
@@ -27,10 +30,13 @@ public class LiveWallpaperService extends WallpaperService {
 
     private class LiveWallpaperEngine extends Engine {
         private BroadcastReceiver receiver;
+        private Bitmap currentBitmap;
 
         @Override
         public void onCreate(SurfaceHolder surfaceHolder) {
             super.onCreate(surfaceHolder);
+
+            setTouchEventsEnabled(false);
 
             if (!isPreview()) {
                 receiver = new BroadcastReceiver() {
@@ -60,6 +66,19 @@ public class LiveWallpaperService extends WallpaperService {
             updateWallpaper();
         }
 
+        @Nullable
+        @Override
+        public WallpaperColors onComputeColors() {
+            if (currentBitmap == null) {
+                return null;
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+                return WallpaperColors.fromBitmap(currentBitmap);
+            }
+
+            return null;
+        }
+
         private void updateWallpaper() {
             File imageFile = new File(getFilesDir(), "currentImage.webp");
             if (!imageFile.exists()) {
@@ -71,6 +90,7 @@ public class LiveWallpaperService extends WallpaperService {
         }
 
         private void updateWallpaper(Bitmap image) {
+            currentBitmap = image;
             SurfaceHolder holder = getSurfaceHolder();
 
             Canvas canvas = holder.lockCanvas();
@@ -109,6 +129,10 @@ public class LiveWallpaperService extends WallpaperService {
 
             canvas.drawBitmap(image, null, new RectF(0, 0, targetWidth, targetHeight), null);
             holder.unlockCanvasAndPost(canvas);
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+                notifyColorsChanged();
+            }
         }
     }
 }
