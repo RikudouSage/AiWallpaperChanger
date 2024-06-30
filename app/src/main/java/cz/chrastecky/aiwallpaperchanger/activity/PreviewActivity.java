@@ -1,6 +1,5 @@
 package cz.chrastecky.aiwallpaperchanger.activity;
 
-import android.app.WallpaperManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -17,7 +16,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.gson.Gson;
 
-import java.io.IOException;
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -25,14 +23,21 @@ import java.util.Objects;
 import java.util.UUID;
 
 import cz.chrastecky.aiwallpaperchanger.R;
+import cz.chrastecky.aiwallpaperchanger.action.StaticWallpaperAction;
+import cz.chrastecky.aiwallpaperchanger.action.WallpaperAction;
+import cz.chrastecky.aiwallpaperchanger.action.WallpaperActionCollection;
 import cz.chrastecky.aiwallpaperchanger.databinding.ActivityPreviewBinding;
 import cz.chrastecky.aiwallpaperchanger.dto.GenerateRequest;
 import cz.chrastecky.aiwallpaperchanger.dto.StoredRequest;
 import cz.chrastecky.aiwallpaperchanger.helper.ContentResolverHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.History;
+import cz.chrastecky.aiwallpaperchanger.helper.Logger;
 import cz.chrastecky.aiwallpaperchanger.helper.SharedPreferencesHelper;
 
 public class PreviewActivity extends AppCompatActivity {
+    private final WallpaperActionCollection wallpaperActionCollection = new WallpaperActionCollection();
+    private final Logger logger = new Logger(this);
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,18 +73,19 @@ public class PreviewActivity extends AppCompatActivity {
             editor.apply();
 
             AsyncTask.execute(() -> {
-                try {
-                    if (preferences.contains(SharedPreferencesHelper.STORE_WALLPAPERS_URI)) {
-                        ContentResolverHelper.storeBitmap(this, Uri.parse(preferences.getString(SharedPreferencesHelper.STORE_WALLPAPERS_URI, "")), UUID.randomUUID() + ".png", image);
-                    }
-
-                    WallpaperManager wallpaperManager = WallpaperManager.getInstance(this);
-                    wallpaperManager.setBitmap(image);
-                    editor.putString(SharedPreferencesHelper.WALLPAPER_LAST_CHANGED, DateFormat.getInstance().format(Calendar.getInstance().getTime()));
-                    editor.apply();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
+                if (preferences.contains(SharedPreferencesHelper.STORE_WALLPAPERS_URI)) {
+                    ContentResolverHelper.storeBitmap(this, Uri.parse(preferences.getString(SharedPreferencesHelper.STORE_WALLPAPERS_URI, "")), UUID.randomUUID() + ".png", image);
                 }
+
+                WallpaperAction wallpaperAction = wallpaperActionCollection.findById(
+                        preferences.getString(SharedPreferencesHelper.WALLPAPER_ACTION, StaticWallpaperAction.ID)
+                );
+                if (!wallpaperAction.setWallpaper(this, image)) {
+                    logger.error("Preview", "Failed setting the wallpaper");
+                }
+
+                editor.putString(SharedPreferencesHelper.WALLPAPER_LAST_CHANGED, DateFormat.getInstance().format(Calendar.getInstance().getTime()));
+                editor.apply();
             });
 
             History history = new History(this);
