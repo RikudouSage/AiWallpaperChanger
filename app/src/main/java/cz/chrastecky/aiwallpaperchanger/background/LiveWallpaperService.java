@@ -21,8 +21,6 @@ import cz.chrastecky.aiwallpaperchanger.action.LiveWallpaperAction;
 import cz.chrastecky.aiwallpaperchanger.helper.Logger;
 
 public class LiveWallpaperService extends WallpaperService {
-    public final static String SOCKET_NAME = "AiWallpaperChangerLW";
-
     @Override
     public Engine onCreateEngine() {
         return new LiveWallpaperEngine();
