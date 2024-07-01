@@ -83,6 +83,18 @@
                     android:text="@string/app.preview.button.cancel" />
             </LinearLayout>
 
+            <Button
+                android:id="@+id/share_button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/button_wrapper"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:text="@string/app.preview.share" />
+
             <ImageView
                 android:id="@+id/preview_image"
                 android:layout_width="0dp"
@@ -96,7 +108,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/button_wrapper" />
+                app:layout_constraintTop_toBottomOf="@id/share_button" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>

@@ -9,6 +9,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -16,9 +17,14 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.gson.Gson;
 
+import java.io.File;
+import java.io.IOException;
 import java.text.DateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -30,6 +36,7 @@ import cz.chrastecky.aiwallpaperchanger.databinding.ActivityPreviewBinding;
 import cz.chrastecky.aiwallpaperchanger.dto.GenerateRequest;
 import cz.chrastecky.aiwallpaperchanger.dto.StoredRequest;
 import cz.chrastecky.aiwallpaperchanger.helper.ContentResolverHelper;
+import cz.chrastecky.aiwallpaperchanger.helper.WallpaperFileHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.History;
 import cz.chrastecky.aiwallpaperchanger.helper.Logger;
 import cz.chrastecky.aiwallpaperchanger.helper.SharedPreferencesHelper;
@@ -37,6 +44,8 @@ import cz.chrastecky.aiwallpaperchanger.helper.SharedPreferencesHelper;
 public class PreviewActivity extends AppCompatActivity {
     private final WallpaperActionCollection wallpaperActionCollection = new WallpaperActionCollection();
     private final Logger logger = new Logger(this);
+    private String tempFileName;
+    private String shareFileName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +67,8 @@ public class PreviewActivity extends AppCompatActivity {
         setTitle(R.string.app_generate_preview);
 
         Intent intent = getIntent();
-        Bitmap image = BitmapFactory.decodeFile(Objects.requireNonNull(intent.getStringExtra("imagePath")));
+        tempFileName = Objects.requireNonNull(intent.getStringExtra("imagePath"));
+        Bitmap image = Objects.requireNonNull(WallpaperFileHelper.getBitmap(this, tempFileName));
         ImageView previewImage = findViewById(R.id.preview_image);
         previewImage.setImageBitmap(image);
 
@@ -67,6 +77,11 @@ public class PreviewActivity extends AppCompatActivity {
 
         Button okButton = findViewById(R.id.ok_button);
         okButton.setOnClickListener(view -> {
+            try {
+                WallpaperFileHelper.save(this, image);
+            } catch (IOException e) {
+                logger.error("Preview", "Failed saving the current image", e);
+            }
             SharedPreferences preferences = new SharedPreferencesHelper().get(this);
             SharedPreferences.Editor editor = preferences.edit();
             editor.putString(SharedPreferencesHelper.STORED_GENERATION_PARAMETERS, intent.getStringExtra("generationParameters"));
@@ -103,5 +118,42 @@ public class PreviewActivity extends AppCompatActivity {
             intent.putExtra("generationParameters", intent.getStringExtra("generationParameters"));
             scheduleActivityLauncher.launch(configureIntent);
         });
+
+        binding.shareButton.setOnClickListener(view -> {
+            try {
+                createShareFile();
+            } catch (IOException e) {
+                Toast.makeText(this, R.string.app_error_create_tmp_file, Toast.LENGTH_LONG).show();
+                return;
+            }
+
+            startActivity(WallpaperFileHelper.getShareIntent(this, shareFileName));
+        });
+    }
+
+    private void createShareFile() throws IOException {
+        if (shareFileName != null) {
+            return;
+        }
+
+        shareFileName = "AI_Wallpaper_Changer_" + new Date().getTime() / 1000 + ".webp";
+        WallpaperFileHelper.save(this, Objects.requireNonNull(WallpaperFileHelper.getBitmap(this, tempFileName)), shareFileName);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        final List<String> files = Arrays.asList(tempFileName, shareFileName);
+        for (final String filename : files) {
+            if (filename == null) {
+                continue;
+            }
+            File file = WallpaperFileHelper.getFile(this, filename);
+            if (file == null) {
+                continue;
+            }
+            file.delete();
+        }
     }
 }
