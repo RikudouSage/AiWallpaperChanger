@@ -10,6 +10,10 @@ on:
     tags:
       - v*
 
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
 jobs:
   generate:
     name: Generate
