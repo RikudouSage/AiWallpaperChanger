@@ -22,6 +22,11 @@
         android:title="@string/app.title.about"
         app:showAsAction="never" />
     <item
+        android:id="@+id/share_current_menu_item"
+        android:title="@string/app.menu.share_current"
+        app:showAsAction="never"
+        android:visible="false" />
+    <item
         android:id="@+id/next_image_menu_item"
         android:title="@string/app.shortcut.next_image"
         app:showAsAction="never"

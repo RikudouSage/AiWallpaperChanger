@@ -144,4 +144,5 @@
     <string name="app.parameter.town_description">Město, ve kterém se nacházíte, pokud to nelze zjistit, vrátí se prázdný text.</string>
     <string name="app.parameter.state_description">Vrací současnou administrativní oblast, například stát USA, ve kterém se nacházíte, v jiných zemích vrací obecně region, ve kterém se nacházíte (v ČR vrací název kraje).</string>
     <string name="app.parameter.full_weather.description">Vrací komplexnější popis počasí, jako například \"heavy intensity shower rain\" namísto jednoho klíčového slova.</string>
+    <string name="app.menu.share_current">Sdílet současnou tapetu</string>
 </resources>
