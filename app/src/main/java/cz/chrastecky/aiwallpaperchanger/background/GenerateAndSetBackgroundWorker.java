@@ -1,9 +1,9 @@
 package cz.chrastecky.aiwallpaperchanger.background;
 
 import android.annotation.SuppressLint;
-import android.app.WallpaperManager;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.net.Uri;
 
 import androidx.annotation.NonNull;
@@ -13,6 +13,8 @@ import androidx.work.WorkerParameters;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.util.Calendar;
@@ -21,6 +23,9 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import cz.chrastecky.aiwallpaperchanger.BuildConfig;
+import cz.chrastecky.aiwallpaperchanger.action.StaticWallpaperAction;
+import cz.chrastecky.aiwallpaperchanger.action.WallpaperAction;
+import cz.chrastecky.aiwallpaperchanger.action.WallpaperActionCollection;
 import cz.chrastecky.aiwallpaperchanger.activity.PremiumActivity;
 import cz.chrastecky.aiwallpaperchanger.dto.GenerateRequest;
 import cz.chrastecky.aiwallpaperchanger.dto.StoredRequest;
@@ -29,6 +34,7 @@ import cz.chrastecky.aiwallpaperchanger.exception.ContentCensoredException;
 import cz.chrastecky.aiwallpaperchanger.exception.RetryGenerationException;
 import cz.chrastecky.aiwallpaperchanger.helper.BillingHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.ContentResolverHelper;
+import cz.chrastecky.aiwallpaperchanger.helper.CurrentWallpaperHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.GenerateRequestHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.History;
 import cz.chrastecky.aiwallpaperchanger.helper.Logger;
@@ -39,7 +45,8 @@ import cz.chrastecky.aiwallpaperchanger.provider.AiHorde;
 import cz.chrastecky.aiwallpaperchanger.provider.AiProvider;
 
 public class GenerateAndSetBackgroundWorker extends ListenableWorker {
-    Logger logger = new Logger(getApplicationContext());
+    private final Logger logger = new Logger(getApplicationContext());
+    private final WallpaperActionCollection wallpaperActionCollection = new WallpaperActionCollection();
 
     public GenerateAndSetBackgroundWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
@@ -88,38 +95,44 @@ public class GenerateAndSetBackgroundWorker extends ListenableWorker {
                     AiProvider.OnResponse<GenerationDetailWithBitmap> onResponse = response -> {
                         logger.debug("WorkerJob", "Finished");
                         logger.debug("WorkerJob", "Model: " + response.getDetail().getModel());
-                        WallpaperManager wallpaperManager = WallpaperManager.getInstance(getApplicationContext());
+
                         try {
-                            if (preferences.contains(SharedPreferencesHelper.STORE_WALLPAPERS_URI)) {
-                                logger.debug("WorkerJob", "Storing image on the filesystem");
-                                ContentResolverHelper.storeBitmap(getApplicationContext(), Uri.parse(preferences.getString(SharedPreferencesHelper.STORE_WALLPAPERS_URI, "")), UUID.randomUUID() + ".png", response.getImage());
-                            }
-
-                            int status = wallpaperManager.setBitmap(response.getImage(), null, true);
-                            logger.debug("WorkerJob", "The wallpaper has been set");
-                            logger.debug("WorkerJob", "Set wallpaper status: " + status);
-
-                            SharedPreferences.Editor editor = preferences.edit();
-                            editor.putString(SharedPreferencesHelper.WALLPAPER_LAST_CHANGED, DateFormat.getInstance().format(Calendar.getInstance().getTime()));
-                            editor.commit();
-
-                            History history = new History(getApplicationContext());
-                            history.addItem(new StoredRequest(
-                                    UUID.randomUUID(),
-                                    finalRequest,
-                                    response.getDetail().getSeed(),
-                                    response.getDetail().getWorkerId(),
-                                    response.getDetail().getWorkerName(),
-                                    new Date(),
-                                    response.getDetail().getModel()
-                            ));
-                            logger.debug("WorkerJob", "Adding the item to the history");
-
-                            completer.set(Result.success());
+                            CurrentWallpaperHelper.save(getApplicationContext(), response.getImage());
                         } catch (IOException e) {
-                            logger.error("AIWallpaperError", "Failed setting new wallpaper", e);
-                            completer.setException(e);
+                            logger.error("WorkerJob", "Failed saving the current image", e);
                         }
+
+                        WallpaperAction wallpaperAction = wallpaperActionCollection.findById(
+                                preferences.getString(SharedPreferencesHelper.WALLPAPER_ACTION, StaticWallpaperAction.ID)
+                        );
+                        if (!wallpaperAction.setWallpaper(getApplicationContext(), response.getImage())) {
+                            logger.error("AIWallpaperError", "Failed setting new wallpaper");
+                            completer.setException(new RuntimeException("Failed setting new wallpaper"));
+                            return;
+                        }
+
+                        if (preferences.contains(SharedPreferencesHelper.STORE_WALLPAPERS_URI)) {
+                            logger.debug("WorkerJob", "Storing image on the filesystem");
+                            ContentResolverHelper.storeBitmap(getApplicationContext(), Uri.parse(preferences.getString(SharedPreferencesHelper.STORE_WALLPAPERS_URI, "")), UUID.randomUUID() + ".png", response.getImage());
+                        }
+
+                        SharedPreferences.Editor editor = preferences.edit();
+                        editor.putString(SharedPreferencesHelper.WALLPAPER_LAST_CHANGED, DateFormat.getInstance().format(Calendar.getInstance().getTime()));
+                        editor.commit();
+
+                        History history = new History(getApplicationContext());
+                        history.addItem(new StoredRequest(
+                                UUID.randomUUID(),
+                                finalRequest,
+                                response.getDetail().getSeed(),
+                                response.getDetail().getWorkerId(),
+                                response.getDetail().getWorkerName(),
+                                new Date(),
+                                response.getDetail().getModel()
+                        ));
+                        logger.debug("WorkerJob", "Adding the item to the history");
+
+                        completer.set(Result.success());
                     };
                     AtomicInteger censoredRetries = new AtomicInteger(3);
                     ValueWrapper<AiHorde.OnError> onError = new ValueWrapper<>();

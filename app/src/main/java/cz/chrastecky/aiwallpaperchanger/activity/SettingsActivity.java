@@ -1,6 +1,9 @@
 package cz.chrastecky.aiwallpaperchanger.activity;
 
 import android.annotation.SuppressLint;
+import android.app.WallpaperInfo;
+import android.app.WallpaperManager;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
@@ -17,6 +20,9 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
 
 import cz.chrastecky.aiwallpaperchanger.R;
+import cz.chrastecky.aiwallpaperchanger.action.LiveWallpaperAction;
+import cz.chrastecky.aiwallpaperchanger.action.StaticWallpaperAction;
+import cz.chrastecky.aiwallpaperchanger.background.LiveWallpaperService;
 import cz.chrastecky.aiwallpaperchanger.databinding.ActivitySettingsBinding;
 import cz.chrastecky.aiwallpaperchanger.helper.ContentResolverHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.SharedPreferencesHelper;
@@ -24,12 +30,13 @@ import cz.chrastecky.aiwallpaperchanger.helper.SharedPreferencesHelper;
 public class SettingsActivity extends AppCompatActivity {
 
     private Uri directoryUri = null;
+    private ActivitySettingsBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        ActivitySettingsBinding binding = ActivitySettingsBinding.inflate(getLayoutInflater());
+        binding = ActivitySettingsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         setSupportActionBar(binding.toolbar);
@@ -57,6 +64,14 @@ public class SettingsActivity extends AppCompatActivity {
                 }
         );
 
+        binding.useLiveWallpaper.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked && !isLiveWallpaper()) {
+                Intent intent = new Intent(WallpaperManager.ACTION_CHANGE_LIVE_WALLPAPER);
+                intent.putExtra(WallpaperManager.EXTRA_LIVE_WALLPAPER_COMPONENT, new ComponentName(this, LiveWallpaperService.class));
+                startActivity(intent);
+            }
+        });
+
         FloatingActionButton saveButton = findViewById(R.id.save_button);
         saveButton.setOnClickListener(view -> {
             SharedPreferences.Editor editor = new SharedPreferencesHelper().get(this).edit();
@@ -78,6 +93,12 @@ public class SettingsActivity extends AppCompatActivity {
                 editor.remove(SharedPreferencesHelper.STORE_WALLPAPERS_URI);
             } else {
                 editor.putString(SharedPreferencesHelper.STORE_WALLPAPERS_URI, directoryUri.toString());
+            }
+
+            if (binding.useLiveWallpaper.isChecked()) {
+                editor.putString(SharedPreferencesHelper.WALLPAPER_ACTION, LiveWallpaperAction.ID);
+            } else {
+                editor.putString(SharedPreferencesHelper.WALLPAPER_ACTION, StaticWallpaperAction.ID);
             }
 
             editor.putBoolean(SharedPreferencesHelper.ALLOW_LARGE_NUMERIC_VALUES, binding.allowLargeValues.isChecked());
@@ -105,6 +126,14 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        if (binding.useLiveWallpaper.isChecked() && !isLiveWallpaper()) {
+            binding.useLiveWallpaper.setChecked(false);
+        }
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = new MenuInflater(this);
         inflater.inflate(R.menu.settings_menu, menu);
@@ -124,5 +153,19 @@ public class SettingsActivity extends AppCompatActivity {
         ) {
             binding.saveWallpapersSwitch.setChecked(true);
         }
+
+        if (preferences.getString(SharedPreferencesHelper.WALLPAPER_ACTION, StaticWallpaperAction.ID).equals(LiveWallpaperAction.ID) && isLiveWallpaper()) {
+            binding.useLiveWallpaper.setChecked(true);
+        }
+    }
+
+    private boolean isLiveWallpaper() {
+        WallpaperManager wallpaperManager = WallpaperManager.getInstance(this);
+        WallpaperInfo currentWallpaper = wallpaperManager.getWallpaperInfo();
+        if (currentWallpaper == null) {
+            return false;
+        }
+
+        return currentWallpaper.getComponent().equals(new ComponentName(this, LiveWallpaperService.class));
     }
 }
