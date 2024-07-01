@@ -282,13 +282,14 @@
   },
   {
     "name": "Current weather (extended)",
-    "prompt": "${country}, ${full_weather}",
+    "prompt": "${country}, ${full_weather}, ${tod}",
     "models": ["AlbedoBase XL (SDXL)", "ICBINP XL"],
     "author": "Rikudou",
     "description": "Uses your phone's location to determine the current weather and country and uses them as part of the prompt. Unlike the other weather prompt, this one uses an expanded description of the weather, like \"light intensity drizzle rain\".",
     "params": {
       "country": ["Czechia", "United States", "Great Britain", "Netherlands", "France", "Egypt", "Spain", "Italy", "Germany", "Mexico", "Japan"],
-      "full_weather": ["light intensity drizzle rain", "thunderstorm with heavy rain", "heavy shower snow", "mist", "tornado", "scattered clouds", "clear sky"]
+      "full_weather": ["light intensity drizzle rain", "thunderstorm with heavy rain", "heavy shower snow", "mist", "tornado", "scattered clouds", "clear sky"],
+      "tod": ["morning", "afternoon", "noon", "evening", "night", "midnight"]
     }
   }
 ]
