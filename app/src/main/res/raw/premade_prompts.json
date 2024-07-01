@@ -279,5 +279,16 @@
       "state": ["California", "Texas", "Florida", "New York", "Pennsylvania", "Illinois", "Ohio", "Georgia", "North Carolina", "Michigan"]
     },
     "description": "Uses your current location to determine the state you're in. Outside US it uses the general administrative area which might or might not yield good results."
+  },
+  {
+    "name": "Current weather (extended)",
+    "prompt": "${country}, ${full_weather}",
+    "models": ["AlbedoBase XL (SDXL)", "ICBINP XL"],
+    "author": "Rikudou",
+    "description": "Uses your phone's location to determine the current weather and country and uses them as part of the prompt. Unlike the other weather prompt, this one uses an expanded description of the weather, like \"light intensity drizzle rain\".",
+    "params": {
+      "country": ["Czechia", "United States", "Great Britain", "Netherlands", "France", "Egypt", "Spain", "Italy", "Germany", "Mexico", "Japan"],
+      "full_weather": ["light intensity drizzle rain", "thunderstorm with heavy rain", "heavy shower snow", "mist", "tornado", "scattered clouds", "clear sky"]
+    }
   }
 ]
