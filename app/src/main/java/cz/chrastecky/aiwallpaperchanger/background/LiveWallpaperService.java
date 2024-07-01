@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.RectF;
 import android.os.Build;
@@ -18,10 +17,8 @@ import android.view.WindowManager;
 import androidx.annotation.Nullable;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import java.io.File;
-
 import cz.chrastecky.aiwallpaperchanger.action.LiveWallpaperAction;
-import cz.chrastecky.aiwallpaperchanger.helper.CurrentWallpaperHelper;
+import cz.chrastecky.aiwallpaperchanger.helper.WallpaperFileHelper;
 
 public class LiveWallpaperService extends WallpaperService {
     @Override
@@ -81,7 +78,7 @@ public class LiveWallpaperService extends WallpaperService {
         }
 
         private void updateWallpaper() {
-            final Bitmap currentImage = CurrentWallpaperHelper.getBitmap(LiveWallpaperService.this);
+            final Bitmap currentImage = WallpaperFileHelper.getBitmap(LiveWallpaperService.this);
             if (currentImage == null) {
                 return;
             }

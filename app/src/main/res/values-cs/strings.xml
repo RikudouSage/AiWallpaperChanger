@@ -148,4 +148,5 @@
     <string name="app.settings.use_live_wallpaper.description">Na některých zařízeních je problém s nastavováním tapet, i když se všechno tváří, že to funguje. Zaškrtnutím této možnosti povolíte živou tapetu, což může tento problém vyřešit.</string>
     <string name="app.parameter.full_weather.description">Vrací komplexnější popis počasí, jako například \"heavy intensity shower rain\" namísto jednoho klíčového slova.</string>
     <string name="app.menu.share_current">Sdílet současnou tapetu</string>
+    <string name="app.preview.share">Sdílet</string>
 </resources>
