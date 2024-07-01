@@ -144,4 +144,5 @@
     <string name="app.parameter.town_description">The current town you\'re in. If it can\'t be determined, empty text is used.</string>
     <string name="app.parameter.state_description">Returns the current admin area you\'re in, for example the US state you\'re in, or generally the larger region you\'re currently in in other countries.</string>
     <string name="app.parameter.full_weather.description">Returns a more complex weather description like \"heavy intensity shower rain\" instead of a single keyword.</string>
+    <string name="app.menu.share_current">Share current wallpaper</string>
 </resources>
