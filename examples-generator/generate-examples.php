@@ -38,7 +38,7 @@ foreach ($configs as $config) {
     $objects = array_filter(
         $s3client->listObjectsV2([
             'Bucket' => $bucket,
-            'Prefix' => $config->name,
+            'Prefix' => $config->name . '/',
         ])->get('Contents') ?? [],
         fn (array $item) => !str_ends_with($item['Key'], 'json'),
     );
@@ -242,7 +242,7 @@ if ($shouldGenerateIndex) {
         $objects = array_filter(
             $s3client->listObjectsV2([
                 'Bucket' => $bucket,
-                'Prefix' => $config->name,
+                'Prefix' => $config->name . '/',
             ])->get('Contents') ?? [],
             fn (array $item) => !str_ends_with($item['Key'], 'json'),
         );
