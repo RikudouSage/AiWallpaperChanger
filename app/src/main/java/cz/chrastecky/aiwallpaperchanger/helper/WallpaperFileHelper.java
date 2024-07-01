@@ -93,7 +93,7 @@ public class WallpaperFileHelper {
         intent.setType("image/webp");
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
-        return intent;
+        return Intent.createChooser(intent, null);
     }
 
     @Nullable

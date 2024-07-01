@@ -207,7 +207,7 @@ public class MainActivity extends AppCompatActivity {
                     return true;
                 }
 
-                startActivity(Intent.createChooser(intent, null));
+                startActivity(intent);
 
                 return true;
             }
