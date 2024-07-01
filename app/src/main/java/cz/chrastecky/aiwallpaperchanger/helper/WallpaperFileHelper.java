@@ -97,6 +97,11 @@ public class WallpaperFileHelper {
     }
 
     @Nullable
+    public static Intent getShareIntent(@NonNull Context context, @NonNull File file) {
+        return getShareIntent(context, file.getName());
+    }
+
+    @Nullable
     public static Intent getShareIntent(@NonNull Context context) {
         return getShareIntent(context, FILENAME);
     }

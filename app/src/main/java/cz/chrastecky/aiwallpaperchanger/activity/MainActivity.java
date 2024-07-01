@@ -44,6 +44,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -97,6 +98,7 @@ public class MainActivity extends AppCompatActivity {
 
     private List<String> selectedModels = new ArrayList<>();
     private List<String> allModels = new ArrayList<>();
+    private final List<String> filenamesToDelete = new ArrayList<>();
 
     private final PromptParameterProviders parameterProviders = new PromptParameterProviders();
 
@@ -201,13 +203,19 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
             if (item.getItemId() == R.id.share_current_menu_item) {
-                Intent intent = WallpaperFileHelper.getShareIntent(this);
-                if (intent == null) {
+                try {
+                    final File tempFile = WallpaperFileHelper.save(
+                            this,
+                            WallpaperFileHelper.getBitmap(this),
+                            "AI_Wallpaper_Changer_" + new Date().getTime() / 1_000 + ".webp"
+                    );
+                    filenamesToDelete.add(tempFile.getName());
+                    Intent intent = WallpaperFileHelper.getShareIntent(this, tempFile);
+                    startActivity(intent);
+                } catch (IOException e) {
                     Toast.makeText(this, R.string.app_error_create_tmp_file, Toast.LENGTH_LONG).show();
                     return true;
                 }
-
-                startActivity(intent);
 
                 return true;
             }
@@ -425,6 +433,24 @@ public class MainActivity extends AppCompatActivity {
                 });
             });
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        for (final String filename : filenamesToDelete) {
+            if (filename == null) {
+                continue;
+            }
+
+            File file = WallpaperFileHelper.getFile(this, filename);
+            if (file == null) {
+                continue;
+            }
+
+            file.delete();
+        }
     }
 
     @NonNull
