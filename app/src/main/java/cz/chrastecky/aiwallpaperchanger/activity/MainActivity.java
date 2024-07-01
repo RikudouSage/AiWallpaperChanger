@@ -8,7 +8,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PermissionInfo;
-import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.text.Editable;
@@ -34,6 +33,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 
 import com.android.volley.AuthFailureError;
 import com.google.android.material.slider.Slider;
@@ -41,7 +41,6 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.gson.Gson;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -68,6 +67,7 @@ import cz.chrastecky.aiwallpaperchanger.exception.ContentCensoredException;
 import cz.chrastecky.aiwallpaperchanger.exception.RetryGenerationException;
 import cz.chrastecky.aiwallpaperchanger.helper.AlarmManagerHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.BillingHelper;
+import cz.chrastecky.aiwallpaperchanger.helper.CurrentWallpaperHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.GenerateRequestHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.Logger;
 import cz.chrastecky.aiwallpaperchanger.helper.PermissionHelper;
@@ -79,6 +79,7 @@ import cz.chrastecky.aiwallpaperchanger.helper.ValueWrapper;
 import cz.chrastecky.aiwallpaperchanger.prompt_parameter_provider.PromptParameterProvider;
 import cz.chrastecky.aiwallpaperchanger.provider.AiHorde;
 import cz.chrastecky.aiwallpaperchanger.provider.AiProvider;
+import cz.chrastecky.aiwallpaperchanger.sharing.AppFileProvider;
 
 public class MainActivity extends AppCompatActivity {
     private interface OnGenerateRequestCreated {
@@ -199,6 +200,22 @@ public class MainActivity extends AppCompatActivity {
             }
             if (item.getItemId() == R.id.next_image_menu_item) {
                 startActivity(new Intent(this, TriggerNextImageActivity.class));
+                return true;
+            }
+            if (item.getItemId() == R.id.share_current_menu_item) {
+                final File file = CurrentWallpaperHelper.getFile(this);
+                if (file == null) {
+                    Toast.makeText(this, R.string.app_error_create_tmp_file, Toast.LENGTH_LONG).show();
+                    return true;
+                }
+
+                final Intent intent = new Intent(Intent.ACTION_SEND);
+                intent.putExtra(Intent.EXTRA_STREAM, AppFileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".files_provider", file));
+                intent.setType("image/webp");
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+                startActivity(Intent.createChooser(intent, null));
+
                 return true;
             }
 
@@ -328,14 +345,7 @@ public class MainActivity extends AppCompatActivity {
                 createGenerateRequest(unreplacedRequest -> {
                     createGenerateRequest(replacedRequest -> {
                         try {
-                            File imageFile = new File(getFilesDir(), "currentImage.webp");
-                            if (imageFile.exists()) {
-                                imageFile.delete();
-                            }
-                            imageFile.createNewFile();
-                            FileOutputStream imageOutputStream = new FileOutputStream(imageFile, false);
-                            response.getImage().compress(Bitmap.CompressFormat.WEBP, 100, imageOutputStream);
-                            imageOutputStream.close();
+                            final File imageFile = CurrentWallpaperHelper.save(this, response.getImage());
 
                             Intent intent = new Intent(this, PreviewActivity.class);
                             intent.putExtra("imagePath", imageFile.getAbsolutePath());
@@ -507,6 +517,9 @@ public class MainActivity extends AppCompatActivity {
         }
         if (AlarmManagerHelper.getAlarmIntent(this, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_NO_CREATE) != null) {
             menu.findItem(R.id.next_image_menu_item).setVisible(true);
+        }
+        if (CurrentWallpaperHelper.getFile(this) != null) {
+            menu.findItem(R.id.share_current_menu_item).setVisible(true);
         }
 
         return true;

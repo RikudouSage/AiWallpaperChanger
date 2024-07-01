@@ -95,7 +95,7 @@ foreach ($configs as $config) {
         $create = $maxImages;
     }
 
-    if (!$create) {
+    if ($create <= 0) {
         echo "[{$config->name}] No new objects needed, skipping", PHP_EOL;
         continue;
     }

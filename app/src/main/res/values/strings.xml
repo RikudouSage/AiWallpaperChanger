@@ -146,4 +146,6 @@
     <string name="app.live_wallpaper.description">Have a new AI generated wallpaper multiple times a day.</string>
     <string name="app.settings.use_live_wallpaper">Use live wallpaper</string>
     <string name="app.settings.use_live_wallpaper.description">On some devices there are problems with the wallpaper not being changed even though everything seems to work. You can check this toggle to enable live wallpaper which could mitigate the problem.</string>
+    <string name="app.parameter.full_weather.description">Returns a more complex weather description like \"heavy intensity shower rain\" instead of a single keyword.</string>
+    <string name="app.menu.share_current">Share current wallpaper</string>
 </resources>
