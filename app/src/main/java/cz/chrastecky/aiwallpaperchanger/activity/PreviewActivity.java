@@ -20,8 +20,11 @@ import com.google.gson.Gson;
 import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -42,6 +45,7 @@ public class PreviewActivity extends AppCompatActivity {
     private final WallpaperActionCollection wallpaperActionCollection = new WallpaperActionCollection();
     private final Logger logger = new Logger(this);
     private String tempFileName;
+    private String shareFileName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,28 +120,37 @@ public class PreviewActivity extends AppCompatActivity {
         });
 
         binding.shareButton.setOnClickListener(view -> {
-            final Intent shareIntent = WallpaperFileHelper.getShareIntent(this, tempFileName);
-            if (shareIntent == null) {
+            try {
+                createShareFile();
+            } catch (IOException e) {
                 Toast.makeText(this, R.string.app_error_create_tmp_file, Toast.LENGTH_LONG).show();
                 return;
             }
 
-            startActivity(shareIntent);
+            startActivity(WallpaperFileHelper.getShareIntent(this, shareFileName));
         });
+    }
+
+    private void createShareFile() throws IOException {
+        if (shareFileName != null) {
+            return;
+        }
+
+        shareFileName = "AI_Wallpaper_Changer_" + new Date().getTime() / 1000 + ".webp";
+        WallpaperFileHelper.save(this, Objects.requireNonNull(WallpaperFileHelper.getBitmap(this, tempFileName)), shareFileName);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (tempFileName != null) {
-            File file = WallpaperFileHelper.getFile(this, tempFileName);
-            if (file == null) {
-                return;
-            }
 
-            if (file.exists()) {
-                file.delete();
+        final List<String> files = Arrays.asList(tempFileName, shareFileName);
+        for (final String filename : files) {
+            File file = WallpaperFileHelper.getFile(this, filename);
+            if (file == null) {
+                continue;
             }
+            file.delete();
         }
     }
 }

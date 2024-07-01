@@ -63,6 +63,7 @@ public class WallpaperFileHelper {
         return file;
     }
 
+    @NonNull
     public static File save(@NonNull Context context, @NonNull Bitmap bitmap) throws IOException {
         return save(context, bitmap, FILENAME);
     }
