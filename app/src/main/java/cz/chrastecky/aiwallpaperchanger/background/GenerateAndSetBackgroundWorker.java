@@ -34,6 +34,7 @@ import cz.chrastecky.aiwallpaperchanger.exception.ContentCensoredException;
 import cz.chrastecky.aiwallpaperchanger.exception.RetryGenerationException;
 import cz.chrastecky.aiwallpaperchanger.helper.BillingHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.ContentResolverHelper;
+import cz.chrastecky.aiwallpaperchanger.helper.CurrentWallpaperHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.GenerateRequestHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.History;
 import cz.chrastecky.aiwallpaperchanger.helper.Logger;
@@ -95,15 +96,8 @@ public class GenerateAndSetBackgroundWorker extends ListenableWorker {
                         logger.debug("WorkerJob", "Finished");
                         logger.debug("WorkerJob", "Model: " + response.getDetail().getModel());
 
-                        File imageFile = new File(getApplicationContext().getFilesDir(), "currentImage.webp");
-                        if (imageFile.exists()) {
-                            imageFile.delete();
-                        }
                         try {
-                            imageFile.createNewFile();
-                            FileOutputStream imageOutputStream = new FileOutputStream(imageFile, false);
-                            response.getImage().compress(Bitmap.CompressFormat.WEBP, 100, imageOutputStream);
-                            imageOutputStream.close();
+                            CurrentWallpaperHelper.save(getApplicationContext(), response.getImage());
                         } catch (IOException e) {
                             logger.error("WorkerJob", "Failed saving the current image", e);
                         }

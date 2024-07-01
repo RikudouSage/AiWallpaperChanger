@@ -21,6 +21,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import java.io.File;
 
 import cz.chrastecky.aiwallpaperchanger.action.LiveWallpaperAction;
+import cz.chrastecky.aiwallpaperchanger.helper.CurrentWallpaperHelper;
 
 public class LiveWallpaperService extends WallpaperService {
     @Override
@@ -80,13 +81,12 @@ public class LiveWallpaperService extends WallpaperService {
         }
 
         private void updateWallpaper() {
-            File imageFile = new File(getFilesDir(), "currentImage.webp");
-            if (!imageFile.exists()) {
+            final Bitmap currentImage = CurrentWallpaperHelper.getBitmap(LiveWallpaperService.this);
+            if (currentImage == null) {
                 return;
             }
 
-            final Bitmap image = BitmapFactory.decodeFile(imageFile.getAbsolutePath());
-            updateWallpaper(image);
+            updateWallpaper(currentImage);
         }
 
         private void updateWallpaper(Bitmap image) {
