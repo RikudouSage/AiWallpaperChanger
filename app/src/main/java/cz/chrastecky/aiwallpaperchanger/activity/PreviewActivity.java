@@ -146,6 +146,9 @@ public class PreviewActivity extends AppCompatActivity {
 
         final List<String> files = Arrays.asList(tempFileName, shareFileName);
         for (final String filename : files) {
+            if (filename == null) {
+                continue;
+            }
             File file = WallpaperFileHelper.getFile(this, filename);
             if (file == null) {
                 continue;
