@@ -29,6 +29,10 @@ public interface CustomParameterDao {
     @Query("select * from CustomParameter where id = :id")
     CustomParameterWithValues find(int id);
 
+    @Transaction
+    @Query("select * from CustomParameter where name = :name")
+    CustomParameterWithValues findByName(String name);
+
     @Delete
     void delete(CustomParameter customParameter);
 

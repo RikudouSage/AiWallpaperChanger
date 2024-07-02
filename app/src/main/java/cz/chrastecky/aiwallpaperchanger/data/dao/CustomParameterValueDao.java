@@ -1,6 +1,7 @@
 package cz.chrastecky.aiwallpaperchanger.data.dao;
 
 import androidx.room.Dao;
+import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Upsert;
 
@@ -15,4 +16,7 @@ public interface CustomParameterValueDao {
 
     @Upsert
     void upsertMultiple(List<CustomParameterValue> values);
+
+    @Delete
+    void delete(CustomParameterValue value);
 }

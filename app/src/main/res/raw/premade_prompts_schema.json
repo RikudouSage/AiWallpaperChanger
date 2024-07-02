@@ -72,7 +72,7 @@
                   },
                   "type": {
                     "type": "string",
-                    "enum": ["if", "else"]
+                    "enum": ["If", "Else"]
                   }
                 },
                 "if": {

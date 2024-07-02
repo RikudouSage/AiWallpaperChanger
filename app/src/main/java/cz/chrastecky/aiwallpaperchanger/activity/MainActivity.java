@@ -57,9 +57,15 @@ import java.util.stream.Collectors;
 import cz.chrastecky.aiwallpaperchanger.BuildConfig;
 import cz.chrastecky.aiwallpaperchanger.PromptParameterProviders;
 import cz.chrastecky.aiwallpaperchanger.R;
+import cz.chrastecky.aiwallpaperchanger.data.AppDatabase;
+import cz.chrastecky.aiwallpaperchanger.data.entity.CustomParameter;
+import cz.chrastecky.aiwallpaperchanger.data.entity.CustomParameterValue;
+import cz.chrastecky.aiwallpaperchanger.data.relation.CustomParameterWithValues;
 import cz.chrastecky.aiwallpaperchanger.databinding.ActivityMainBinding;
 import cz.chrastecky.aiwallpaperchanger.dto.GenerateRequest;
 import cz.chrastecky.aiwallpaperchanger.dto.PremadePrompt;
+import cz.chrastecky.aiwallpaperchanger.dto.PremadePromptCustomParameter;
+import cz.chrastecky.aiwallpaperchanger.dto.PremadePromptCustomParameterCondition;
 import cz.chrastecky.aiwallpaperchanger.dto.Sampler;
 import cz.chrastecky.aiwallpaperchanger.dto.Upscaler;
 import cz.chrastecky.aiwallpaperchanger.dto.response.ActiveModel;
@@ -68,6 +74,7 @@ import cz.chrastecky.aiwallpaperchanger.exception.ContentCensoredException;
 import cz.chrastecky.aiwallpaperchanger.exception.RetryGenerationException;
 import cz.chrastecky.aiwallpaperchanger.helper.AlarmManagerHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.BillingHelper;
+import cz.chrastecky.aiwallpaperchanger.helper.DatabaseHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.GenerateRequestHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.Logger;
 import cz.chrastecky.aiwallpaperchanger.helper.PermissionHelper;
@@ -75,6 +82,7 @@ import cz.chrastecky.aiwallpaperchanger.helper.PremadePromptHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.PromptReplacer;
 import cz.chrastecky.aiwallpaperchanger.helper.SharedPreferencesHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.ShortcutManagerHelper;
+import cz.chrastecky.aiwallpaperchanger.helper.ThreadHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.ValueWrapper;
 import cz.chrastecky.aiwallpaperchanger.helper.WallpaperFileHelper;
 import cz.chrastecky.aiwallpaperchanger.prompt_parameter_provider.PromptParameterProvider;
@@ -140,12 +148,14 @@ public class MainActivity extends AppCompatActivity {
                         initializeForm(request);
                         Toast.makeText(this, R.string.app_generate_style_successfully_set, Toast.LENGTH_LONG).show();
                     });
+                    createCustomParameters(prompt);
                 } catch (IOException e) {
                     logger.error("AiWallpaperChanger", "Failed getting prompts", e);
                     Toast.makeText(this, R.string.app_premade_prompts_failed_getting, Toast.LENGTH_LONG).show();
                 }
             }
     );
+
     private final ActivityResultLauncher<String[]> requestPermissionLauncher = registerForActivityResult(
             new ActivityResultContracts.RequestMultiplePermissions(),
             isGranted -> {
@@ -891,5 +901,41 @@ public class MainActivity extends AppCompatActivity {
             android.os.Process.killProcess(android.os.Process.myPid());
             System.exit(0);
         });
+    }
+
+    private void createCustomParameters(@NonNull PremadePrompt prompt) {
+        if (prompt.getCustomParameters() == null || prompt.getCustomParameters().isEmpty()) {
+            return;
+        }
+
+        ThreadHelper.runInThread(() -> {
+            AppDatabase database = DatabaseHelper.getDatabase(this);
+
+            for (PremadePromptCustomParameter promptCustomParameter : prompt.getCustomParameters()) {
+                CustomParameterWithValues existingParameter = database.customParameters().findByName(promptCustomParameter.getName());
+                if (existingParameter != null) {
+                    if (existingParameter.values != null) {
+                        for (CustomParameterValue value : existingParameter.values) {
+                            database.customParameterValues().delete(value);
+                        }
+                    }
+                    database.customParameters().delete(existingParameter);
+                }
+                CustomParameter newParameter = new CustomParameter();
+                newParameter.name = promptCustomParameter.getName();
+                newParameter.description = promptCustomParameter.getDescription();
+                newParameter.expression = promptCustomParameter.getExpression();
+
+                long newParameterId = database.customParameters().create(newParameter);
+                for (PremadePromptCustomParameterCondition condition : promptCustomParameter.getConditions()) {
+                    CustomParameterValue value = new CustomParameterValue(CustomParameterValue.ConditionType.valueOf(condition.getType().name()));
+                    value.customParameterId = newParameterId;
+                    value.value = condition.getValue();
+                    value.expression = condition.getExpression();
+
+                    database.customParameterValues().create(value);
+                }
+            }
+        }, this);
     }
 }
