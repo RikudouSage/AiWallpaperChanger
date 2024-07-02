@@ -94,6 +94,7 @@ public class GenerateAndSetBackgroundWorker extends ListenableWorker {
                         logger.debug("WorkerJob", "Model: " + response.getDetail().getModel());
 
                         try {
+                            logger.debug("WorkerJob", "Trying to save current image");
                             WallpaperFileHelper.save(getApplicationContext(), response.getImage());
                             logger.debug("WorkerJob", "Successfully saved the current image");
                         } catch (IOException e) {
