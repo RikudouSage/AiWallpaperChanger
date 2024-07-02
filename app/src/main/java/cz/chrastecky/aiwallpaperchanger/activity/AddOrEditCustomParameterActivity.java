@@ -158,6 +158,12 @@ public class AddOrEditCustomParameterActivity extends AppCompatActivity {
                 model.customParameter.name = s.toString();
                 formElementsValidation.put("name", !model.customParameter.name.isEmpty());
                 validateForm();
+
+                if (model.customParameter.name.startsWith(" ") || model.customParameter.name.endsWith(" ")) {
+                    binding.parameterNameWhitespaceWarning.setVisibility(View.VISIBLE);
+                } else {
+                    binding.parameterNameWhitespaceWarning.setVisibility(View.GONE);
+                }
             }
 
             @Override
@@ -196,6 +202,12 @@ public class AddOrEditCustomParameterActivity extends AppCompatActivity {
                 model.customParameter.expression = s.toString();
                 formElementsValidation.put("expression", !model.customParameter.expression.isEmpty());
                 validateForm();
+
+                if (model.customParameter.expression.startsWith(" ") || model.customParameter.expression.endsWith(" ")) {
+                    binding.expressionWhitespaceWarning.setVisibility(View.VISIBLE);
+                } else {
+                    binding.expressionWhitespaceWarning.setVisibility(View.GONE);
+                }
             }
 
             @Override
@@ -231,6 +243,11 @@ public class AddOrEditCustomParameterActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 value.expression = s.toString().isEmpty() ? null : s.toString();
+                if (value.expression.startsWith(" ") || value.expression.endsWith(" ")) {
+                    itemBinding.ifWhitespaceWarning.setVisibility(View.VISIBLE);
+                } else {
+                    itemBinding.ifWhitespaceWarning.setVisibility(View.GONE);
+                }
             }
 
             @Override
@@ -245,6 +262,11 @@ public class AddOrEditCustomParameterActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 value.value = s.toString();
+                if (value.value.startsWith(" ") || value.value.endsWith(" ")) {
+                    itemBinding.valueWhitespaceWarning.setVisibility(View.VISIBLE);
+                } else {
+                    itemBinding.valueWhitespaceWarning.setVisibility(View.GONE);
+                }
             }
 
             @Override

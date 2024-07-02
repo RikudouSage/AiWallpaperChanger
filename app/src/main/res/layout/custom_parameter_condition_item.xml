@@ -36,6 +36,18 @@
                 android:minHeight="48dp" />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <TextView
+            android:id="@+id/if_whitespace_warning"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/md_theme_error"
+            android:visibility="gone"
+            android:text="@string/app.error.trailing_leading_whitespace"
+            app:layout_constraintTop_toBottomOf="@+id/if_wrapper"
+            app:layout_constraintStart_toStartOf="parent"
+            android:paddingBottom="16dp"
+            />
+
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/value_wrapper"
             android:layout_width="match_parent"
@@ -43,7 +55,7 @@
             android:hint="@{model.type == CustomParameterValue.ConditionType.Else ? @string/app_custom_parameters_condition_else : @string/app_custom_parameters_condition_then}"
             tools:hint="@string/app.custom_parameters.condition.then"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/if_wrapper"
+            app:layout_constraintTop_toBottomOf="@+id/if_whitespace_warning"
             app:layout_constraintEnd_toEndOf="parent">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -53,5 +65,16 @@
                 android:text="@{model.value}"
                 android:minHeight="48dp" />
         </com.google.android.material.textfield.TextInputLayout>
+        <TextView
+            android:id="@+id/value_whitespace_warning"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/md_theme_error"
+            android:visibility="gone"
+            android:text="@string/app.error.trailing_leading_whitespace"
+            app:layout_constraintTop_toBottomOf="@+id/value_wrapper"
+            app:layout_constraintStart_toStartOf="parent"
+            android:paddingBottom="16dp"
+            />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
