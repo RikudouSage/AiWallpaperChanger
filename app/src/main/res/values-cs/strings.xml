@@ -150,4 +150,5 @@
     <string name="app.menu.share_current">Sdílet současnou tapetu</string>
     <string name="app.preview.share">Sdílet</string>
     <string name="app.generate.estimated_time.pre_start.parameters">Nahrazování parametrů va vašem promptu</string>
+    <string name="app.error.trailing_leading_whitespace">Tato hodnota obsahuje mezeru na začátku nebo na konci, pokud je to schválně, můžete toto varování ignorovat.</string>
 </resources>

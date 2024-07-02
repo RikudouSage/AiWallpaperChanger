@@ -150,4 +150,5 @@
     <string name="app.menu.share_current">Share current wallpaper</string>
     <string name="app.preview.share">Share</string>
     <string name="app.generate.estimated_time.pre_start.parameters">Replacing parameters in your prompt</string>
+    <string name="app.error.trailing_leading_whitespace">This value contains a leading or trailing whitespace, if that\'s intentional, you can ignore this warning.</string>
 </resources>
