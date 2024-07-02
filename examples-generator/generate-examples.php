@@ -2,6 +2,8 @@
 
 use Aws\S3\S3Client;
 use GuzzleHttp\Client;
+use Rikudou\AiWallpaperChanger\ExamplesGenerator\Model\CustomParameter;
+use Rikudou\AiWallpaperChanger\ExamplesGenerator\Model\CustomParameterCondition;
 use Rikudou\AiWallpaperChanger\ExamplesGenerator\Model\ExampleConfig;
 use Rikudou\AiWallpaperChanger\ExamplesGenerator\Service\ModelDeserializer;
 
@@ -104,7 +106,7 @@ foreach ($configs as $config) {
     $totalCreate += $create;
 
     echo "[{$config->name}] Sending a request for {$create} images", PHP_EOL;
-    if (!$config->params) {
+    if (!$config->params && !$config->customParameters) {
         $response = $httpClient->post('https://aihorde.net/api/v2/generate/async', [
             'json' => [
                 'prompt' => $config->negativePrompt ? ("{$config->prompt} ### {$config->negativePrompt}") : $config->prompt,
@@ -126,13 +128,26 @@ foreach ($configs as $config) {
         $toCheck[$config->name] ??= [];
         $toCheck[$config->name][] = $body['id'];
     } else {
+        $params = $config->params ?? [];
+        if ($config->customParameters) {
+            /** @var CustomParameter $customParameter */
+            foreach ($config->customParameters as $customParameter) {
+                /** @var CustomParameterCondition $condition */
+                foreach ($customParameter->conditions as $condition) {
+                    $params[$customParameter->name] ??= [];
+                    $params[$customParameter->name][] = $condition->value;
+                }
+
+                $params[$customParameter->name] = array_unique(array_filter($params[$customParameter->name]));
+            }
+        }
         for ($i = 0; $i < $create; ++$i) {
             $prompt = $config->prompt;
             $negativePrompt = $config->negativePrompt;
-            foreach ($config->params as $key => $values) {
-                $prompt = str_replace(sprintf('${%s}', $key), $config->params[$key][array_rand($values)], $prompt);
+            foreach ($params as $key => $values) {
+                $prompt = str_replace(sprintf('${%s}', $key), $values[array_rand($values)], $prompt);
                 if ($negativePrompt !== null) {
-                    $negativePrompt = str_replace(sprintf('${%s}', $key), $config->params[$key][array_rand($values)], $negativePrompt);
+                    $negativePrompt = str_replace(sprintf('${%s}', $key), $values[array_rand($values)], $negativePrompt);
                 }
             }
             echo " - ", $prompt, PHP_EOL;

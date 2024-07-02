@@ -2,9 +2,11 @@
 
 namespace Rikudou\AiWallpaperChanger\ExamplesGenerator\Service;
 
+use BackedEnum;
 use ReflectionClass;
 use ReflectionNamedType;
-use ReflectionType;
+use ReflectionProperty;
+use Rikudou\AiWallpaperChanger\ExamplesGenerator\Attribute\ArrayType;
 use RuntimeException;
 
 /**
@@ -26,14 +28,16 @@ final readonly class ModelDeserializer
         $params = [];
         foreach ($raw as $key => $value) {
             $classProperty = $reflection->getProperty($key);
-            $params[$key] = $this->parseParam($value, $classProperty->getType());
+            $params[$key] = $this->parseParam($value, $classProperty);
         }
 
         return new $class(...$params);
     }
 
-    private function parseParam(mixed $value, ?ReflectionType $type): mixed
+    private function parseParam(mixed $value, ReflectionProperty $parameter): mixed
     {
+        $type = $parameter->getType();
+
         if ($type === null) {
             return $value;
         }
@@ -59,15 +63,44 @@ final readonly class ModelDeserializer
             return (bool) $value;
         }
         if ($typeName === 'array') {
+            if ($attribute = $this->getAttribute($parameter, ArrayType::class)) {
+                $result = [];
+
+                foreach ($value as $item) {
+                    $result[] = $this->deserialize($item, $attribute->class);
+                }
+
+                return $result;
+            }
             return (array) $value;
         }
         if ($typeName === 'object') {
             return (object) $value;
+        }
+        if (is_a($typeName, BackedEnum::class, true)) {
+            return $typeName::from($value);
         }
         if (class_exists($typeName)) {
             return $this->deserialize($value, $type->getName());
         }
 
         throw new RuntimeException('Unsupported type: ' . $type->getName());
+    }
+
+    /**
+     * @template T of object
+     *
+     * @param class-string<T> $attribute
+     *
+     * @return T|null
+     */
+    private function getAttribute(ReflectionProperty $parameter, string $attribute): ?object
+    {
+        $attributes = $parameter->getAttributes($attribute);
+        if (!count($attributes)) {
+            return null;
+        }
+
+        return $attributes[array_key_first($attributes)]->newInstance();
     }
 }

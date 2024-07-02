@@ -291,5 +291,45 @@
       "full_weather": ["light intensity drizzle rain", "thunderstorm with heavy rain", "heavy shower snow", "mist", "tornado", "scattered clouds", "clear sky"],
       "tod": ["morning", "afternoon", "noon", "evening", "night", "midnight"]
     }
+  },
+  {
+    "name": "Battery cityscape",
+    "description": "This prompt includes a custom parameter that renders the city in various states (neutral, dystopian, utopian) based on your battery level",
+    "prompt": "cityscape, ${b_cityscape}",
+    "author": "Rikudou",
+    "models": ["AlbedoBase XL (SDXL)", "ICBINP XL"],
+    "customParameters": [
+      {
+        "name": "b_cityscape",
+        "description": "This parameter changes the prompt into utopian, neutral on dystopian based on your battery level",
+        "expression": "${battery}",
+        "conditions": [
+          {
+            "type": "If",
+            "expression": "low",
+            "value": "dystopian, ruins, horrible, depressing, horror, madness, hellish, red tint"
+          },
+          {
+            "type": "If",
+            "expression": "very low",
+            "value": "dystopian, ruins, horrible, depressing, horror, madness, hellish, red tint"
+          },
+          {
+            "type": "If",
+            "expression": "medium",
+            "value": "neutral, early 21st century, busy square, sepia tone"
+          },
+          {
+            "type": "If",
+            "expression": "high",
+            "value": "utopia, futuristic, happy, vivid colors, public square"
+          },
+          {
+            "type": "Else",
+            "value": ""
+          }
+        ]
+      }
+    ]
   }
 ]

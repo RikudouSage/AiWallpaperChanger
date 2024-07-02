@@ -39,6 +39,56 @@
       },
       "author": {
         "type": "string"
+      },
+      "customParameters": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["name", "expression", "conditions"],
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "expression": {
+              "type": "string"
+            },
+            "conditions": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["value", "type"],
+                "properties": {
+                  "expression": {
+                    "type": "string"
+                  },
+                  "value": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": ["If", "Else"]
+                  }
+                },
+                "if": {
+                  "properties": {
+                    "type": {
+                      "const": "if"
+                    }
+                  }
+                },
+                "then": {
+                  "required": ["expression"]
+                }
+              }
+            }
+          }
+        }
       }
     },
     "additionalProperties": false

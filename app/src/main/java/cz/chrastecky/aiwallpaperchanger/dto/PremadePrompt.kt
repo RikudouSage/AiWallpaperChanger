@@ -9,4 +9,5 @@ data class PremadePrompt(
     val params: Map<String, List<String>>? = null,
     val description: String? = null,
     val author: String? = null,
+    val customParameters: List<PremadePromptCustomParameter>? = null,
 )
