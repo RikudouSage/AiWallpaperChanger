@@ -36,6 +36,7 @@ import cz.chrastecky.aiwallpaperchanger.databinding.ActivityPreviewBinding;
 import cz.chrastecky.aiwallpaperchanger.dto.GenerateRequest;
 import cz.chrastecky.aiwallpaperchanger.dto.StoredRequest;
 import cz.chrastecky.aiwallpaperchanger.helper.ContentResolverHelper;
+import cz.chrastecky.aiwallpaperchanger.helper.ThreadHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.WallpaperFileHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.History;
 import cz.chrastecky.aiwallpaperchanger.helper.Logger;
@@ -77,17 +78,18 @@ public class PreviewActivity extends AppCompatActivity {
 
         Button okButton = findViewById(R.id.ok_button);
         okButton.setOnClickListener(view -> {
-            try {
-                WallpaperFileHelper.save(this, image);
-            } catch (IOException e) {
-                logger.error("Preview", "Failed saving the current image", e);
-            }
             SharedPreferences preferences = new SharedPreferencesHelper().get(this);
             SharedPreferences.Editor editor = preferences.edit();
             editor.putString(SharedPreferencesHelper.STORED_GENERATION_PARAMETERS, intent.getStringExtra("generationParameters"));
             editor.apply();
 
-            AsyncTask.execute(() -> {
+            ThreadHelper.runInThread(() -> {
+                try {
+                    WallpaperFileHelper.save(this, image);
+                } catch (IOException e) {
+                    logger.error("Preview", "Failed saving the current image", e);
+                }
+
                 if (preferences.contains(SharedPreferencesHelper.STORE_WALLPAPERS_URI)) {
                     ContentResolverHelper.storeBitmap(this, Uri.parse(preferences.getString(SharedPreferencesHelper.STORE_WALLPAPERS_URI, "")), UUID.randomUUID() + ".png", image);
                 }
@@ -101,7 +103,7 @@ public class PreviewActivity extends AppCompatActivity {
 
                 editor.putString(SharedPreferencesHelper.WALLPAPER_LAST_CHANGED, DateFormat.getInstance().format(Calendar.getInstance().getTime()));
                 editor.apply();
-            });
+            }, this);
 
             History history = new History(this);
             history.addItem(new StoredRequest(
