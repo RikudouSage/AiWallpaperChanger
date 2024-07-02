@@ -120,6 +120,7 @@ public class GenerateAndSetBackgroundWorker extends ListenableWorker {
                         editor.putString(SharedPreferencesHelper.WALLPAPER_LAST_CHANGED, DateFormat.getInstance().format(Calendar.getInstance().getTime()));
                         editor.commit();
 
+                        logger.debug("WorkerJob", "Storing item in history.");
                         History history = new History(getApplicationContext());
                         history.addItem(new StoredRequest(
                                 UUID.randomUUID(),
@@ -130,7 +131,7 @@ public class GenerateAndSetBackgroundWorker extends ListenableWorker {
                                 new Date(),
                                 response.getDetail().getModel()
                         ));
-                        logger.debug("WorkerJob", "Adding the item to the history");
+                        logger.debug("WorkerJob", "Successfully created a history entry");
 
                         completer.set(Result.success());
                     };

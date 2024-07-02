@@ -52,6 +52,7 @@ public class PreviewActivity extends AppCompatActivity {
         ActivityResultLauncher<Intent> scheduleActivityLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
+                    logger.debug("Preview", "Schedule component finished, result: " + result.getResultCode());
                     if (result.getResultCode() == RESULT_OK) {
                         finish();
                     }
@@ -84,6 +85,7 @@ public class PreviewActivity extends AppCompatActivity {
             ThreadHelper.runInThread(() -> {
                 try {
                     WallpaperFileHelper.save(this, image);
+                    logger.debug("Preview", "Successfully saved the current image");
                 } catch (IOException e) {
                     logger.error("Preview", "Failed saving the current image", e);
                 }
@@ -95,24 +97,30 @@ public class PreviewActivity extends AppCompatActivity {
                 WallpaperAction wallpaperAction = wallpaperActionCollection.findById(
                         preferences.getString(SharedPreferencesHelper.WALLPAPER_ACTION, StaticWallpaperAction.ID)
                 );
+                logger.debug("Preview", "Wallpaper action: " + wallpaperAction.getClass().getName());
                 if (!wallpaperAction.setWallpaper(this, image)) {
                     logger.error("Preview", "Failed setting the wallpaper");
                 }
+                logger.debug("Preview", "Wallpaper action finished successfully");
 
                 editor.putString(SharedPreferencesHelper.WALLPAPER_LAST_CHANGED, DateFormat.getInstance().format(Calendar.getInstance().getTime()));
                 editor.apply();
             }, this);
 
-            History history = new History(this);
-            history.addItem(new StoredRequest(
-                    UUID.randomUUID(),
-                    new Gson().fromJson(intent.getStringExtra("generationParametersReplaced"), GenerateRequest.class),
-                    Objects.requireNonNull(intent.getStringExtra("seed")),
-                    Objects.requireNonNull(intent.getStringExtra("workerId")),
-                    Objects.requireNonNull(intent.getStringExtra("workerName")),
-                    new Date(),
-                    intent.getStringExtra("model")
-            ));
+            ThreadHelper.runInThread(() -> {
+                logger.debug("Preview", "Storing item in history.");
+                History history = new History(this);
+                history.addItem(new StoredRequest(
+                        UUID.randomUUID(),
+                        new Gson().fromJson(intent.getStringExtra("generationParametersReplaced"), GenerateRequest.class),
+                        Objects.requireNonNull(intent.getStringExtra("seed")),
+                        Objects.requireNonNull(intent.getStringExtra("workerId")),
+                        Objects.requireNonNull(intent.getStringExtra("workerName")),
+                        new Date(),
+                        intent.getStringExtra("model")
+                ));
+                logger.debug("Preview", "Successfully created a history entry");
+            }, this);
 
             Intent configureIntent = new Intent(this, ConfigureScheduleActivity.class);
             intent.putExtra("generationParameters", intent.getStringExtra("generationParameters"));
