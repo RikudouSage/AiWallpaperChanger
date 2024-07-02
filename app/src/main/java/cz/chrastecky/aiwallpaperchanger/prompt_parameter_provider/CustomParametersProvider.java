@@ -25,6 +25,7 @@ import cz.chrastecky.aiwallpaperchanger.exception.ParameterDoesNotExistException
 import cz.chrastecky.aiwallpaperchanger.helper.DatabaseHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.Logger;
 import cz.chrastecky.aiwallpaperchanger.helper.PromptReplacer;
+import cz.chrastecky.aiwallpaperchanger.helper.ThreadHelper;
 import cz.chrastecky.annotationprocessor.InjectedPromptParameterProvider;
 
 @InjectedPromptParameterProvider
@@ -37,6 +38,8 @@ public class CustomParametersProvider implements PromptParameterProvider {
         CompletableFuture<List<String>> future = new CompletableFuture<>();
 
         new Thread(() -> {
+            ThreadHelper.setupErrorHandler(new Logger(context));
+
             AppDatabase database = DatabaseHelper.getDatabase(context);
             parameters = database.customParameters().getAll();
             future.complete(parameters.stream().map(
@@ -54,6 +57,8 @@ public class CustomParametersProvider implements PromptParameterProvider {
 
         new Thread(() -> {
             final Logger logger = new Logger(context);
+            ThreadHelper.setupErrorHandler(logger);
+
             final CustomParameterWithValues parameter = findByName(parameterName, logger);
             if (parameter == null) {
                 future.completeExceptionally(new ParameterDoesNotExistException(parameterName));

@@ -17,6 +17,8 @@ import cz.chrastecky.aiwallpaperchanger.data.relation.CustomParameterWithValues;
 import cz.chrastecky.aiwallpaperchanger.databinding.ActivityCustomParameterListBinding;
 import cz.chrastecky.aiwallpaperchanger.databinding.CustomParameterItemBinding;
 import cz.chrastecky.aiwallpaperchanger.helper.DatabaseHelper;
+import cz.chrastecky.aiwallpaperchanger.helper.Logger;
+import cz.chrastecky.aiwallpaperchanger.helper.ThreadHelper;
 
 public class CustomParameterListActivity extends AppCompatActivity {
 
@@ -51,6 +53,8 @@ public class CustomParameterListActivity extends AppCompatActivity {
         });
 
         new Thread(() -> {
+            ThreadHelper.setupErrorHandler(new Logger(this));
+
             AppDatabase database = DatabaseHelper.getDatabase(this);
             List<CustomParameterWithValues> parameters = database.customParameters().getAll();
 
@@ -67,6 +71,7 @@ public class CustomParameterListActivity extends AppCompatActivity {
                         builder.setMessage(R.string.app_generic_delete_content);
                         builder.setPositiveButton(R.string.app_delete, (dialog, which) -> {
                             new Thread(() -> {
+                                ThreadHelper.setupErrorHandler(new Logger(this));
                                 database.customParameters().delete(parameter);
                                 loadData();
                             }).start();

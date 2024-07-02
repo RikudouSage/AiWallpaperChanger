@@ -28,7 +28,7 @@ public class GeolocationDataParameterProvider extends AbstractLocationParameterP
         Geocoder geocoder = new Geocoder(context, Locale.ENGLISH);
         try {
             List<Address> addresses = geocoder.getFromLocation(coordinates.getLatitude(), coordinates.getLongitude(), 1);
-            if (addresses != null) {
+            if (addresses != null && !addresses.isEmpty()) {
                 Address address = addresses.get(0);
                 switch (parameterName) {
                     case PARAMETER_COUNTRY:

@@ -19,6 +19,7 @@ import cz.chrastecky.aiwallpaperchanger.dto.LatitudeLongitude;
 import cz.chrastecky.aiwallpaperchanger.dto.response.weather.WeatherResponse;
 import cz.chrastecky.aiwallpaperchanger.exception.InvalidWeatherResponse;
 import cz.chrastecky.aiwallpaperchanger.helper.Logger;
+import cz.chrastecky.aiwallpaperchanger.helper.ThreadHelper;
 import cz.chrastecky.annotationprocessor.InjectedPromptParameterProvider;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -30,6 +31,8 @@ public class FullWeatherParameterProvider extends AbstractLocationParameterProvi
     protected void completeValue(@NonNull CompletableFuture<String> future, @NonNull Context context, @NonNull LatitudeLongitude coordinates, @NonNull String parameterName) {
         new Thread(() -> {
             final Logger logger = new Logger(context);
+            ThreadHelper.setupErrorHandler(logger);
+
             final OkHttpClient client = new OkHttpClient();
             final Request request = new Request.Builder()
                     .url("https://api.openweathermap.org/data/2.5/weather?lat=" + coordinates.getLatitude() + "&lon=" + coordinates.getLongitude() + "&appid=" + BuildConfig.WEATHER_API_KEY)

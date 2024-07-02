@@ -25,6 +25,7 @@ import cz.chrastecky.aiwallpaperchanger.dto.LatitudeLongitude;
 import cz.chrastecky.aiwallpaperchanger.exception.FailedGettingLocationException;
 import cz.chrastecky.aiwallpaperchanger.helper.Logger;
 import cz.chrastecky.aiwallpaperchanger.helper.SharedPreferencesHelper;
+import cz.chrastecky.aiwallpaperchanger.helper.ThreadHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.Tuple;
 
 public abstract class AbstractLocationParameterProvider implements PromptParameterProvider {
@@ -44,6 +45,8 @@ public abstract class AbstractLocationParameterProvider implements PromptParamet
             future.complete(cacheItem.value1);
         } else {
             new Thread(() -> {
+                ThreadHelper.setupErrorHandler(logger);
+
                 FusedLocationProviderClient locationProviderClient = LocationServices.getFusedLocationProviderClient(context.getApplicationContext());
                 try {
                     locationProviderClient.getCurrentLocation(LocationRequest.PRIORITY_HIGH_ACCURACY, null).addOnSuccessListener(location -> {

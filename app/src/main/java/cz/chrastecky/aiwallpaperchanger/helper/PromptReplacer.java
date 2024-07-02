@@ -25,6 +25,8 @@ public class PromptReplacer {
         }
 
         new Thread(() -> {
+            ThreadHelper.setupErrorHandler(new Logger(context));
+
             String promptCopy = prompt;
             final List<PromptParameterProvider> providers = parameterProviders.getProviders();
 

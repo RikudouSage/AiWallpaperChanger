@@ -31,6 +31,8 @@ import cz.chrastecky.aiwallpaperchanger.data.relation.CustomParameterWithValues;
 import cz.chrastecky.aiwallpaperchanger.databinding.ActivityAddOrEditCustomParameterBinding;
 import cz.chrastecky.aiwallpaperchanger.databinding.CustomParameterConditionItemBinding;
 import cz.chrastecky.aiwallpaperchanger.helper.DatabaseHelper;
+import cz.chrastecky.aiwallpaperchanger.helper.Logger;
+import cz.chrastecky.aiwallpaperchanger.helper.ThreadHelper;
 
 public class AddOrEditCustomParameterActivity extends AppCompatActivity {
     private ActivityAddOrEditCustomParameterBinding binding;
@@ -60,6 +62,7 @@ public class AddOrEditCustomParameterActivity extends AppCompatActivity {
             onLoad();
         } else {
             new Thread(() -> {
+                ThreadHelper.setupErrorHandler(new Logger(this));
                 model = DatabaseHelper.getDatabase(this).customParameters().find(mainIntent.getIntExtra("id", 0));
                 if (model == null) {
                     runOnUiThread(() -> {
@@ -84,6 +87,8 @@ public class AddOrEditCustomParameterActivity extends AppCompatActivity {
             binding.rootView.setVisibility(View.INVISIBLE);
 
             new Thread(() -> {
+                ThreadHelper.setupErrorHandler(new Logger(this));
+
                 assert model.values != null;
                 assert !model.values.isEmpty();
 
