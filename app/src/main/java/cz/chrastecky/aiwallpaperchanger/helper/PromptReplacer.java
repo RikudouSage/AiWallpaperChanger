@@ -25,6 +25,8 @@ public class PromptReplacer {
         }
 
         ThreadHelper.runInThread(() -> {
+            final Logger logger = new Logger(context);
+
             String promptCopy = prompt;
             final List<PromptParameterProvider> providers = parameterProviders.getProviders();
 
@@ -34,6 +36,7 @@ public class PromptReplacer {
                     if (!promptCopy.contains("${" + parameterName + "}")) {
                         continue;
                     }
+                    logger.debug("PromptReplacer", "Replacing parameter ${" + parameterName + "}");
                     CompletableFuture<String> value = provider.getValue(context, parameterName);
                     if (value == null) {
                         onPromptReplaced.onReplaced(null);
