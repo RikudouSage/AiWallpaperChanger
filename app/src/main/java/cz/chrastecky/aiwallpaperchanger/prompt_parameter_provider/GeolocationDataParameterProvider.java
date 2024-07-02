@@ -25,6 +25,7 @@ public class GeolocationDataParameterProvider extends AbstractLocationParameterP
 
     @Override
     protected void completeValue(@NonNull CompletableFuture<String> future, @NonNull Context context, @NonNull LatitudeLongitude coordinates, @NonNull String parameterName) {
+        final Logger logger = new Logger(context);
         Geocoder geocoder = new Geocoder(context, Locale.ENGLISH);
         try {
             List<Address> addresses = geocoder.getFromLocation(coordinates.getLatitude(), coordinates.getLongitude(), 1);
@@ -41,14 +42,21 @@ public class GeolocationDataParameterProvider extends AbstractLocationParameterP
                         future.complete(address.getAdminArea());
                         break;
                     default:
-                        future.completeExceptionally(new RuntimeException("Unknown parameter: " + parameterName));
+                        logger.error("GeolocationData", "Unknown parameter somehow slipped through: " + parameterName);
+                        future.complete("");
                         break;
                 }
             } else {
-                future.completeExceptionally(new RuntimeException("Failed getting address from location"));
+                if (addresses == null) {
+                    logger.error("GeolocationData", "Failed getting addresses (null)");
+                } else {
+                    logger.error("GeolocationData", "Failed getting addresses (empty list)");
+                }
+                future.complete("");
             }
         } catch (IOException e) {
-            future.completeExceptionally(e);
+            logger.error("GeolocationData", "Caught IOException", e);
+            future.complete("");
         }
     }
 

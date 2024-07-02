@@ -43,10 +43,11 @@ public class FullWeatherParameterProvider extends AbstractLocationParameterProvi
                         response.body().string(),
                         WeatherResponse.class
                 );
-                if (result.getWeather().isEmpty()) {
-                    future.completeExceptionally(new InvalidWeatherResponse());
-                    return;
-                }
+                    if (result.getWeather().isEmpty()) {
+                        logger.error("FullWeather", "Invalid weather response received");
+                        future.complete("");
+                        return;
+                    }
 
                 final Map<Integer, String> weatherMap = new HashMap<Integer, String>() {{
                     put(200, "thunderstorm with light rain");
@@ -114,7 +115,8 @@ public class FullWeatherParameterProvider extends AbstractLocationParameterProvi
 
                 setCache(future.join(), parameterName);
             } catch (IOException | NullPointerException e) {
-                future.completeExceptionally(e);
+                logger.error("FullWeather", "Got an Exception when getting weather", e);
+                future.complete("");
             }
         }).start();
     }

@@ -40,7 +40,8 @@ public class WeatherParameterProvider extends AbstractLocationParameterProvider 
     @Override
     protected void completeValue(@NonNull CompletableFuture<String> future, @NonNull Context context, @NonNull LatitudeLongitude coordinates, @NonNull String parameterName) {
         new Thread(() -> {
-            ThreadHelper.setupErrorHandler(new Logger(context));
+            final Logger logger = new Logger(context);
+            ThreadHelper.setupErrorHandler(logger);
 
             OkHttpClient client = new OkHttpClient();
             Request request = new Request.Builder()
@@ -53,7 +54,8 @@ public class WeatherParameterProvider extends AbstractLocationParameterProvider 
                         WeatherResponse.class
                 );
                 if (result.getWeather().isEmpty()) {
-                    future.completeExceptionally(new InvalidWeatherResponse());
+                    logger.error("Weather", "Invalid weather response received");
+                    future.complete("");
                     return;
                 }
 
@@ -90,7 +92,8 @@ public class WeatherParameterProvider extends AbstractLocationParameterProvider 
 
                 setCache(future.join(), parameterName);
             } catch (IOException | NullPointerException e) {
-                future.completeExceptionally(e);
+                logger.error("FullWeather", "Got an Exception when getting weather", e);
+                future.complete("");
             }
         }).start();
     }

@@ -61,7 +61,7 @@ public abstract class AbstractLocationParameterProvider implements PromptParamet
                                 latitude = Double.parseDouble(oldLocationRaw.get(0));
                                 longitude = Double.parseDouble(oldLocationRaw.get(1));
                             } else {
-                                future.completeExceptionally(new FailedGettingLocationException());
+                                future.complete("");
                                 logger.error("LocationParameter", "Failed getting location");
                                 return;
                             }
@@ -79,7 +79,8 @@ public abstract class AbstractLocationParameterProvider implements PromptParamet
                         completeValue(future, context, result, parameterName);
                     });
                 } catch (SecurityException e) {
-                    future.completeExceptionally(e);
+                    logger.error("LocationParameter", "Failed getting location, no permission", e);
+                    future.complete("");
                 }
             }).start();
         }

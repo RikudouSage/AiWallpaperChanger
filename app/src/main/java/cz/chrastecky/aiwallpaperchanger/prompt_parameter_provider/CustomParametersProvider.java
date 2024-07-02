@@ -61,7 +61,7 @@ public class CustomParametersProvider implements PromptParameterProvider {
 
             final CustomParameterWithValues parameter = findByName(parameterName, logger);
             if (parameter == null) {
-                future.completeExceptionally(new ParameterDoesNotExistException(parameterName));
+                logger.error("CustomParameter", "The parameter does not exist: " + parameterName);
                 return;
             }
 
