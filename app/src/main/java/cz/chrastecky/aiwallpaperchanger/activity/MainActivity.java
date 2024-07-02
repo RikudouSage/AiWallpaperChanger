@@ -430,8 +430,10 @@ public class MainActivity extends AppCompatActivity {
 
             createGenerateRequest(rawRequest -> {
                 logger.debug("HordeRequest", new Gson().toJson(rawRequest));
+                runOnUiThread(() -> progressText.setText(R.string.app_generate_estimated_time_pre_start_parameters));
                 createGenerateRequest(newRequest -> {
                     logger.debug("HordeRequestReplaced", new Gson().toJson(newRequest));
+                    runOnUiThread(() -> progressText.setText(R.string.app_generate_estimated_time_pre_start));
                     aiProvider.generateImage(newRequest, onProgress, onResponse, onError.value);
                 }, () -> {
                     Toast.makeText(this, R.string.app_error_parameter_replacing_failed, Toast.LENGTH_LONG).show();

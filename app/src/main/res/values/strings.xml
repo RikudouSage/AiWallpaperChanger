@@ -149,4 +149,5 @@
     <string name="app.parameter.full_weather.description">Returns a more complex weather description like \"heavy intensity shower rain\" instead of a single keyword.</string>
     <string name="app.menu.share_current">Share current wallpaper</string>
     <string name="app.preview.share">Share</string>
+    <string name="app.generate.estimated_time.pre_start.parameters">Replacing parameters in your prompt</string>
 </resources>
