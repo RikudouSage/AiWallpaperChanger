@@ -67,7 +67,6 @@ import cz.chrastecky.aiwallpaperchanger.exception.ContentCensoredException;
 import cz.chrastecky.aiwallpaperchanger.exception.RetryGenerationException;
 import cz.chrastecky.aiwallpaperchanger.helper.AlarmManagerHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.BillingHelper;
-import cz.chrastecky.aiwallpaperchanger.helper.WallpaperFileHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.GenerateRequestHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.Logger;
 import cz.chrastecky.aiwallpaperchanger.helper.PermissionHelper;
@@ -76,6 +75,7 @@ import cz.chrastecky.aiwallpaperchanger.helper.PromptReplacer;
 import cz.chrastecky.aiwallpaperchanger.helper.SharedPreferencesHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.ShortcutManagerHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.ValueWrapper;
+import cz.chrastecky.aiwallpaperchanger.helper.WallpaperFileHelper;
 import cz.chrastecky.aiwallpaperchanger.prompt_parameter_provider.PromptParameterProvider;
 import cz.chrastecky.aiwallpaperchanger.provider.AiHorde;
 import cz.chrastecky.aiwallpaperchanger.provider.AiProvider;
@@ -347,6 +347,15 @@ public class MainActivity extends AppCompatActivity {
                     createGenerateRequest(replacedRequest -> {
                         try {
                             final File imageFile = WallpaperFileHelper.save(this, response.getImage(), "temp.webp");
+                            if (!imageFile.exists()) {
+                                logger.error("Main", "The image does not exist even after saving it");
+                                runOnUiThread(() -> {
+                                    Toast.makeText(this, R.string.app_error_create_tmp_file, Toast.LENGTH_LONG).show();
+                                    rootView.setVisibility(View.VISIBLE);
+                                    loader.setVisibility(View.INVISIBLE);
+                                });
+                                return;
+                            }
 
                             Intent intent = new Intent(this, PreviewActivity.class);
                             intent.putExtra("imagePath", imageFile.getName());

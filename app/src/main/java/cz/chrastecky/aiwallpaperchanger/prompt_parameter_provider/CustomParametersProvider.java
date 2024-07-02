@@ -5,6 +5,8 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.gson.Gson;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -21,10 +23,10 @@ import cz.chrastecky.aiwallpaperchanger.R;
 import cz.chrastecky.aiwallpaperchanger.data.AppDatabase;
 import cz.chrastecky.aiwallpaperchanger.data.entity.CustomParameterValue;
 import cz.chrastecky.aiwallpaperchanger.data.relation.CustomParameterWithValues;
-import cz.chrastecky.aiwallpaperchanger.exception.ParameterDoesNotExistException;
 import cz.chrastecky.aiwallpaperchanger.helper.DatabaseHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.Logger;
 import cz.chrastecky.aiwallpaperchanger.helper.PromptReplacer;
+import cz.chrastecky.aiwallpaperchanger.helper.ThreadHelper;
 import cz.chrastecky.annotationprocessor.InjectedPromptParameterProvider;
 
 @InjectedPromptParameterProvider
@@ -36,13 +38,13 @@ public class CustomParametersProvider implements PromptParameterProvider {
     public CompletableFuture<List<String>> getParameterNames(@NonNull final Context context) {
         CompletableFuture<List<String>> future = new CompletableFuture<>();
 
-        new Thread(() -> {
+        ThreadHelper.runInThread(() -> {
             AppDatabase database = DatabaseHelper.getDatabase(context);
             parameters = database.customParameters().getAll();
             future.complete(parameters.stream().map(
                     parameter -> Objects.requireNonNull(parameter.customParameter).name
             ).collect(Collectors.toList()));
-        }).start();
+        }, context);
 
         return future;
     }
@@ -52,21 +54,31 @@ public class CustomParametersProvider implements PromptParameterProvider {
     public CompletableFuture<String> getValue(@NonNull final Context context, @NonNull final String parameterName) {
         final CompletableFuture<String> future = new CompletableFuture<>();
 
-        new Thread(() -> {
+        ThreadHelper.runInThread(() -> {
             final Logger logger = new Logger(context);
+
             final CustomParameterWithValues parameter = findByName(parameterName, logger);
             if (parameter == null) {
-                future.completeExceptionally(new ParameterDoesNotExistException(parameterName));
+                logger.error("CustomParameter", "The parameter does not exist: " + parameterName);
                 return;
             }
 
             assert parameter.customParameter != null;
             assert parameter.values != null;
 
+            if (parameter.customParameter.expression == null) {
+                parameter.customParameter.expression = "";
+            }
+
+            logger.debug("CustomParametersProvider", "Replacing custom parameter: " + new Gson().toJson(parameter));
+
             PromptReplacer.replacePrompt(context, parameter.customParameter.expression, expression -> {
                 parameter.sortValues();
                 for (CustomParameterValue value : parameter.values) {
                     if (value.type == CustomParameterValue.ConditionType.Else || value.expression.equals(expression)) {
+                        if (value.value == null) {
+                            value.value = "";
+                        }
                         PromptReplacer.replacePrompt(context, value.value, future::complete);
                         return;
                     }
@@ -76,7 +88,7 @@ public class CustomParametersProvider implements PromptParameterProvider {
                 logger.error("CustomParameters", "No else block was present with the parameter, returning empty value");
                 future.complete("");
             });
-        }).start();
+        }, context);
 
         return future;
     }

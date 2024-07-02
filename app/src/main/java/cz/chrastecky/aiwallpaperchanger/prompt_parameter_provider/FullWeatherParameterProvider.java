@@ -17,8 +17,8 @@ import cz.chrastecky.aiwallpaperchanger.BuildConfig;
 import cz.chrastecky.aiwallpaperchanger.R;
 import cz.chrastecky.aiwallpaperchanger.dto.LatitudeLongitude;
 import cz.chrastecky.aiwallpaperchanger.dto.response.weather.WeatherResponse;
-import cz.chrastecky.aiwallpaperchanger.exception.InvalidWeatherResponse;
 import cz.chrastecky.aiwallpaperchanger.helper.Logger;
+import cz.chrastecky.aiwallpaperchanger.helper.ThreadHelper;
 import cz.chrastecky.annotationprocessor.InjectedPromptParameterProvider;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -28,8 +28,9 @@ import okhttp3.Response;
 public class FullWeatherParameterProvider extends AbstractLocationParameterProvider {
     @Override
     protected void completeValue(@NonNull CompletableFuture<String> future, @NonNull Context context, @NonNull LatitudeLongitude coordinates, @NonNull String parameterName) {
-        new Thread(() -> {
+        ThreadHelper.runInThread(() -> {
             final Logger logger = new Logger(context);
+
             final OkHttpClient client = new OkHttpClient();
             final Request request = new Request.Builder()
                     .url("https://api.openweathermap.org/data/2.5/weather?lat=" + coordinates.getLatitude() + "&lon=" + coordinates.getLongitude() + "&appid=" + BuildConfig.WEATHER_API_KEY)
@@ -40,10 +41,11 @@ public class FullWeatherParameterProvider extends AbstractLocationParameterProvi
                         response.body().string(),
                         WeatherResponse.class
                 );
-                if (result.getWeather().isEmpty()) {
-                    future.completeExceptionally(new InvalidWeatherResponse());
-                    return;
-                }
+                    if (result.getWeather().isEmpty()) {
+                        logger.error("FullWeather", "Invalid weather response received");
+                        future.complete("");
+                        return;
+                    }
 
                 final Map<Integer, String> weatherMap = new HashMap<Integer, String>() {{
                     put(200, "thunderstorm with light rain");
@@ -111,9 +113,10 @@ public class FullWeatherParameterProvider extends AbstractLocationParameterProvi
 
                 setCache(future.join(), parameterName);
             } catch (IOException | NullPointerException e) {
-                future.completeExceptionally(e);
+                logger.error("FullWeather", "Got an Exception when getting weather", e);
+                future.complete("");
             }
-        }).start();
+        }, context);
     }
 
     @NonNull

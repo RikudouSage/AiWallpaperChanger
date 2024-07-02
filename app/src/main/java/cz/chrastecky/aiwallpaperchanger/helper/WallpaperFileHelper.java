@@ -51,13 +51,20 @@ public class WallpaperFileHelper {
 
     @NonNull
     public static File save(@NonNull Context context, @NonNull Bitmap bitmap, @NonNull String filename) throws IOException {
+        final Logger logger = new Logger(context);
+        logger.debug("WallpaperFileHelper", "Trying to save a bitmap to " + filename);
+
         final File file = getFileRaw(context, filename);
         if (file.exists()) {
+            logger.debug("WallpaperFileHelper", "File already exists, deleting");
             file.delete();
         }
         file.createNewFile();
         FileOutputStream outputStream = new FileOutputStream(file, false);
+
+        logger.debug("WallpaperFileHelper", "Trying to compress the bitmap into webp");
         bitmap.compress(Bitmap.CompressFormat.WEBP, 100, outputStream);
+        logger.debug("WallpaperFileHelper", "Bitmap compressed");
         outputStream.close();
 
         return file;

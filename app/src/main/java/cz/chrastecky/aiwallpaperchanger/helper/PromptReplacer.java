@@ -24,7 +24,9 @@ public class PromptReplacer {
             return;
         }
 
-        new Thread(() -> {
+        ThreadHelper.runInThread(() -> {
+            final Logger logger = new Logger(context);
+
             String promptCopy = prompt;
             final List<PromptParameterProvider> providers = parameterProviders.getProviders();
 
@@ -34,6 +36,7 @@ public class PromptReplacer {
                     if (!promptCopy.contains("${" + parameterName + "}")) {
                         continue;
                     }
+                    logger.debug("PromptReplacer", "Replacing parameter ${" + parameterName + "}");
                     CompletableFuture<String> value = provider.getValue(context, parameterName);
                     if (value == null) {
                         onPromptReplaced.onReplaced(null);
@@ -41,10 +44,11 @@ public class PromptReplacer {
                     }
 
                     promptCopy = promptCopy.replace("${" + parameterName + "}", value.join());
+                    logger.debug("PromptReplacer", "${" + parameterName + "} replaced with " + value.join());
                 }
             }
 
             onPromptReplaced.onReplaced(promptCopy);
-        }).start();
+        }, context);
     }
 }

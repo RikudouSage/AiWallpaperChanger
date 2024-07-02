@@ -22,9 +22,9 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 import cz.chrastecky.aiwallpaperchanger.dto.LatitudeLongitude;
-import cz.chrastecky.aiwallpaperchanger.exception.FailedGettingLocationException;
 import cz.chrastecky.aiwallpaperchanger.helper.Logger;
 import cz.chrastecky.aiwallpaperchanger.helper.SharedPreferencesHelper;
+import cz.chrastecky.aiwallpaperchanger.helper.ThreadHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.Tuple;
 
 public abstract class AbstractLocationParameterProvider implements PromptParameterProvider {
@@ -43,7 +43,7 @@ public abstract class AbstractLocationParameterProvider implements PromptParamet
         if (cacheItem != null && now.before(cacheItem.value2)) {
             future.complete(cacheItem.value1);
         } else {
-            new Thread(() -> {
+            ThreadHelper.runInThread(() -> {
                 FusedLocationProviderClient locationProviderClient = LocationServices.getFusedLocationProviderClient(context.getApplicationContext());
                 try {
                     locationProviderClient.getCurrentLocation(LocationRequest.PRIORITY_HIGH_ACCURACY, null).addOnSuccessListener(location -> {
@@ -58,7 +58,7 @@ public abstract class AbstractLocationParameterProvider implements PromptParamet
                                 latitude = Double.parseDouble(oldLocationRaw.get(0));
                                 longitude = Double.parseDouble(oldLocationRaw.get(1));
                             } else {
-                                future.completeExceptionally(new FailedGettingLocationException());
+                                future.complete("");
                                 logger.error("LocationParameter", "Failed getting location");
                                 return;
                             }
@@ -76,9 +76,10 @@ public abstract class AbstractLocationParameterProvider implements PromptParamet
                         completeValue(future, context, result, parameterName);
                     });
                 } catch (SecurityException e) {
-                    future.completeExceptionally(e);
+                    logger.error("LocationParameter", "Failed getting location, no permission", e);
+                    future.complete("");
                 }
-            }).start();
+            }, context);
         }
 
         return future;
