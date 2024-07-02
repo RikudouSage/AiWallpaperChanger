@@ -64,10 +64,17 @@ public class CustomParametersProvider implements PromptParameterProvider {
             assert parameter.customParameter != null;
             assert parameter.values != null;
 
+            if (parameter.customParameter.expression == null) {
+                parameter.customParameter.expression = "";
+            }
+
             PromptReplacer.replacePrompt(context, parameter.customParameter.expression, expression -> {
                 parameter.sortValues();
                 for (CustomParameterValue value : parameter.values) {
                     if (value.type == CustomParameterValue.ConditionType.Else || value.expression.equals(expression)) {
+                        if (value.value == null) {
+                            value.value = "";
+                        }
                         PromptReplacer.replacePrompt(context, value.value, future::complete);
                         return;
                     }
