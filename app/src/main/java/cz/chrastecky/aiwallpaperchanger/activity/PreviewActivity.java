@@ -67,7 +67,13 @@ public class PreviewActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         tempFileName = Objects.requireNonNull(intent.getStringExtra("imagePath"));
-        Bitmap image = Objects.requireNonNull(WallpaperFileHelper.getBitmap(this, tempFileName));
+        Bitmap image = WallpaperFileHelper.getBitmap(this, tempFileName);
+        if (image == null) {
+            Toast.makeText(this, R.string.app_error_create_tmp_file, Toast.LENGTH_LONG).show();
+            setResult(-125);
+            finish();
+            return;
+        }
         ImageView previewImage = findViewById(R.id.preview_image);
         previewImage.setImageBitmap(image);
 
