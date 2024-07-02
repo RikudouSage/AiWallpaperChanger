@@ -31,13 +31,13 @@ import cz.chrastecky.aiwallpaperchanger.exception.ContentCensoredException;
 import cz.chrastecky.aiwallpaperchanger.exception.RetryGenerationException;
 import cz.chrastecky.aiwallpaperchanger.helper.BillingHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.ContentResolverHelper;
-import cz.chrastecky.aiwallpaperchanger.helper.WallpaperFileHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.GenerateRequestHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.History;
 import cz.chrastecky.aiwallpaperchanger.helper.Logger;
 import cz.chrastecky.aiwallpaperchanger.helper.PromptReplacer;
 import cz.chrastecky.aiwallpaperchanger.helper.SharedPreferencesHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.ValueWrapper;
+import cz.chrastecky.aiwallpaperchanger.helper.WallpaperFileHelper;
 import cz.chrastecky.aiwallpaperchanger.provider.AiHorde;
 import cz.chrastecky.aiwallpaperchanger.provider.AiProvider;
 
@@ -95,6 +95,7 @@ public class GenerateAndSetBackgroundWorker extends ListenableWorker {
 
                         try {
                             WallpaperFileHelper.save(getApplicationContext(), response.getImage());
+                            logger.debug("WorkerJob", "Successfully saved the current image");
                         } catch (IOException e) {
                             logger.error("WorkerJob", "Failed saving the current image", e);
                         }
@@ -102,11 +103,13 @@ public class GenerateAndSetBackgroundWorker extends ListenableWorker {
                         WallpaperAction wallpaperAction = wallpaperActionCollection.findById(
                                 preferences.getString(SharedPreferencesHelper.WALLPAPER_ACTION, StaticWallpaperAction.ID)
                         );
+                        logger.debug("WorkerJob", "Wallpaper action: " + wallpaperAction.getClass().getName());
                         if (!wallpaperAction.setWallpaper(getApplicationContext(), response.getImage())) {
                             logger.error("AIWallpaperError", "Failed setting new wallpaper");
                             completer.setException(new RuntimeException("Failed setting new wallpaper"));
                             return;
                         }
+                        logger.debug("WorkerJob", "Wallpaper action finished successfully");
 
                         if (preferences.contains(SharedPreferencesHelper.STORE_WALLPAPERS_URI)) {
                             logger.debug("WorkerJob", "Storing image on the filesystem");

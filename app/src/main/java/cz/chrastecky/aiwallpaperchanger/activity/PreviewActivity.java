@@ -3,9 +3,7 @@ package cz.chrastecky.aiwallpaperchanger.activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -22,7 +20,6 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -36,11 +33,11 @@ import cz.chrastecky.aiwallpaperchanger.databinding.ActivityPreviewBinding;
 import cz.chrastecky.aiwallpaperchanger.dto.GenerateRequest;
 import cz.chrastecky.aiwallpaperchanger.dto.StoredRequest;
 import cz.chrastecky.aiwallpaperchanger.helper.ContentResolverHelper;
-import cz.chrastecky.aiwallpaperchanger.helper.ThreadHelper;
-import cz.chrastecky.aiwallpaperchanger.helper.WallpaperFileHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.History;
 import cz.chrastecky.aiwallpaperchanger.helper.Logger;
 import cz.chrastecky.aiwallpaperchanger.helper.SharedPreferencesHelper;
+import cz.chrastecky.aiwallpaperchanger.helper.ThreadHelper;
+import cz.chrastecky.aiwallpaperchanger.helper.WallpaperFileHelper;
 
 public class PreviewActivity extends AppCompatActivity {
     private final WallpaperActionCollection wallpaperActionCollection = new WallpaperActionCollection();
@@ -78,6 +75,7 @@ public class PreviewActivity extends AppCompatActivity {
 
         Button okButton = findViewById(R.id.ok_button);
         okButton.setOnClickListener(view -> {
+            logger.debug("Preview", "Looks good button clicked");
             SharedPreferences preferences = new SharedPreferencesHelper().get(this);
             SharedPreferences.Editor editor = preferences.edit();
             editor.putString(SharedPreferencesHelper.STORED_GENERATION_PARAMETERS, intent.getStringExtra("generationParameters"));
