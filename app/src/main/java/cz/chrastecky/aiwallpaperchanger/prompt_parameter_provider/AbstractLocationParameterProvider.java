@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 import cz.chrastecky.aiwallpaperchanger.dto.LatitudeLongitude;
-import cz.chrastecky.aiwallpaperchanger.exception.FailedGettingLocationException;
 import cz.chrastecky.aiwallpaperchanger.helper.Logger;
 import cz.chrastecky.aiwallpaperchanger.helper.SharedPreferencesHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.ThreadHelper;
@@ -44,9 +43,7 @@ public abstract class AbstractLocationParameterProvider implements PromptParamet
         if (cacheItem != null && now.before(cacheItem.value2)) {
             future.complete(cacheItem.value1);
         } else {
-            new Thread(() -> {
-                ThreadHelper.setupErrorHandler(logger);
-
+            ThreadHelper.runInThread(() -> {
                 FusedLocationProviderClient locationProviderClient = LocationServices.getFusedLocationProviderClient(context.getApplicationContext());
                 try {
                     locationProviderClient.getCurrentLocation(LocationRequest.PRIORITY_HIGH_ACCURACY, null).addOnSuccessListener(location -> {
@@ -82,7 +79,7 @@ public abstract class AbstractLocationParameterProvider implements PromptParamet
                     logger.error("LocationParameter", "Failed getting location, no permission", e);
                     future.complete("");
                 }
-            }).start();
+            }, context);
         }
 
         return future;

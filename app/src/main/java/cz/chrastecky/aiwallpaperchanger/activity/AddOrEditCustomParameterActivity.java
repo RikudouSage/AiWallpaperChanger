@@ -31,7 +31,6 @@ import cz.chrastecky.aiwallpaperchanger.data.relation.CustomParameterWithValues;
 import cz.chrastecky.aiwallpaperchanger.databinding.ActivityAddOrEditCustomParameterBinding;
 import cz.chrastecky.aiwallpaperchanger.databinding.CustomParameterConditionItemBinding;
 import cz.chrastecky.aiwallpaperchanger.helper.DatabaseHelper;
-import cz.chrastecky.aiwallpaperchanger.helper.Logger;
 import cz.chrastecky.aiwallpaperchanger.helper.ThreadHelper;
 
 public class AddOrEditCustomParameterActivity extends AppCompatActivity {
@@ -61,8 +60,7 @@ public class AddOrEditCustomParameterActivity extends AppCompatActivity {
             model.values = new ArrayList<>(Collections.singletonList(new CustomParameterValue(CustomParameterValue.ConditionType.Else)));
             onLoad();
         } else {
-            new Thread(() -> {
-                ThreadHelper.setupErrorHandler(new Logger(this));
+            ThreadHelper.runInThread(() -> {
                 model = DatabaseHelper.getDatabase(this).customParameters().find(mainIntent.getIntExtra("id", 0));
                 if (model == null) {
                     runOnUiThread(() -> {
@@ -79,16 +77,14 @@ public class AddOrEditCustomParameterActivity extends AppCompatActivity {
                 }
 
                 runOnUiThread(this::onLoad);
-            }).start();
+            }, this);
         }
 
         binding.saveButton.setOnClickListener(view -> {
             binding.loader.setVisibility(View.VISIBLE);
             binding.rootView.setVisibility(View.INVISIBLE);
 
-            new Thread(() -> {
-                ThreadHelper.setupErrorHandler(new Logger(this));
-
+            ThreadHelper.runInThread(() -> {
                 assert model.values != null;
                 assert !model.values.isEmpty();
 
@@ -104,7 +100,7 @@ public class AddOrEditCustomParameterActivity extends AppCompatActivity {
                 }
                 database.customParameterValues().upsertMultiple(model.values);
                 runOnUiThread(this::finish);
-            }).start();
+            }, this);
         });
 
         binding.addConditionButton.setOnClickListener(view -> {

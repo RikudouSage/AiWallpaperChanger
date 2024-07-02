@@ -21,7 +21,6 @@ import cz.chrastecky.aiwallpaperchanger.R;
 import cz.chrastecky.aiwallpaperchanger.data.AppDatabase;
 import cz.chrastecky.aiwallpaperchanger.data.entity.CustomParameterValue;
 import cz.chrastecky.aiwallpaperchanger.data.relation.CustomParameterWithValues;
-import cz.chrastecky.aiwallpaperchanger.exception.ParameterDoesNotExistException;
 import cz.chrastecky.aiwallpaperchanger.helper.DatabaseHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.Logger;
 import cz.chrastecky.aiwallpaperchanger.helper.PromptReplacer;
@@ -37,15 +36,13 @@ public class CustomParametersProvider implements PromptParameterProvider {
     public CompletableFuture<List<String>> getParameterNames(@NonNull final Context context) {
         CompletableFuture<List<String>> future = new CompletableFuture<>();
 
-        new Thread(() -> {
-            ThreadHelper.setupErrorHandler(new Logger(context));
-
+        ThreadHelper.runInThread(() -> {
             AppDatabase database = DatabaseHelper.getDatabase(context);
             parameters = database.customParameters().getAll();
             future.complete(parameters.stream().map(
                     parameter -> Objects.requireNonNull(parameter.customParameter).name
             ).collect(Collectors.toList()));
-        }).start();
+        }, context);
 
         return future;
     }
@@ -55,9 +52,8 @@ public class CustomParametersProvider implements PromptParameterProvider {
     public CompletableFuture<String> getValue(@NonNull final Context context, @NonNull final String parameterName) {
         final CompletableFuture<String> future = new CompletableFuture<>();
 
-        new Thread(() -> {
+        ThreadHelper.runInThread(() -> {
             final Logger logger = new Logger(context);
-            ThreadHelper.setupErrorHandler(logger);
 
             final CustomParameterWithValues parameter = findByName(parameterName, logger);
             if (parameter == null) {
@@ -81,7 +77,7 @@ public class CustomParametersProvider implements PromptParameterProvider {
                 logger.error("CustomParameters", "No else block was present with the parameter, returning empty value");
                 future.complete("");
             });
-        }).start();
+        }, context);
 
         return future;
     }

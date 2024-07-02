@@ -17,7 +17,6 @@ import cz.chrastecky.aiwallpaperchanger.data.relation.CustomParameterWithValues;
 import cz.chrastecky.aiwallpaperchanger.databinding.ActivityCustomParameterListBinding;
 import cz.chrastecky.aiwallpaperchanger.databinding.CustomParameterItemBinding;
 import cz.chrastecky.aiwallpaperchanger.helper.DatabaseHelper;
-import cz.chrastecky.aiwallpaperchanger.helper.Logger;
 import cz.chrastecky.aiwallpaperchanger.helper.ThreadHelper;
 
 public class CustomParameterListActivity extends AppCompatActivity {
@@ -52,9 +51,7 @@ public class CustomParameterListActivity extends AppCompatActivity {
             binding.rootView.removeAllViews();
         });
 
-        new Thread(() -> {
-            ThreadHelper.setupErrorHandler(new Logger(this));
-
+        ThreadHelper.runInThread(() -> {
             AppDatabase database = DatabaseHelper.getDatabase(this);
             List<CustomParameterWithValues> parameters = database.customParameters().getAll();
 
@@ -70,11 +67,10 @@ public class CustomParameterListActivity extends AppCompatActivity {
                         builder.setTitle(R.string.app_generic_delete_title);
                         builder.setMessage(R.string.app_generic_delete_content);
                         builder.setPositiveButton(R.string.app_delete, (dialog, which) -> {
-                            new Thread(() -> {
-                                ThreadHelper.setupErrorHandler(new Logger(this));
+                            ThreadHelper.runInThread(() -> {
                                 database.customParameters().delete(parameter);
                                 loadData();
-                            }).start();
+                            }, this);
                         });
                         builder.setNegativeButton(android.R.string.cancel, (dialog, which) -> {
                             // do nothing
@@ -95,6 +91,6 @@ public class CustomParameterListActivity extends AppCompatActivity {
                 binding.noParameters.setVisibility(isEmpty.get() ? View.VISIBLE : View.GONE);
                 binding.loader.setVisibility(View.GONE);
             });
-        }).start();
+        }, this);
     }
 }

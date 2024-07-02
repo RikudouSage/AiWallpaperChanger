@@ -24,9 +24,7 @@ public class PromptReplacer {
             return;
         }
 
-        new Thread(() -> {
-            ThreadHelper.setupErrorHandler(new Logger(context));
-
+        ThreadHelper.runInThread(() -> {
             String promptCopy = prompt;
             final List<PromptParameterProvider> providers = parameterProviders.getProviders();
 
@@ -47,6 +45,6 @@ public class PromptReplacer {
             }
 
             onPromptReplaced.onReplaced(promptCopy);
-        }).start();
+        }, context);
     }
 }

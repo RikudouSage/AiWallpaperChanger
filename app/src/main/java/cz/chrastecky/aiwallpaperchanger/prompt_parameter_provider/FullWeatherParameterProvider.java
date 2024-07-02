@@ -17,7 +17,6 @@ import cz.chrastecky.aiwallpaperchanger.BuildConfig;
 import cz.chrastecky.aiwallpaperchanger.R;
 import cz.chrastecky.aiwallpaperchanger.dto.LatitudeLongitude;
 import cz.chrastecky.aiwallpaperchanger.dto.response.weather.WeatherResponse;
-import cz.chrastecky.aiwallpaperchanger.exception.InvalidWeatherResponse;
 import cz.chrastecky.aiwallpaperchanger.helper.Logger;
 import cz.chrastecky.aiwallpaperchanger.helper.ThreadHelper;
 import cz.chrastecky.annotationprocessor.InjectedPromptParameterProvider;
@@ -29,9 +28,8 @@ import okhttp3.Response;
 public class FullWeatherParameterProvider extends AbstractLocationParameterProvider {
     @Override
     protected void completeValue(@NonNull CompletableFuture<String> future, @NonNull Context context, @NonNull LatitudeLongitude coordinates, @NonNull String parameterName) {
-        new Thread(() -> {
+        ThreadHelper.runInThread(() -> {
             final Logger logger = new Logger(context);
-            ThreadHelper.setupErrorHandler(logger);
 
             final OkHttpClient client = new OkHttpClient();
             final Request request = new Request.Builder()
@@ -118,7 +116,7 @@ public class FullWeatherParameterProvider extends AbstractLocationParameterProvi
                 logger.error("FullWeather", "Got an Exception when getting weather", e);
                 future.complete("");
             }
-        }).start();
+        }, context);
     }
 
     @NonNull
