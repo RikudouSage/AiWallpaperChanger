@@ -44,6 +44,7 @@ public class PromptReplacer {
                     }
 
                     promptCopy = promptCopy.replace("${" + parameterName + "}", value.join());
+                    logger.debug("PromptReplacer", "${" + parameterName + "} replaced with " + value.join());
                 }
             }
 
