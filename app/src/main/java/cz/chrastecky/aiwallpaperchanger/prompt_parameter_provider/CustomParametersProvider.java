@@ -5,6 +5,8 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.gson.Gson;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -67,6 +69,8 @@ public class CustomParametersProvider implements PromptParameterProvider {
             if (parameter.customParameter.expression == null) {
                 parameter.customParameter.expression = "";
             }
+
+            logger.debug("CustomParametersProvider", "Replacing custom parameter: " + new Gson().toJson(parameter));
 
             PromptReplacer.replacePrompt(context, parameter.customParameter.expression, expression -> {
                 parameter.sortValues();
