@@ -149,4 +149,5 @@
     <string name="app.parameter.full_weather.description">Vrací komplexnější popis počasí, jako například \"heavy intensity shower rain\" namísto jednoho klíčového slova.</string>
     <string name="app.menu.share_current">Sdílet současnou tapetu</string>
     <string name="app.preview.share">Sdílet</string>
+    <string name="app.generate.estimated_time.pre_start.parameters">Nahrazování parametrů va vašem promptu</string>
 </resources>
