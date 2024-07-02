@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -89,8 +88,9 @@ public class PreviewActivity extends AppCompatActivity {
             editor.putString(SharedPreferencesHelper.STORED_GENERATION_PARAMETERS, intent.getStringExtra("generationParameters"));
             editor.apply();
 
-            binding.root.setVisibility(View.GONE);
-            binding.loader.setVisibility(View.VISIBLE);
+            Intent configureIntent = new Intent(this, ConfigureScheduleActivity.class);
+            intent.putExtra("generationParameters", intent.getStringExtra("generationParameters"));
+            scheduleActivityLauncher.launch(configureIntent);
 
             ThreadHelper.runInThread(() -> {
                 try {
@@ -115,10 +115,6 @@ public class PreviewActivity extends AppCompatActivity {
 
                 editor.putString(SharedPreferencesHelper.WALLPAPER_LAST_CHANGED, DateFormat.getInstance().format(Calendar.getInstance().getTime()));
                 editor.apply();
-
-                Intent configureIntent = new Intent(this, ConfigureScheduleActivity.class);
-                intent.putExtra("generationParameters", intent.getStringExtra("generationParameters"));
-                scheduleActivityLauncher.launch(configureIntent);
             }, this);
 
             ThreadHelper.runInThread(() -> {
