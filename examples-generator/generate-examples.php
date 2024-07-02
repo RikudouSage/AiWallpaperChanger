@@ -118,7 +118,6 @@ foreach ($configs as $config) {
                 'models' => $config->models,
                 'slow_workers' => false,
                 'nsfw' => false,
-                'censor_nsfw' => true,
             ],
             'headers' => [
                 'apikey' => getenv('AI_HORDE_API_KEY'),
