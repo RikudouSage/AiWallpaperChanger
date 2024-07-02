@@ -51,6 +51,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import cz.chrastecky.aiwallpaperchanger.BuildConfig;
@@ -327,6 +328,8 @@ public class MainActivity extends AppCompatActivity {
             TextView progressText = findViewById(R.id.progress_info);
 
             AtomicBoolean hasBeenAboveZero = new AtomicBoolean(false);
+            AtomicReference<GenerateRequest> cachedRawRequest = new AtomicReference<>(null);
+            AtomicReference<GenerateRequest> cachedReplacedRequest = new AtomicReference<>(null);
 
             AiHorde.OnProgress onProgress = progress -> {
                 if (progress.getWaitTime() > 0) {
@@ -343,70 +346,48 @@ public class MainActivity extends AppCompatActivity {
             };
 
             AiHorde.OnResponse<GenerationDetailWithBitmap> onResponse = response -> {
-                createGenerateRequest(unreplacedRequest -> {
-                    createGenerateRequest(replacedRequest -> {
-                        try {
-                            final File imageFile = WallpaperFileHelper.save(this, response.getImage(), "temp.webp");
-                            if (!imageFile.exists()) {
-                                logger.error("Main", "The image does not exist even after saving it");
-                                runOnUiThread(() -> {
-                                    Toast.makeText(this, R.string.app_error_create_tmp_file, Toast.LENGTH_LONG).show();
-                                    rootView.setVisibility(View.VISIBLE);
-                                    loader.setVisibility(View.INVISIBLE);
-                                });
-                                return;
-                            }
-
-                            Intent intent = new Intent(this, PreviewActivity.class);
-                            intent.putExtra("imagePath", imageFile.getName());
-                            intent.putExtra("generationParameters", new Gson().toJson(unreplacedRequest));
-                            intent.putExtra("generationParametersReplaced", new Gson().toJson(replacedRequest));
-                            intent.putExtra("seed", response.getDetail().getSeed());
-                            intent.putExtra("workerId", response.getDetail().getWorkerId());
-                            intent.putExtra("workerName", response.getDetail().getWorkerName());
-                            intent.putExtra("model", response.getDetail().getModel());
-                            startActivity(intent);
-                        } catch (IOException e) {
+                try {
+                    final File imageFile = WallpaperFileHelper.save(this, response.getImage(), "temp.webp");
+                    if (!imageFile.exists()) {
+                        logger.error("Main", "The image does not exist even after saving it");
+                        runOnUiThread(() -> {
                             Toast.makeText(this, R.string.app_error_create_tmp_file, Toast.LENGTH_LONG).show();
-                        }
+                            rootView.setVisibility(View.VISIBLE);
+                            loader.setVisibility(View.INVISIBLE);
+                        });
+                        return;
+                    }
 
-                        runOnUiThread(() -> {
-                            rootView.setVisibility(View.VISIBLE);
-                            loader.setVisibility(View.INVISIBLE);
-                        });
-                    }, () -> {
-                        Toast.makeText(this, R.string.app_error_parameter_replacing_failed, Toast.LENGTH_LONG).show();
-                        runOnUiThread(() -> {
-                            rootView.setVisibility(View.VISIBLE);
-                            loader.setVisibility(View.INVISIBLE);
-                        });
-                    });
+                    Intent intent = new Intent(this, PreviewActivity.class);
+                    intent.putExtra("imagePath", imageFile.getName());
+                    intent.putExtra("generationParameters", new Gson().toJson(cachedRawRequest.get()));
+                    intent.putExtra("generationParametersReplaced", new Gson().toJson(cachedReplacedRequest.get()));
+                    intent.putExtra("seed", response.getDetail().getSeed());
+                    intent.putExtra("workerId", response.getDetail().getWorkerId());
+                    intent.putExtra("workerName", response.getDetail().getWorkerName());
+                    intent.putExtra("model", response.getDetail().getModel());
+                    startActivity(intent);
+                } catch (IOException e) {
+                    Toast.makeText(this, R.string.app_error_create_tmp_file, Toast.LENGTH_LONG).show();
+                }
+
+                runOnUiThread(() -> {
+                    rootView.setVisibility(View.VISIBLE);
+                    loader.setVisibility(View.INVISIBLE);
                 });
             };
 
             ValueWrapper<AiHorde.OnError> onError = new ValueWrapper<>();
             AtomicInteger censoredRetries = new AtomicInteger(3);
             onError.value = error -> {
-                Runnable errorHandler = () -> {
-                    runOnUiThread(() -> {
-                        rootView.setVisibility(View.VISIBLE);
-                        loader.setVisibility(View.INVISIBLE);
-                        Toast.makeText(this, R.string.app_error_parameter_replacing_failed, Toast.LENGTH_LONG).show();
-                    });
-                };
-
                 if (error.getCause() instanceof RetryGenerationException) {
-                    createGenerateRequest(newRequest -> {
-                        aiProvider.generateImage(newRequest, onProgress, onResponse, onError.value);
-                    }, errorHandler::run);
+                    aiProvider.generateImage(cachedReplacedRequest.get(), onProgress, onResponse, onError.value);
                     return;
                 }
                 if (error.getCause() instanceof ContentCensoredException && censoredRetries.get() > 0) {
-                    createGenerateRequest(newRequest -> {
-                        logger.debug("HordeError", "Request got censored, retrying");
-                        censoredRetries.addAndGet(-1);
-                        aiProvider.generateImage(newRequest, onProgress, onResponse, onError.value);
-                    }, errorHandler::run);
+                    logger.debug("HordeError", "Request got censored, retrying");
+                    censoredRetries.addAndGet(-1);
+                    aiProvider.generateImage(cachedReplacedRequest.get(), onProgress, onResponse, onError.value);
                     return;
                 }
                 if (error instanceof AuthFailureError) {
@@ -421,7 +402,11 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(this, R.string.app_error_generating_failed, Toast.LENGTH_LONG).show();
                 }
 
-                errorHandler.run();
+                runOnUiThread(() -> {
+                    rootView.setVisibility(View.VISIBLE);
+                    loader.setVisibility(View.INVISIBLE);
+                    Toast.makeText(this, R.string.app_error_parameter_replacing_failed, Toast.LENGTH_LONG).show();
+                });
             };
 
             rootView.setVisibility(View.INVISIBLE);
@@ -431,9 +416,11 @@ public class MainActivity extends AppCompatActivity {
             createGenerateRequest(rawRequest -> {
                 logger.debug("HordeRequest", new Gson().toJson(rawRequest));
                 runOnUiThread(() -> progressText.setText(R.string.app_generate_estimated_time_pre_start_parameters));
+                cachedRawRequest.set(rawRequest);
                 createGenerateRequest(newRequest -> {
                     logger.debug("HordeRequestReplaced", new Gson().toJson(newRequest));
                     runOnUiThread(() -> progressText.setText(R.string.app_generate_estimated_time_pre_start));
+                    cachedReplacedRequest.set(newRequest);
                     aiProvider.generateImage(newRequest, onProgress, onResponse, onError.value);
                 }, () -> {
                     Toast.makeText(this, R.string.app_error_parameter_replacing_failed, Toast.LENGTH_LONG).show();
