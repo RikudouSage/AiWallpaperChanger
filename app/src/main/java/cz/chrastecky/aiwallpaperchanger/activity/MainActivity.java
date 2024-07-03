@@ -87,7 +87,8 @@ import cz.chrastecky.aiwallpaperchanger.helper.ValueWrapper;
 import cz.chrastecky.aiwallpaperchanger.helper.WallpaperFileHelper;
 import cz.chrastecky.aiwallpaperchanger.prompt_parameter_provider.PromptParameterProvider;
 import cz.chrastecky.aiwallpaperchanger.provider.AiHorde;
-import cz.chrastecky.aiwallpaperchanger.provider.AiProvider;
+import cz.chrastecky.aiwallpaperchanger.provider.AiImageProvider;
+import cz.chrastecky.aiwallpaperchanger.provider.AiTextProvider;
 
 public class MainActivity extends AppCompatActivity {
     private interface OnGenerateRequestCreated {
@@ -99,7 +100,8 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String DEFAULT_MODEL = "ICBINP - I Can't Believe It's Not Photography";
     private static final String DEFAULT_SAMPLER = Sampler.k_dpmpp_sde.name();
-    private AiProvider aiProvider;
+    private AiImageProvider aiImageProvider;
+    private AiTextProvider aiTextProvider;
     private final Logger logger = new Logger(this);
     private ActivityMainBinding binding;
 
@@ -174,7 +176,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setupExceptionLogging();
 
-        this.aiProvider = new AiHorde(this);
+        final AiHorde horde = new AiHorde(this);
+        this.aiImageProvider = horde;
+        this.aiTextProvider = horde;
 
         SharedPreferences sharedPreferences = new SharedPreferencesHelper().get(this);
         GenerateRequest request = null;
@@ -391,13 +395,13 @@ public class MainActivity extends AppCompatActivity {
             AtomicInteger censoredRetries = new AtomicInteger(3);
             onError.value = error -> {
                 if (error.getCause() instanceof RetryGenerationException) {
-                    aiProvider.generateImage(cachedReplacedRequest.get(), onProgress, onResponse, onError.value);
+                    aiImageProvider.generateImage(cachedReplacedRequest.get(), onProgress, onResponse, onError.value);
                     return;
                 }
                 if (error.getCause() instanceof ContentCensoredException && censoredRetries.get() > 0) {
                     logger.debug("HordeError", "Request got censored, retrying");
                     censoredRetries.addAndGet(-1);
-                    aiProvider.generateImage(cachedReplacedRequest.get(), onProgress, onResponse, onError.value);
+                    aiImageProvider.generateImage(cachedReplacedRequest.get(), onProgress, onResponse, onError.value);
                     return;
                 }
                 if (error instanceof AuthFailureError) {
@@ -431,7 +435,7 @@ public class MainActivity extends AppCompatActivity {
                     logger.debug("HordeRequestReplaced", new Gson().toJson(newRequest));
                     runOnUiThread(() -> progressText.setText(R.string.app_generate_estimated_time_pre_start));
                     cachedReplacedRequest.set(newRequest);
-                    aiProvider.generateImage(newRequest, onProgress, onResponse, onError.value);
+                    aiImageProvider.generateImage(newRequest, onProgress, onResponse, onError.value);
                 }, () -> {
                     Toast.makeText(this, R.string.app_error_parameter_replacing_failed, Toast.LENGTH_LONG).show();
                     runOnUiThread(() -> {
@@ -777,7 +781,7 @@ public class MainActivity extends AppCompatActivity {
             multipleModelsSwitch.setChecked(request.getModels().size() > 1);
         }
 
-        aiProvider.getModels(response -> {
+        aiImageProvider.getModels(response -> {
             response.sort((a, b) -> String.CASE_INSENSITIVE_ORDER.compare(a.getName(), b.getName()));
             List<String> models = response.stream().map(ActiveModel::getName).collect(Collectors.toList());
             this.allModels = models;

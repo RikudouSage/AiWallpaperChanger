@@ -39,7 +39,7 @@ import cz.chrastecky.aiwallpaperchanger.helper.SharedPreferencesHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.ValueWrapper;
 import cz.chrastecky.aiwallpaperchanger.helper.WallpaperFileHelper;
 import cz.chrastecky.aiwallpaperchanger.provider.AiHorde;
-import cz.chrastecky.aiwallpaperchanger.provider.AiProvider;
+import cz.chrastecky.aiwallpaperchanger.provider.AiImageProvider;
 
 public class GenerateAndSetBackgroundWorker extends ListenableWorker {
     private final Logger logger = new Logger(getApplicationContext());
@@ -88,8 +88,8 @@ public class GenerateAndSetBackgroundWorker extends ListenableWorker {
                     }
                     final GenerateRequest finalRequest = newRequest;
 
-                    AiProvider.OnProgress onProgress = status -> logger.debug("WorkerJob", "OnProgress: " + status.getWaitTime());
-                    AiProvider.OnResponse<GenerationDetailWithBitmap> onResponse = response -> {
+                    AiImageProvider.OnProgress onProgress = status -> logger.debug("WorkerJob", "OnProgress: " + status.getWaitTime());
+                    AiImageProvider.OnResponse<GenerationDetailWithBitmap> onResponse = response -> {
                         logger.debug("WorkerJob", "Finished");
                         logger.debug("WorkerJob", "Model: " + response.getDetail().getModel());
 

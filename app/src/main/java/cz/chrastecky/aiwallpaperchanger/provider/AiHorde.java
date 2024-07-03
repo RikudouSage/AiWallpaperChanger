@@ -20,36 +20,50 @@ import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.JsonRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 import cz.chrastecky.aiwallpaperchanger.BuildConfig;
 import cz.chrastecky.aiwallpaperchanger.dto.GenerateRequest;
+import cz.chrastecky.aiwallpaperchanger.dto.GenerateTextRequest;
 import cz.chrastecky.aiwallpaperchanger.dto.response.ActiveModel;
-import cz.chrastecky.aiwallpaperchanger.dto.response.AsyncRequestFullStatus;
+import cz.chrastecky.aiwallpaperchanger.dto.response.AsyncRequestFullStatusImage;
+import cz.chrastecky.aiwallpaperchanger.dto.response.AsyncRequestFullStatusText;
 import cz.chrastecky.aiwallpaperchanger.dto.response.AsyncRequestStatusCheck;
-import cz.chrastecky.aiwallpaperchanger.dto.response.GenerationDetail;
+import cz.chrastecky.aiwallpaperchanger.dto.response.GenerationDetailImage;
 import cz.chrastecky.aiwallpaperchanger.dto.response.GenerationDetailWithBitmap;
 import cz.chrastecky.aiwallpaperchanger.dto.response.GenerationQueued;
 import cz.chrastecky.aiwallpaperchanger.dto.response.HordeWarning;
 import cz.chrastecky.aiwallpaperchanger.dto.response.ModelType;
+import cz.chrastecky.aiwallpaperchanger.dto.response.TextModel;
 import cz.chrastecky.aiwallpaperchanger.exception.ContentCensoredException;
 import cz.chrastecky.aiwallpaperchanger.exception.RetryGenerationException;
 import cz.chrastecky.aiwallpaperchanger.helper.HashHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.Logger;
 import cz.chrastecky.aiwallpaperchanger.helper.SharedPreferencesHelper;
+import cz.chrastecky.aiwallpaperchanger.helper.ThreadHelper;
+import cz.chrastecky.aiwallpaperchanger.text_formatter.LlmTextFormatterProvider;
+import cz.chrastecky.aiwallpaperchanger.text_formatter.TextFormatter;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.RequestBody;
 
-public class AiHorde implements AiProvider {
+public class AiHorde implements AiImageProvider, AiTextProvider {
     private static final String CLIENT_AGENT_HEADER = BuildConfig.APPLICATION_ID + ":" + BuildConfig.VERSION_NAME + ":" + BuildConfig.MAINTAINER;
     public static String DEFAULT_API_KEY = BuildConfig.API_KEY;
 
@@ -275,8 +289,8 @@ public class AiHorde implements AiProvider {
         };
     }
 
-    private JsonRequest<AsyncRequestFullStatus> getFullStatusRequest(String id, OnResponse<GenerationDetail> onResponse, OnError onError) {
-        return new JsonRequest<AsyncRequestFullStatus>(
+    private JsonRequest<AsyncRequestFullStatusImage> getFullStatusRequest(String id, OnResponse<GenerationDetailImage> onResponse, OnError onError) {
+        return new JsonRequest<AsyncRequestFullStatusImage>(
                 Request.Method.GET,
                 baseUrl + "/generate/status/" + id,
                 null,
@@ -302,15 +316,15 @@ public class AiHorde implements AiProvider {
             }
 
             @Override
-            protected Response<AsyncRequestFullStatus> parseNetworkResponse(NetworkResponse networkResponse) {
+            protected Response<AsyncRequestFullStatusImage> parseNetworkResponse(NetworkResponse networkResponse) {
                 try {
                     String body = new String(networkResponse.data, StandardCharsets.UTF_8);
                     JSONObject json = new JSONObject(body);
                     JSONArray generationsRaw = json.getJSONArray("generations");
-                    List<GenerationDetail> generations = new ArrayList<>();
+                    List<GenerationDetailImage> generations = new ArrayList<>();
                     for (int i = 0; i < generationsRaw.length(); ++i) {
                         JSONObject generationJson = generationsRaw.getJSONObject(i);
-                        generations.add(new GenerationDetail(
+                        generations.add(new GenerationDetailImage(
                                 generationJson.getString("worker_id"),
                                 generationJson.getString("worker_name"),
                                 generationJson.getString("model"),
@@ -323,7 +337,7 @@ public class AiHorde implements AiProvider {
                     }
 
                     return Response.success(
-                            new AsyncRequestFullStatus(
+                            new AsyncRequestFullStatusImage(
                                     json.getInt("finished"),
                                     json.getInt("processing"),
                                     json.getInt("restarted"),
@@ -397,5 +411,127 @@ public class AiHorde implements AiProvider {
             return null;
         }
         return HashHelper.sha256(id, logger);
+    }
+
+    @Override
+    public CompletableFuture<String> getResponse(final String message) {
+        final CompletableFuture<String> future = new CompletableFuture<>();
+
+        ThreadHelper.runInThread(() -> {
+            final List<String> models = findModels().join();
+            if (models.isEmpty()) {
+                logger.error("AIHorde", "Failed to find any suitable text models");
+                future.complete("");
+                return;
+            }
+
+            final LlmTextFormatterProvider textFormatterProvider = new LlmTextFormatterProvider();
+            final TextFormatter textFormatter = textFormatterProvider.findForModel(models.get(0)); // todo make it actually support multiple models
+            if (textFormatter == null) {
+                logger.error("AIHorde", "Failed to find text formatter");
+                future.complete("");
+                return;
+            }
+            final OkHttpClient httpClient = new OkHttpClient();
+            final okhttp3.Request request = new okhttp3.Request.Builder()
+                    .url(baseUrl + "/generate/text/async")
+                    .addHeader("Client-Agent", CLIENT_AGENT_HEADER)
+                    .addHeader("apikey", apiKey())
+                    .post(RequestBody.create(
+                            new Gson().toJson(new GenerateTextRequest(textFormatter.encode(message), findModels().join())),
+                            MediaType.parse("application/json; charset=utf-8")
+                    ))
+                    .build();
+            try (final okhttp3.Response response = httpClient.newCall(request).execute()) {
+                final GenerationQueued result = new Gson().fromJson(response.body().string(), GenerationQueued.class);
+                final String requestId = result.getId();
+
+                while (true) {
+                    AsyncRequestFullStatusText status = getTextStatus(requestId).join();
+                    if (status.getFaulted()) {
+                        logger.error("AiHorde", "The text request faulted");
+                        future.complete("");
+                        return;
+                    }
+                    if (status.getDone()) {
+                        if (status.getGenerations().isEmpty()) {
+                            logger.error("AiHorde", "The text request result was empty even though it claimed completed");
+                            future.complete("");
+                            return;
+                        }
+
+                        future.complete(textFormatter.decode(status.getGenerations().get(0).getText()));
+                        return;
+                    }
+                    Thread.sleep(2_000);
+                }
+
+            } catch (IOException e) {
+                logger.error("AiHorde", "There was an error while generating text response", e);
+                future.complete("");
+            } catch (InterruptedException e) {
+                logger.error("AiHorde", "Sleeping in a thread got interrupted", e);
+                future.complete("");
+            }
+        }, context);
+
+        return future;
+    }
+
+    @NonNull
+    private CompletableFuture<List<String>> findModels() {
+        CompletableFuture<List<String>> future = new CompletableFuture<>();
+
+        ThreadHelper.runInThread(() -> {
+            final List<String> wantedModels = Arrays.asList("l3", "llama3", "llama-3"); // add openhermes-2.5-mistral-7b
+            final OkHttpClient httpClient = new OkHttpClient();
+            final okhttp3.Request request = new okhttp3.Request.Builder()
+                    .url(baseUrl + "/status/models?type=text")
+                    .addHeader("Client-Agent", CLIENT_AGENT_HEADER)
+                    .build();
+
+            try (final okhttp3.Response response = httpClient.newCall(request).execute()) {
+                List<TextModel> result = Arrays.asList(new Gson().fromJson(
+                        response.body().string(),
+                        TextModel[].class
+                ));
+
+                future.complete(
+                        result.stream()
+                                .map(TextModel::getName)
+                                .filter(textModel -> wantedModels.stream().anyMatch(wantedModel -> textModel.toLowerCase().contains(wantedModel)))
+                                .collect(Collectors.toList())
+                );
+            } catch (IOException e) {
+                logger.error("AiHorde", "There was an error while fetching list of text models", e);
+                future.complete(new ArrayList<>());
+            }
+        }, context);
+
+        return future;
+    }
+
+    @NonNull
+    private CompletableFuture<AsyncRequestFullStatusText> getTextStatus(@NonNull final String id) {
+        final CompletableFuture<AsyncRequestFullStatusText> future = new CompletableFuture<>();
+
+        ThreadHelper.runInThread(() -> {
+            final OkHttpClient httpClient = new OkHttpClient();
+            final okhttp3.Request request = new okhttp3.Request.Builder()
+                    .url(baseUrl + "/generate/text/status/" + id)
+                    .addHeader("Client-Agent", CLIENT_AGENT_HEADER)
+                    .addHeader("apikey", apiKey())
+                    .build();
+
+            try (final okhttp3.Response response = httpClient.newCall(request).execute()) {
+                final String body = response.body().string();
+                future.complete(new Gson().fromJson(body, AsyncRequestFullStatusText.class));
+            } catch (IOException e) {
+                logger.error("AiHorde", "There was an error while getting the status of request with id " + id, e);
+                future.complete(null);
+            }
+        }, context);
+
+        return future;
     }
 }
