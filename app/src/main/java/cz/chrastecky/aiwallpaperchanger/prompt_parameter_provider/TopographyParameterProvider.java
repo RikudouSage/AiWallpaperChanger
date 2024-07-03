@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
+import cz.chrastecky.aiwallpaperchanger.R;
 import cz.chrastecky.aiwallpaperchanger.helper.PromptReplacer;
 import cz.chrastecky.aiwallpaperchanger.helper.ThreadHelper;
 import cz.chrastecky.aiwallpaperchanger.provider.AiTextProvider;
@@ -45,7 +46,7 @@ public class TopographyParameterProvider implements PromptParameterProvider {
     @NonNull
     @Override
     public String getDescription(@NonNull Context context, @NonNull String parameterName) {
-        return "TODO";
+        return context.getString(R.string.app_parameter_topography_description);
     }
 
     @Nullable
