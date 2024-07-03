@@ -29,6 +29,7 @@ import cz.chrastecky.aiwallpaperchanger.dto.StoredRequest;
 import cz.chrastecky.aiwallpaperchanger.dto.response.GenerationDetailWithBitmap;
 import cz.chrastecky.aiwallpaperchanger.exception.ContentCensoredException;
 import cz.chrastecky.aiwallpaperchanger.exception.RetryGenerationException;
+import cz.chrastecky.aiwallpaperchanger.helper.ApiKeyHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.BillingHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.ContentResolverHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.GenerateRequestHelper;
@@ -61,7 +62,7 @@ public class GenerateAndSetBackgroundWorker extends ListenableWorker {
             BillingHelper.getPurchaseStatus(getApplicationContext(), PremiumActivity.PREMIUM_PURCHASE_NAME, premiumStatus -> {
                 logger.debug("WorkerJob", "Is premium: " + (premiumStatus ? "Yes" : "No"));
                 if (premiumStatus) {
-                    AiHorde.DEFAULT_API_KEY = BuildConfig.PREMIUM_API_KEY;
+                    ApiKeyHelper.setDefaultApiKey(BuildConfig.PREMIUM_API_KEY);
                 }
 
                 logger.debug("WorkerJob", "Inside doWork()");

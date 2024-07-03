@@ -3,6 +3,8 @@ package cz.chrastecky.aiwallpaperchanger.helper;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import androidx.annotation.NonNull;
+
 public class SharedPreferencesHelper {
     public static final String ALLOW_LARGE_NUMERIC_VALUES = "allowLargeNumericValues";
     public static final String API_KEY = "api_key";
@@ -17,8 +19,9 @@ public class SharedPreferencesHelper {
     public static final String DOZE_MODE_DO_NOT_ASK = "doze_mode_exception_do_not_ask";
     public static final String LAST_KNOWN_LOCATION = "lastKnownLocation";
     public static final String WALLPAPER_ACTION = "wallpaperAction";
+    public static final String LLM_PROVIDER = "llmProvider";
 
-    public SharedPreferences get(Context context) {
+    public SharedPreferences get(@NonNull Context context) {
         return context.getSharedPreferences("GlobalPreferences", Context.MODE_PRIVATE);
     }
 }

@@ -11,8 +11,8 @@ import java.util.concurrent.CompletableFuture;
 
 import cz.chrastecky.aiwallpaperchanger.helper.PromptReplacer;
 import cz.chrastecky.aiwallpaperchanger.helper.ThreadHelper;
-import cz.chrastecky.aiwallpaperchanger.provider.AiHorde;
 import cz.chrastecky.aiwallpaperchanger.provider.AiTextProvider;
+import cz.chrastecky.aiwallpaperchanger.provider.AiTextProviderCollection;
 import cz.chrastecky.annotationprocessor.InjectedPromptParameterProvider;
 
 @InjectedPromptParameterProvider
@@ -33,7 +33,7 @@ public class CurrentTownDescriptionParameterProvider implements PromptParameterP
         ThreadHelper.runInThread(() -> {
             final String rawPrompt = "list 5 comma-separated tags/words describing the topography of ${town} in ${state} in ${country}, include only the tags separated by comma and nothing else";
             PromptReplacer.replacePrompt(context, rawPrompt, prompt -> {
-                final AiTextProvider textProvider = new AiHorde(context);
+                final AiTextProvider textProvider = new AiTextProviderCollection(context).getCurrentProvider();
                 final String response = textProvider.getResponse(prompt).join();
                 future.complete(response);
             });

@@ -73,6 +73,7 @@ import cz.chrastecky.aiwallpaperchanger.dto.response.GenerationDetailWithBitmap;
 import cz.chrastecky.aiwallpaperchanger.exception.ContentCensoredException;
 import cz.chrastecky.aiwallpaperchanger.exception.RetryGenerationException;
 import cz.chrastecky.aiwallpaperchanger.helper.AlarmManagerHelper;
+import cz.chrastecky.aiwallpaperchanger.helper.ApiKeyHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.BillingHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.DatabaseHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.GenerateRequestHelper;
@@ -88,7 +89,6 @@ import cz.chrastecky.aiwallpaperchanger.helper.WallpaperFileHelper;
 import cz.chrastecky.aiwallpaperchanger.prompt_parameter_provider.PromptParameterProvider;
 import cz.chrastecky.aiwallpaperchanger.provider.AiHorde;
 import cz.chrastecky.aiwallpaperchanger.provider.AiImageProvider;
-import cz.chrastecky.aiwallpaperchanger.provider.AiTextProvider;
 
 public class MainActivity extends AppCompatActivity {
     private interface OnGenerateRequestCreated {
@@ -101,7 +101,6 @@ public class MainActivity extends AppCompatActivity {
     private static final String DEFAULT_MODEL = "ICBINP - I Can't Believe It's Not Photography";
     private static final String DEFAULT_SAMPLER = Sampler.k_dpmpp_sde.name();
     private AiImageProvider aiImageProvider;
-    private AiTextProvider aiTextProvider;
     private final Logger logger = new Logger(this);
     private ActivityMainBinding binding;
 
@@ -176,9 +175,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setupExceptionLogging();
 
-        final AiHorde horde = new AiHorde(this);
-        this.aiImageProvider = horde;
-        this.aiTextProvider = horde;
+        this.aiImageProvider = new AiHorde(this);
 
         SharedPreferences sharedPreferences = new SharedPreferencesHelper().get(this);
         GenerateRequest request = null;
@@ -526,7 +523,7 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
 
-            AiHorde.DEFAULT_API_KEY = BuildConfig.PREMIUM_API_KEY;
+            ApiKeyHelper.setDefaultApiKey(BuildConfig.PREMIUM_API_KEY);
         });
 
         if (PermissionHelper.shouldCheckForPermissions(this)) {

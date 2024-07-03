@@ -4,9 +4,6 @@ import androidx.annotation.NonNull;
 
 import java.util.regex.Pattern;
 
-import cz.chrastecky.annotationprocessor.LlmTextFormatter;
-
-@LlmTextFormatter
 public class MetaLlama3Instruct implements TextFormatter {
     @Override
     public boolean supports(@NonNull String model) {
