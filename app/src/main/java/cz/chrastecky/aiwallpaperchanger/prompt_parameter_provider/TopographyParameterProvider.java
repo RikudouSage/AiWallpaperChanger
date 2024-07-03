@@ -16,7 +16,7 @@ import cz.chrastecky.aiwallpaperchanger.provider.AiTextProviderCollection;
 import cz.chrastecky.annotationprocessor.InjectedPromptParameterProvider;
 
 @InjectedPromptParameterProvider
-public class CurrentTownDescriptionParameterProvider implements PromptParameterProvider {
+public class TopographyParameterProvider implements PromptParameterProvider {
     private final GeolocationDataParameterProvider geolocationDataProvider = new GeolocationDataParameterProvider();
 
     @NonNull
