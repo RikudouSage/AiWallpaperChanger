@@ -32,10 +32,8 @@ public class PromptReplacer {
 
             for (int i = 0; i < providers.size(); ++i) {
                 PromptParameterProvider provider = providers.get(i);
-                for (String parameterName : provider.getParameterNames(context).join()) {
-                    if (!promptCopy.contains("${" + parameterName + "}")) {
-                        continue;
-                    }
+                final List<String> promptParameters = provider.getParametersInText(context, promptCopy).join();
+                for (final String parameterName : promptParameters) {
                     logger.debug("PromptReplacer", "Replacing parameter ${" + parameterName + "}");
                     CompletableFuture<String> value = provider.getValue(context, parameterName);
                     if (value == null) {
@@ -43,7 +41,11 @@ public class PromptReplacer {
                         return;
                     }
 
-                    promptCopy = promptCopy.replace("${" + parameterName + "}", value.join());
+                    String replacedValue = value.join();
+                    if (replacedValue == null) {
+                        replacedValue = "";
+                    }
+                    promptCopy = promptCopy.replace("${" + parameterName + "}", replacedValue);
                     logger.debug("PromptReplacer", "${" + parameterName + "} replaced with " + value.join());
                 }
             }

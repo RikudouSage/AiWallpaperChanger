@@ -3,6 +3,10 @@ plugins {
     alias(libs.plugins.jetbrainsKotlinAndroid)
 }
 
+ext {
+    maintainer = 'Rikudou'
+}
+
 android {
     Properties properties = new Properties()
     properties.load(project.rootProject.file('local.properties').newDataInputStream())
@@ -25,8 +29,12 @@ android {
         dataBinding {
             enabled = true
         }
-        buildConfigField "String", "MAINTAINER", "\"Rikudou\""
+
+
+        buildConfigField "String", "MAINTAINER", "\"${maintainer}\""
         buildConfigField "String", "ANONYMOUS_API_KEY", "\"0000000000\""
+        buildConfigField "String", "HORDE_API_URL", "\"https://aihorde.net/api/v2\""
+        buildConfigField "String", "CLIENT_AGENT_HEADER", "\"${applicationId}:${versionName}:${maintainer}\""
         buildConfigField "String", "SUPPORT_EMAIL", "\"" + (properties.getProperty("support_email") ?: "") + "\""
         buildConfigField "String", "EXAMPLES_URL", "\"" + (properties.getProperty("examples_url") ?: "") + "\""
         buildConfigField "String", "WEATHER_API_KEY", "\"" + (properties.getProperty("weather_api_key") ?: "") + "\""

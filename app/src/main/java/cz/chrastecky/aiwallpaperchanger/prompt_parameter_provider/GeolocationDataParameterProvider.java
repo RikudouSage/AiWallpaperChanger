@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 import cz.chrastecky.aiwallpaperchanger.R;
@@ -28,18 +29,36 @@ public class GeolocationDataParameterProvider extends AbstractLocationParameterP
         final Logger logger = new Logger(context);
         Geocoder geocoder = new Geocoder(context, Locale.ENGLISH);
         try {
-            List<Address> addresses = geocoder.getFromLocation(coordinates.getLatitude(), coordinates.getLongitude(), 1);
+            List<Address> addresses = geocoder.getFromLocation(coordinates.getLatitude(), coordinates.getLongitude(), 10);
             if (addresses != null && !addresses.isEmpty()) {
-                Address address = addresses.get(0);
+                Optional<Address> target;
                 switch (parameterName) {
                     case PARAMETER_COUNTRY:
-                        future.complete(address.getCountryName());
+                        target = addresses.stream().filter(address -> address.getCountryName() != null).findFirst();
+                        if (!target.isPresent()) {
+                            logger.error("GeolocationData", "No address with valid country found");
+                            future.complete("");
+                            return;
+                        }
+                        future.complete(target.get().getCountryName());
                         break;
                     case PARAMETER_TOWN:
-                        future.complete(address.getLocality());
+                        target = addresses.stream().filter(address -> address.getLocality() != null).findFirst();
+                        if (!target.isPresent()) {
+                            logger.error("GeolocationData", "No address with valid locality found");
+                            future.complete("");
+                            return;
+                        }
+                        future.complete(target.get().getLocality());
                         break;
                     case PARAMETER_STATE:
-                        future.complete(address.getAdminArea());
+                        target = addresses.stream().filter(address -> address.getAdminArea() != null).findFirst();
+                        if (!target.isPresent()) {
+                            logger.error("GeolocationData", "No address with valid admin area found");
+                            future.complete("");
+                            return;
+                        }
+                        future.complete(target.get().getAdminArea());
                         break;
                     default:
                         logger.error("GeolocationData", "Unknown parameter somehow slipped through: " + parameterName);

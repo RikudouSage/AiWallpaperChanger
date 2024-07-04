@@ -73,6 +73,7 @@ import cz.chrastecky.aiwallpaperchanger.dto.response.GenerationDetailWithBitmap;
 import cz.chrastecky.aiwallpaperchanger.exception.ContentCensoredException;
 import cz.chrastecky.aiwallpaperchanger.exception.RetryGenerationException;
 import cz.chrastecky.aiwallpaperchanger.helper.AlarmManagerHelper;
+import cz.chrastecky.aiwallpaperchanger.helper.ApiKeyHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.BillingHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.DatabaseHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.GenerateRequestHelper;
@@ -87,7 +88,7 @@ import cz.chrastecky.aiwallpaperchanger.helper.ValueWrapper;
 import cz.chrastecky.aiwallpaperchanger.helper.WallpaperFileHelper;
 import cz.chrastecky.aiwallpaperchanger.prompt_parameter_provider.PromptParameterProvider;
 import cz.chrastecky.aiwallpaperchanger.provider.AiHorde;
-import cz.chrastecky.aiwallpaperchanger.provider.AiProvider;
+import cz.chrastecky.aiwallpaperchanger.provider.AiImageProvider;
 
 public class MainActivity extends AppCompatActivity {
     private interface OnGenerateRequestCreated {
@@ -99,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String DEFAULT_MODEL = "ICBINP - I Can't Believe It's Not Photography";
     private static final String DEFAULT_SAMPLER = Sampler.k_dpmpp_sde.name();
-    private AiProvider aiProvider;
+    private AiImageProvider aiImageProvider;
     private final Logger logger = new Logger(this);
     private ActivityMainBinding binding;
 
@@ -174,7 +175,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setupExceptionLogging();
 
-        this.aiProvider = new AiHorde(this);
+        this.aiImageProvider = new AiHorde(this);
 
         SharedPreferences sharedPreferences = new SharedPreferencesHelper().get(this);
         GenerateRequest request = null;
@@ -263,16 +264,10 @@ public class MainActivity extends AppCompatActivity {
             }
 
             final String prompt = binding.promptField.getText() != null ? binding.promptField.getText().toString() : "";
-            final String negativePrompt = binding.negativePromptField.getText() != null ? binding.negativePromptField.getText().toString() : "";
 
             Map<String, List<String>> neededPermissions = new HashMap<>();
             for (PromptParameterProvider provider : parameterProviders.getProviders()) {
-                for (String parameterName : provider.getParameterNames(this).join()) {
-                    final String parameter = "${" + parameterName + "}";
-                    if (!prompt.contains(parameter) && !negativePrompt.contains(parameter)) {
-                        continue;
-                    }
-
+                for (String parameterName : provider.getParametersInText(this, prompt).join()) {
                     final List<String> requiredPermissions = provider.getRequiredPermissions(this, getGrantedPermissions(), parameterName);
                     if (requiredPermissions == null || requiredPermissions.isEmpty()) {
                         continue;
@@ -391,13 +386,13 @@ public class MainActivity extends AppCompatActivity {
             AtomicInteger censoredRetries = new AtomicInteger(3);
             onError.value = error -> {
                 if (error.getCause() instanceof RetryGenerationException) {
-                    aiProvider.generateImage(cachedReplacedRequest.get(), onProgress, onResponse, onError.value);
+                    aiImageProvider.generateImage(cachedReplacedRequest.get(), onProgress, onResponse, onError.value);
                     return;
                 }
                 if (error.getCause() instanceof ContentCensoredException && censoredRetries.get() > 0) {
                     logger.debug("HordeError", "Request got censored, retrying");
                     censoredRetries.addAndGet(-1);
-                    aiProvider.generateImage(cachedReplacedRequest.get(), onProgress, onResponse, onError.value);
+                    aiImageProvider.generateImage(cachedReplacedRequest.get(), onProgress, onResponse, onError.value);
                     return;
                 }
                 if (error instanceof AuthFailureError) {
@@ -431,7 +426,7 @@ public class MainActivity extends AppCompatActivity {
                     logger.debug("HordeRequestReplaced", new Gson().toJson(newRequest));
                     runOnUiThread(() -> progressText.setText(R.string.app_generate_estimated_time_pre_start));
                     cachedReplacedRequest.set(newRequest);
-                    aiProvider.generateImage(newRequest, onProgress, onResponse, onError.value);
+                    aiImageProvider.generateImage(newRequest, onProgress, onResponse, onError.value);
                 }, () -> {
                     Toast.makeText(this, R.string.app_error_parameter_replacing_failed, Toast.LENGTH_LONG).show();
                     runOnUiThread(() -> {
@@ -522,7 +517,7 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
 
-            AiHorde.DEFAULT_API_KEY = BuildConfig.PREMIUM_API_KEY;
+            ApiKeyHelper.setDefaultApiKey(BuildConfig.PREMIUM_API_KEY);
         });
 
         if (PermissionHelper.shouldCheckForPermissions(this)) {
@@ -777,7 +772,7 @@ public class MainActivity extends AppCompatActivity {
             multipleModelsSwitch.setChecked(request.getModels().size() > 1);
         }
 
-        aiProvider.getModels(response -> {
+        aiImageProvider.getModels(response -> {
             response.sort((a, b) -> String.CASE_INSENSITIVE_ORDER.compare(a.getName(), b.getName()));
             List<String> models = response.stream().map(ActiveModel::getName).collect(Collectors.toList());
             this.allModels = models;

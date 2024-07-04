@@ -12,7 +12,7 @@ import cz.chrastecky.aiwallpaperchanger.dto.response.ActiveModel;
 import cz.chrastecky.aiwallpaperchanger.dto.response.AsyncRequestStatusCheck;
 import cz.chrastecky.aiwallpaperchanger.dto.response.GenerationDetailWithBitmap;
 
-public interface AiProvider {
+public interface AiImageProvider {
     interface OnResponse<T> {
         void onResponse(T response);
     }

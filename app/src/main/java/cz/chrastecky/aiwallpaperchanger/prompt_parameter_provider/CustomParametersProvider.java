@@ -160,18 +160,27 @@ public class CustomParametersProvider implements PromptParameterProvider {
 
         final Map<PromptParameterProvider, List<String>> usedProviders = new HashMap<>();
 
+        final List<String> textsToCheck = new ArrayList<>();
+        textsToCheck.add(parameter.customParameter.expression);
+        if (parameter.values != null) {
+            for (CustomParameterValue value : parameter.values) {
+                if (value.type != CustomParameterValue.ConditionType.Else) {
+                    textsToCheck.add(value.expression);
+                }
+                textsToCheck.add(value.value);
+            }
+        }
+
         for (PromptParameterProvider provider : providers.getProviders()) {
             if (provider.getClass().equals(this.getClass())) {
                 continue;
             }
-            for (String providerParameterName : provider.getParameterNames(context).join()) {
-                if (parameter.customParameter.expression.contains("${" + providerParameterName + "}")) {
-                    if (!usedProviders.containsKey(provider)) {
-                        usedProviders.put(provider, new ArrayList<>());
-                    }
-
-                    Objects.requireNonNull(usedProviders.get(provider)).add(providerParameterName);
+            for (String providerParameterName : provider.getParametersInText(context, textsToCheck.toArray(new String[] {})).join()) {
+                if (!usedProviders.containsKey(provider)) {
+                    usedProviders.put(provider, new ArrayList<>());
                 }
+
+                Objects.requireNonNull(usedProviders.get(provider)).add(providerParameterName);
             }
         }
 

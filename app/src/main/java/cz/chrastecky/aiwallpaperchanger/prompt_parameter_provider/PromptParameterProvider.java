@@ -5,9 +5,12 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+
+import cz.chrastecky.aiwallpaperchanger.helper.ThreadHelper;
 
 public interface PromptParameterProvider {
     @NonNull
@@ -28,5 +31,24 @@ public interface PromptParameterProvider {
             return true;
         }
         return new HashSet<>(grantedPermissions).containsAll(requiredPermissions);
+    }
+
+    default CompletableFuture<List<String>> getParametersInText(@NonNull Context context, @NonNull String... texts) {
+        final CompletableFuture<List<String>> future = new CompletableFuture<>();
+
+        ThreadHelper.runInThread(() -> {
+            final List<String> result = new ArrayList<>();
+            for (String parameter : getParameterNames(context).join()) {
+                for (final String text : texts) {
+                    if (text.contains("${" + parameter + "}")) {
+                        result.add(parameter);
+                    }
+                }
+            }
+
+            future.complete(result);
+        }, context);
+
+        return future;
     }
 }

@@ -1,6 +1,6 @@
 package cz.chrastecky.aiwallpaperchanger.dto.response
 
-data class AsyncRequestFullStatus(
+data class AsyncRequestFullStatusImage(
     val finished: Int,
     val processing: Int,
     val restarted: Int,
@@ -11,6 +11,6 @@ data class AsyncRequestFullStatus(
     val queuePosition: Int,
     val kudos: Int,
     val isPossible: Boolean,
-    val generations: List<GenerationDetail>,
+    val generations: List<GenerationDetailImage>,
     val shared: Boolean,
 )

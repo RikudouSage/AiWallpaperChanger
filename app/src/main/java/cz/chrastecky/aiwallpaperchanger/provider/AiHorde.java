@@ -2,7 +2,6 @@ package cz.chrastecky.aiwallpaperchanger.provider;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.provider.Settings;
 import android.widget.ImageView;
@@ -36,24 +35,20 @@ import java.util.TimerTask;
 import cz.chrastecky.aiwallpaperchanger.BuildConfig;
 import cz.chrastecky.aiwallpaperchanger.dto.GenerateRequest;
 import cz.chrastecky.aiwallpaperchanger.dto.response.ActiveModel;
-import cz.chrastecky.aiwallpaperchanger.dto.response.AsyncRequestFullStatus;
+import cz.chrastecky.aiwallpaperchanger.dto.response.AsyncRequestFullStatusImage;
 import cz.chrastecky.aiwallpaperchanger.dto.response.AsyncRequestStatusCheck;
-import cz.chrastecky.aiwallpaperchanger.dto.response.GenerationDetail;
+import cz.chrastecky.aiwallpaperchanger.dto.response.GenerationDetailImage;
 import cz.chrastecky.aiwallpaperchanger.dto.response.GenerationDetailWithBitmap;
 import cz.chrastecky.aiwallpaperchanger.dto.response.GenerationQueued;
 import cz.chrastecky.aiwallpaperchanger.dto.response.HordeWarning;
 import cz.chrastecky.aiwallpaperchanger.dto.response.ModelType;
 import cz.chrastecky.aiwallpaperchanger.exception.ContentCensoredException;
 import cz.chrastecky.aiwallpaperchanger.exception.RetryGenerationException;
+import cz.chrastecky.aiwallpaperchanger.helper.ApiKeyHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.HashHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.Logger;
-import cz.chrastecky.aiwallpaperchanger.helper.SharedPreferencesHelper;
 
-public class AiHorde implements AiProvider {
-    private static final String CLIENT_AGENT_HEADER = BuildConfig.APPLICATION_ID + ":" + BuildConfig.VERSION_NAME + ":" + BuildConfig.MAINTAINER;
-    public static String DEFAULT_API_KEY = BuildConfig.API_KEY;
-
-    private static final String baseUrl = "https://aihorde.net/api/v2";
+public class AiHorde implements AiImageProvider {
     private final RequestQueue requestQueue;
     private final Context context;
     private final Logger logger;
@@ -68,7 +63,7 @@ public class AiHorde implements AiProvider {
     public void getModels(@NonNull OnResponse<List<ActiveModel>> onResponse, @Nullable OnError onError) {
         requestQueue.add(new JsonRequest<List<ActiveModel>>(
                 Request.Method.GET,
-                baseUrl + "/status/models",
+                BuildConfig.HORDE_API_URL + "/status/models",
                 null,
                 onResponse::onResponse,
                 volleyError -> {
@@ -80,7 +75,7 @@ public class AiHorde implements AiProvider {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<>();
-                headers.put("Client-Agent", CLIENT_AGENT_HEADER);
+                headers.put("Client-Agent", BuildConfig.CLIENT_AGENT_HEADER);
 
                 return headers;
             }
@@ -157,7 +152,7 @@ public class AiHorde implements AiProvider {
             if (
                     BuildConfig.BILLING_ENABLED
                     && !BuildConfig.PREMIUM_API_KEY.equals(BuildConfig.ANONYMOUS_API_KEY)
-                    && DEFAULT_API_KEY.equals(BuildConfig.PREMIUM_API_KEY)
+                    && ApiKeyHelper.getDefaultApiKey().equals(BuildConfig.PREMIUM_API_KEY)
             ) {
                 requestBody.put("proxied_account", uniqueId() == null ? "unknown" : uniqueId());
             }
@@ -170,7 +165,7 @@ public class AiHorde implements AiProvider {
 
         requestQueue.add(new JsonRequest<GenerationQueued>(
                 Request.Method.POST,
-                baseUrl + "/generate/async",
+                BuildConfig.HORDE_API_URL + "/generate/async",
                 requestBody.toString(),
                 generationQueued -> {
                     String id = generationQueued.getId();
@@ -194,8 +189,8 @@ public class AiHorde implements AiProvider {
             @Override
             public Map<String, String> getHeaders() {
                 Map<String, String> headers = new HashMap<>();
-                headers.put("apikey", apiKey());
-                headers.put("Client-Agent", CLIENT_AGENT_HEADER);
+                headers.put("apikey", ApiKeyHelper.getApiKey(context));
+                headers.put("Client-Agent", BuildConfig.CLIENT_AGENT_HEADER);
                 return headers;
             }
 
@@ -234,7 +229,7 @@ public class AiHorde implements AiProvider {
     private JsonRequest<AsyncRequestStatusCheck> getCheckStatusRequest(String id, OnProgress onResponse, OnError onError) {
         return new JsonRequest<AsyncRequestStatusCheck>(
                 Request.Method.GET,
-                baseUrl + "/generate/check/" + id,
+                BuildConfig.HORDE_API_URL + "/generate/check/" + id,
                 null,
                 onResponse::onProgress,
                 onError::onError
@@ -242,8 +237,8 @@ public class AiHorde implements AiProvider {
             @Override
             public Map<String, String> getHeaders() {
                 Map<String, String> headers = new HashMap<>();
-                headers.put("apikey", apiKey());
-                headers.put("Client-Agent", CLIENT_AGENT_HEADER);
+                headers.put("apikey", ApiKeyHelper.getApiKey(context));
+                headers.put("Client-Agent", BuildConfig.CLIENT_AGENT_HEADER);
                 return headers;
             }
 
@@ -275,10 +270,10 @@ public class AiHorde implements AiProvider {
         };
     }
 
-    private JsonRequest<AsyncRequestFullStatus> getFullStatusRequest(String id, OnResponse<GenerationDetail> onResponse, OnError onError) {
-        return new JsonRequest<AsyncRequestFullStatus>(
+    private JsonRequest<AsyncRequestFullStatusImage> getFullStatusRequest(String id, OnResponse<GenerationDetailImage> onResponse, OnError onError) {
+        return new JsonRequest<AsyncRequestFullStatusImage>(
                 Request.Method.GET,
-                baseUrl + "/generate/status/" + id,
+                BuildConfig.HORDE_API_URL + "/generate/status/" + id,
                 null,
                 asyncRequestFullStatus -> {
                     if (asyncRequestFullStatus.getGenerations().isEmpty()) {
@@ -296,21 +291,21 @@ public class AiHorde implements AiProvider {
             @Override
             public Map<String, String> getHeaders() {
                 Map<String, String> headers = new HashMap<>();
-                headers.put("apikey", apiKey());
-                headers.put("Client-Agent", CLIENT_AGENT_HEADER);
+                headers.put("apikey", ApiKeyHelper.getApiKey(context));
+                headers.put("Client-Agent", BuildConfig.CLIENT_AGENT_HEADER);
                 return headers;
             }
 
             @Override
-            protected Response<AsyncRequestFullStatus> parseNetworkResponse(NetworkResponse networkResponse) {
+            protected Response<AsyncRequestFullStatusImage> parseNetworkResponse(NetworkResponse networkResponse) {
                 try {
                     String body = new String(networkResponse.data, StandardCharsets.UTF_8);
                     JSONObject json = new JSONObject(body);
                     JSONArray generationsRaw = json.getJSONArray("generations");
-                    List<GenerationDetail> generations = new ArrayList<>();
+                    List<GenerationDetailImage> generations = new ArrayList<>();
                     for (int i = 0; i < generationsRaw.length(); ++i) {
                         JSONObject generationJson = generationsRaw.getJSONObject(i);
-                        generations.add(new GenerationDetail(
+                        generations.add(new GenerationDetailImage(
                                 generationJson.getString("worker_id"),
                                 generationJson.getString("worker_name"),
                                 generationJson.getString("model"),
@@ -323,7 +318,7 @@ public class AiHorde implements AiProvider {
                     }
 
                     return Response.success(
-                            new AsyncRequestFullStatus(
+                            new AsyncRequestFullStatusImage(
                                     json.getInt("finished"),
                                     json.getInt("processing"),
                                     json.getInt("restarted"),
@@ -382,11 +377,6 @@ public class AiHorde implements AiProvider {
                     }
                 }
         ));
-    }
-
-    private String apiKey() {
-        SharedPreferences preferences = new SharedPreferencesHelper().get(context);
-        return preferences.getString(SharedPreferencesHelper.API_KEY, DEFAULT_API_KEY);
     }
 
     @Nullable

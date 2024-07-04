@@ -1,2 +1,3 @@
 cz.chrastecky.annotationprocessor.InjectedPromptParameterProviderProcessor
 cz.chrastecky.annotationprocessor.InjectedWallpaperActionProcessor
+cz.chrastecky.annotationprocessor.InjectableTextProviderProcessor

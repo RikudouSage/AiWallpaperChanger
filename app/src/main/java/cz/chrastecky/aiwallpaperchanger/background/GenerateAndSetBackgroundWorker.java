@@ -29,6 +29,7 @@ import cz.chrastecky.aiwallpaperchanger.dto.StoredRequest;
 import cz.chrastecky.aiwallpaperchanger.dto.response.GenerationDetailWithBitmap;
 import cz.chrastecky.aiwallpaperchanger.exception.ContentCensoredException;
 import cz.chrastecky.aiwallpaperchanger.exception.RetryGenerationException;
+import cz.chrastecky.aiwallpaperchanger.helper.ApiKeyHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.BillingHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.ContentResolverHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.GenerateRequestHelper;
@@ -39,7 +40,7 @@ import cz.chrastecky.aiwallpaperchanger.helper.SharedPreferencesHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.ValueWrapper;
 import cz.chrastecky.aiwallpaperchanger.helper.WallpaperFileHelper;
 import cz.chrastecky.aiwallpaperchanger.provider.AiHorde;
-import cz.chrastecky.aiwallpaperchanger.provider.AiProvider;
+import cz.chrastecky.aiwallpaperchanger.provider.AiImageProvider;
 
 public class GenerateAndSetBackgroundWorker extends ListenableWorker {
     private final Logger logger = new Logger(getApplicationContext());
@@ -61,7 +62,7 @@ public class GenerateAndSetBackgroundWorker extends ListenableWorker {
             BillingHelper.getPurchaseStatus(getApplicationContext(), PremiumActivity.PREMIUM_PURCHASE_NAME, premiumStatus -> {
                 logger.debug("WorkerJob", "Is premium: " + (premiumStatus ? "Yes" : "No"));
                 if (premiumStatus) {
-                    AiHorde.DEFAULT_API_KEY = BuildConfig.PREMIUM_API_KEY;
+                    ApiKeyHelper.setDefaultApiKey(BuildConfig.PREMIUM_API_KEY);
                 }
 
                 logger.debug("WorkerJob", "Inside doWork()");
@@ -88,8 +89,8 @@ public class GenerateAndSetBackgroundWorker extends ListenableWorker {
                     }
                     final GenerateRequest finalRequest = newRequest;
 
-                    AiProvider.OnProgress onProgress = status -> logger.debug("WorkerJob", "OnProgress: " + status.getWaitTime());
-                    AiProvider.OnResponse<GenerationDetailWithBitmap> onResponse = response -> {
+                    AiImageProvider.OnProgress onProgress = status -> logger.debug("WorkerJob", "OnProgress: " + status.getWaitTime());
+                    AiImageProvider.OnResponse<GenerationDetailWithBitmap> onResponse = response -> {
                         logger.debug("WorkerJob", "Finished");
                         logger.debug("WorkerJob", "Model: " + response.getDetail().getModel());
 
