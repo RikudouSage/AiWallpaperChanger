@@ -12,6 +12,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import cz.chrastecky.aiwallpaperchanger.R;
 import cz.chrastecky.aiwallpaperchanger.helper.Logger;
 import cz.chrastecky.aiwallpaperchanger.helper.PromptReplacer;
 import cz.chrastecky.aiwallpaperchanger.helper.ThreadHelper;
@@ -54,7 +55,7 @@ public class LlmParameterProvider implements PromptParameterProvider {
     @NonNull
     @Override
     public String getDescription(@NonNull Context context, @NonNull String parameterName) {
-        return "TODO";
+        return context.getString(R.string.app_parameter_llm_description);
     }
 
     @Nullable

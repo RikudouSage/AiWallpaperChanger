@@ -164,7 +164,9 @@ public class CustomParametersProvider implements PromptParameterProvider {
         textsToCheck.add(parameter.customParameter.expression);
         if (parameter.values != null) {
             for (CustomParameterValue value : parameter.values) {
-                textsToCheck.add(value.expression);
+                if (value.type != CustomParameterValue.ConditionType.Else) {
+                    textsToCheck.add(value.expression);
+                }
                 textsToCheck.add(value.value);
             }
         }

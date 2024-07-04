@@ -152,4 +152,5 @@
     <string name="app.generate.estimated_time.pre_start.parameters">Nahrazování parametrů va vašem promptu</string>
     <string name="app.error.trailing_leading_whitespace">Tato hodnota obsahuje mezeru na začátku nebo na konci, pokud je to schválně, můžete toto varování ignorovat.</string>
     <string name="app.parameter.topography.description">Odešle vaši polohu AI, která poté vrátí několik topografických značek, které popisují místo, kde se nacházíte. Mějte na paměti, že vaše poloha bude sdílena se službou, která AI model provozuje (AI Horde).</string>
+    <string name="app.parameter.llm.description">Bude nahrazeno odpovědí velkého jazykového AI modelu, svůj dotaz musíte oddělit takto: ${llm:random color}. Dotaz může obsahovat další parametry, například: ${llm:what\'s the capital of ${country}?}</string>
 </resources>
