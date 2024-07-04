@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
 
     <data>
         <variable name="provider" type="cz.chrastecky.aiwallpaperchanger.prompt_parameter_provider.PromptParameterProvider" />
@@ -9,7 +9,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:paddingBottom="16dp">
 
         <TextView
@@ -17,12 +17,16 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@{`${` + parameterName + `}`}"
+            android:textSize="16sp"
+            tools:text="${parameterName}"
             android:textStyle="bold" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:layout_marginTop="4dp"
+            tools:text="This is some, potentially long description of the parameter itself. Really, I'm just trying to have long enough description to wrap. Mission accomplished."
             android:text="@{provider.getDescription(context, parameterName)}" />
     </LinearLayout>
 </layout>
