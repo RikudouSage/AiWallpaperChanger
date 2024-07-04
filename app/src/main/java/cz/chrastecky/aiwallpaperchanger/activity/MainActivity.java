@@ -264,16 +264,10 @@ public class MainActivity extends AppCompatActivity {
             }
 
             final String prompt = binding.promptField.getText() != null ? binding.promptField.getText().toString() : "";
-            final String negativePrompt = binding.negativePromptField.getText() != null ? binding.negativePromptField.getText().toString() : "";
 
             Map<String, List<String>> neededPermissions = new HashMap<>();
             for (PromptParameterProvider provider : parameterProviders.getProviders()) {
-                for (String parameterName : provider.getParameterNames(this).join()) {
-                    final String parameter = "${" + parameterName + "}";
-                    if (!prompt.contains(parameter) && !negativePrompt.contains(parameter)) {
-                        continue;
-                    }
-
+                for (String parameterName : provider.getParametersInText(this, prompt).join()) {
                     final List<String> requiredPermissions = provider.getRequiredPermissions(this, getGrantedPermissions(), parameterName);
                     if (requiredPermissions == null || requiredPermissions.isEmpty()) {
                         continue;

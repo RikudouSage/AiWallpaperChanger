@@ -12,8 +12,6 @@ import java.util.concurrent.CompletableFuture;
 import cz.chrastecky.aiwallpaperchanger.R;
 import cz.chrastecky.aiwallpaperchanger.helper.PromptReplacer;
 import cz.chrastecky.aiwallpaperchanger.helper.ThreadHelper;
-import cz.chrastecky.aiwallpaperchanger.provider.AiTextProvider;
-import cz.chrastecky.aiwallpaperchanger.provider.AiTextProviderCollection;
 import cz.chrastecky.annotationprocessor.InjectedPromptParameterProvider;
 
 @InjectedPromptParameterProvider
@@ -31,14 +29,11 @@ public class TopographyParameterProvider implements PromptParameterProvider {
     public CompletableFuture<String> getValue(@NonNull Context context, @NonNull String parameterName) {
         final CompletableFuture<String> future = new CompletableFuture<>();
 
-        ThreadHelper.runInThread(() -> {
-            final String rawPrompt = "list 5 comma-separated tags/words describing the topography of ${town} in ${state} in ${country}, include only the tags separated by comma and nothing else";
-            PromptReplacer.replacePrompt(context, rawPrompt, prompt -> {
-                final AiTextProvider textProvider = new AiTextProviderCollection(context).getCurrentProvider();
-                final String response = textProvider.getResponse(prompt).join();
-                future.complete(response);
-            });
-        }, context);
+        ThreadHelper.runInThread(() -> PromptReplacer.replacePrompt(
+                context,
+                "${llm:list 5 comma-separated tags/words describing the topography of ${town} in ${state} in ${country}, include only the tags separated by comma and nothing else}",
+                future::complete
+        ), context);
 
         return future;
     }
