@@ -43,9 +43,9 @@
   },
   {
     "name": "Cuteness overload",
-    "prompt": "cute {puppy|kitten|otter|miniature pig|hedgehog}, happy, realistic",
+    "prompt": "cute {puppy|kitten|otter|miniature pig|hedgehog|chicken|rabbit}, happy, realistic",
     "negativePrompt": "ugly, deformed",
-    "models": ["ICBINP XL"],
+    "models": ["ICBINP XL", "INCBINP XL (v2.0)", "AlbedoBase XL (SDXL)"],
     "author": "Rikudou"
   },
   {
