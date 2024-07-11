@@ -49,13 +49,6 @@
     "author": "Rikudou"
   },
   {
-    "name": "Fantasy landscape",
-    "prompt": "mystical forest, fantasy, ancient trees, mythical creatures, fairy lights, magical ambiance, misty atmosphere, sparkling streams, enchanted creatures, high resolution, serene and enchanting",
-    "negativePrompt": "ugly, deformed",
-    "models": ["ICBINP XL"],
-    "author": "Rikudou"
-  },
-  {
     "name": "Ocean scene",
     "prompt": "tropical beach, crystal clear water, vibrant coral reefs, colorful fish, golden sands, palm trees, bright blue sky, sunny day, high resolution, tranquil and picturesque",
     "negativePrompt": "ugly, deformed",
