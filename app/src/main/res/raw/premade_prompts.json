@@ -162,9 +162,9 @@
   },
   {
     "name": "Bioluminescent flower",
-    "prompt": "Ink illustration, bioluminescent pink flower, fabulous night forest, magical radiance, Concept art,depth of fieldm, realistic, cinematic lighting, soft shadows,fractal, colorful, depth of field , vivid colors, volumetric lighting, ink stains, ink splatters, ink runs, ink spots, faded ink linquivera",
+    "prompt": "Ink illustration, bioluminescent {pink|blue|green|purple|red} flower, fabulous night forest, magical radiance, Concept art,depth of fieldm, realistic, cinematic lighting, soft shadows,fractal, colorful, depth of field , vivid colors, volumetric lighting, ink stains, ink splatters, ink runs, ink spots, faded ink linquivera",
     "models": ["AlbedoBase XL (SDXL)", "ICBINP XL"],
-    "author": "Efreak"
+    "author": "Efreak, Rikudou"
   },
   {
     "name": "Watercolor painting",
