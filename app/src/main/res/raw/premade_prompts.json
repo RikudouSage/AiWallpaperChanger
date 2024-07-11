@@ -63,13 +63,6 @@
     "author": "Rikudou"
   },
   {
-    "name": "Cozy Winter Cabin",
-    "prompt": "snow-covered cabin, serene forest, warm light from windows, smoke from chimney, starry night sky, peaceful ambiance, rustic charm, high resolution, cozy and inviting",
-    "negativePrompt": "ugly, deformed",
-    "models": ["ICBINP XL"],
-    "author": "Rikudou"
-  },
-  {
     "name": "Pagan gods",
     "prompt": "a {male|female} {greek|spartan|roman|slavic|pagan|egyptian|celtic|hindu|norse|aztec} god, digital wallpaper portrait, dark background, muted colors, brutal epic composition, dramatic, digital painting, expressionism",
     "models": ["AlbedoBase XL (SDXL)"],
