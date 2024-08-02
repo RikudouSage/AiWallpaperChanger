@@ -7,10 +7,10 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Point;
 import android.graphics.RectF;
 import android.os.Build;
 import android.service.wallpaper.WallpaperService;
-import android.util.DisplayMetrics;
 import android.view.SurfaceHolder;
 import android.view.WindowManager;
 
@@ -95,13 +95,12 @@ public class LiveWallpaperService extends WallpaperService {
                 return;
             }
 
-            DisplayMetrics metrics = new DisplayMetrics();
-
             WindowManager windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
-            windowManager.getDefaultDisplay().getMetrics(metrics);
+            Point size = new Point();
+            windowManager.getDefaultDisplay().getRealSize(size);
 
-            final int width = metrics.widthPixels;
-            final int height = metrics.heightPixels;
+            final int width = size.x;
+            final int height = size.y;
 
             int targetWidth = image.getWidth();
             int targetHeight = image.getHeight();
