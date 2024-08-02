@@ -317,5 +317,40 @@
         ]
       }
     ]
+  },
+  {
+    "name": "Battery flower",
+    "description": "A flower that slowly dies as your battery does",
+    "prompt": "${b_flower}",
+    "author": "Rikudou",
+    "models": ["AlbedoBase XL (SDXL)", "ICBINP XL"],
+    "customParameters": [
+      {
+        "name": "b_flower",
+        "description": "This parameter shows a flower that blooms when your battery is full and slowly dies when it's not",
+        "expression": "${battery}",
+        "conditions": [
+          {
+            "type": "If",
+            "expression": "high",
+            "value": "a {radiant|vibrant|lively|colorful|brilliant|glowing} {red|blue|violet|yellow|pink|purple} flower in full bloom, set in a {cheerful|bright|sunny|joyful} garden, bursting with energy"
+          },
+          {
+            "type": "If",
+            "expression": "medium",
+              "value": "a {delicate|fading|wilting|dim|subtle} flower, petals starting to {droop|wilt|fade|curl}, conveying a sense of gentle transition"
+          },
+          {
+            "type": "If",
+            "expression": "low",
+            "value": "a {wilted to dust|nearly disintegrated|barely holding on|ghostly|shadowy} flower, petals {crumbled|vanished|lost to the wind|nearly gone|fragmented}, with {dark|dreary|bleak|void-like} surroundings, evoking a deep sense of stillness and finality"
+          },
+          {
+            "type": "Else",
+            "value": "a {wilted|dried|withered|shrinking|lifeless} flower, petals {fallen|scattered|faded|lost}, set against a {dark|muted|somber} background, evoking a sense of exhaustion and stillness"
+          }
+        ]
+      }
+    ]
   }
 ]
