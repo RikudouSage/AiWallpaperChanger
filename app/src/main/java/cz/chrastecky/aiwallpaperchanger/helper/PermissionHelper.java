@@ -20,7 +20,7 @@ public class PermissionHelper {
     }
 
     public static void askForDataSaverException(Context context) {
-        SharedPreferences preferences = new SharedPreferencesHelper().get(context);
+        SharedPreferences preferences = SharedPreferencesHelper.get(context);
 
 //        SharedPreferences.Editor ed = preferences.edit();
 //        ed.remove(doNotAskAgainKey);
@@ -57,7 +57,7 @@ public class PermissionHelper {
     }
 
     public static void askForDozeModeException(Context context) {
-        SharedPreferences preferences = new SharedPreferencesHelper().get(context);
+        SharedPreferences preferences = SharedPreferencesHelper.get(context);
 
         if (preferences.contains(SharedPreferencesHelper.DOZE_MODE_DO_NOT_ASK)) {
             return;

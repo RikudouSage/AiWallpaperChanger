@@ -21,7 +21,7 @@ public class SharedPreferencesHelper {
     public static final String WALLPAPER_ACTION = "wallpaperAction";
     public static final String LLM_PROVIDER = "llmProvider";
 
-    public SharedPreferences get(@NonNull Context context) {
+    public static SharedPreferences get(@NonNull Context context) {
         return context.getSharedPreferences("GlobalPreferences", Context.MODE_PRIVATE);
     }
 }

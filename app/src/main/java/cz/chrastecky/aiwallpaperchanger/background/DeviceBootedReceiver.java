@@ -15,7 +15,7 @@ public class DeviceBootedReceiver extends BroadcastReceiver {
             return;
         }
 
-        SharedPreferences preferences = new SharedPreferencesHelper().get(context);
+        SharedPreferences preferences = SharedPreferencesHelper.get(context);
         if (!preferences.contains(SharedPreferencesHelper.CONFIGURED_SCHEDULE_INTERVAL)) {
             return;
         }

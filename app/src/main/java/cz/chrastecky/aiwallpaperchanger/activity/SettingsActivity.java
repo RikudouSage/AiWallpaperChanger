@@ -74,7 +74,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         FloatingActionButton saveButton = findViewById(R.id.save_button);
         saveButton.setOnClickListener(view -> {
-            SharedPreferences.Editor editor = new SharedPreferencesHelper().get(this).edit();
+            SharedPreferences.Editor editor = SharedPreferencesHelper.get(this).edit();
 
             TextInputEditText apiKeyField = findViewById(R.id.api_key_field);
             if (apiKeyField.getText() == null) {
@@ -142,7 +142,7 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private void initializeForm(ActivitySettingsBinding binding) {
-        SharedPreferences preferences = new SharedPreferencesHelper().get(this);
+        SharedPreferences preferences = SharedPreferencesHelper.get(this);
 
         binding.apiKeyField.setText(preferences.getString(SharedPreferencesHelper.API_KEY, ""));
         binding.allowLargeValues.setChecked(preferences.getBoolean(SharedPreferencesHelper.ALLOW_LARGE_NUMERIC_VALUES, false));
