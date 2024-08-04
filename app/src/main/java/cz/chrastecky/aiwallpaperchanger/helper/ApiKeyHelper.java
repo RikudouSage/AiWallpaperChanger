@@ -10,7 +10,7 @@ public class ApiKeyHelper {
     private static String defaultApiKey = BuildConfig.API_KEY;
 
     public static String getApiKey(@NonNull final Context context) {
-        return new SharedPreferencesHelper().get(context).getString(SharedPreferencesHelper.API_KEY, defaultApiKey);
+        return SharedPreferencesHelper.get(context).getString(SharedPreferencesHelper.API_KEY, defaultApiKey);
     }
 
     public static String getDefaultApiKey() {

@@ -67,7 +67,7 @@ public class GenerateAndSetBackgroundWorker extends ListenableWorker {
 
                 logger.debug("WorkerJob", "Inside doWork()");
                 AiHorde aiHorde = new AiHorde(getApplicationContext());
-                SharedPreferences preferences = new SharedPreferencesHelper().get(getApplicationContext());
+                SharedPreferences preferences = SharedPreferencesHelper.get(getApplicationContext());
 
                 if (!preferences.contains(SharedPreferencesHelper.STORED_GENERATION_PARAMETERS)) {
                     completer.set(Result.failure());

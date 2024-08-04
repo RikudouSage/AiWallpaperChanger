@@ -50,7 +50,7 @@ public abstract class AbstractLocationParameterProvider implements PromptParamet
                         double latitude;
                         double longitude;
 
-                        SharedPreferences preferences = new SharedPreferencesHelper().get(context);
+                        SharedPreferences preferences = SharedPreferencesHelper.get(context);
                         if (location == null) {
                             if (preferences.contains(SharedPreferencesHelper.LAST_KNOWN_LOCATION)) {
                                 logger.debug("LocationParameter", "Failed getting location, using cached version.");

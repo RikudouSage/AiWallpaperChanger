@@ -57,6 +57,8 @@ import java.util.stream.Collectors;
 import cz.chrastecky.aiwallpaperchanger.BuildConfig;
 import cz.chrastecky.aiwallpaperchanger.PromptParameterProviders;
 import cz.chrastecky.aiwallpaperchanger.R;
+import cz.chrastecky.aiwallpaperchanger.activity.easymode.EasyModeMainActivity;
+import cz.chrastecky.aiwallpaperchanger.activity.easymode.ModeChooserActivity;
 import cz.chrastecky.aiwallpaperchanger.data.AppDatabase;
 import cz.chrastecky.aiwallpaperchanger.data.entity.CustomParameter;
 import cz.chrastecky.aiwallpaperchanger.data.entity.CustomParameterValue;
@@ -175,9 +177,25 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setupExceptionLogging();
 
+        SharedPreferences sharedPreferences = SharedPreferencesHelper.get(this);
+
+        String mode = sharedPreferences.getString(SharedPreferencesHelper.APP_MODE, null);
+//        sharedPreferences.edit().remove(SharedPreferencesHelper.APP_MODE).apply();
+        if (mode == null) {
+            Intent modeChooserIntent = new Intent(this, ModeChooserActivity.class);
+            modeChooserIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_TASK_ON_HOME);
+            startActivity(modeChooserIntent);
+            finish();
+            return;
+        } else if (mode.equals("easy")) {
+            Intent easyModeIntent = new Intent(this, EasyModeMainActivity.class);
+            easyModeIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_TASK_ON_HOME);
+            startActivity(easyModeIntent);
+            finish();
+        }
+
         this.aiImageProvider = new AiHorde(this);
 
-        SharedPreferences sharedPreferences = new SharedPreferencesHelper().get(this);
         GenerateRequest request = null;
         if (sharedPreferences.contains(SharedPreferencesHelper.STORED_GENERATION_PARAMETERS)) {
             request = GenerateRequestHelper.parse(sharedPreferences.getString(SharedPreferencesHelper.STORED_GENERATION_PARAMETERS, ""));
@@ -490,7 +508,7 @@ public class MainActivity extends AppCompatActivity {
                 pendingIntent.cancel();
                 cancelButton.setVisibility(View.INVISIBLE);
 
-                SharedPreferences.Editor sharedPreferences = new SharedPreferencesHelper().get(this).edit();
+                SharedPreferences.Editor sharedPreferences = SharedPreferencesHelper.get(this).edit();
                 sharedPreferences.remove(SharedPreferencesHelper.CONFIGURED_SCHEDULE_INTERVAL);
                 sharedPreferences.apply();
 
@@ -504,7 +522,7 @@ public class MainActivity extends AppCompatActivity {
             ShortcutManagerHelper.hideShortcuts(this);
         }
 
-        SharedPreferences sharedPreferences = new SharedPreferencesHelper().get(this);
+        SharedPreferences sharedPreferences = SharedPreferencesHelper.get(this);
         if (sharedPreferences.contains(SharedPreferencesHelper.WALLPAPER_LAST_CHANGED)) {
             TextView lastChanged = findViewById(R.id.last_changed);
             String lastChangedTime = sharedPreferences.getString(SharedPreferencesHelper.WALLPAPER_LAST_CHANGED, "");
@@ -687,7 +705,7 @@ public class MainActivity extends AppCompatActivity {
         Button modelSelectButton = findViewById(R.id.model_select_button);
         TextView modelSelectedList = findViewById(R.id.model_selected_list);
 
-        SharedPreferences preferences = new SharedPreferencesHelper().get(this);
+        SharedPreferences preferences = SharedPreferencesHelper.get(this);
         int[] widthHeight = calculateWidthAndHeight();
 
         List<String> samplers = Sampler.getEntries().stream().map(Enum::name).collect(Collectors.toList());
@@ -884,18 +902,7 @@ public class MainActivity extends AppCompatActivity {
         if (BuildConfig.DEBUG) {
             return;
         }
-        Thread.setDefaultUncaughtExceptionHandler((thread, exception) -> {
-            logger.error("UncaughtException", "There was an uncaught exception", exception);
-
-            Intent intent = new Intent(this, UncaughtErrorActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-            startActivity(intent);
-
-            android.os.Process.killProcess(android.os.Process.myPid());
-            System.exit(0);
-        });
+        ThreadHelper.setupGraphicalErrorHandler(logger, this);
     }
 
     private void createCustomParameters(@NonNull PremadePrompt prompt) {
