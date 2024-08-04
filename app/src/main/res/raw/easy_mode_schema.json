@@ -17,7 +17,7 @@
   },
   "items": {
     "type": "object",
-    "required": ["prompt", "name"],
+    "required": ["prompt", "name", "backgroundColor"],
     "additionalProperties": false,
     "properties": {
       "name": {
@@ -30,6 +30,9 @@
         "type": "boolean"
       },
       "targetPrompt": {
+        "type": "string"
+      },
+      "backgroundColor": {
         "type": "string"
       },
       "parameters": {

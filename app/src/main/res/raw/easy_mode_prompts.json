@@ -4,6 +4,7 @@
     "prompt": "${style} ${terrain} in shades of ${color}",
     "targetPrompt": "${prompt}, masterpiece, best quality",
     "featured": true,
+    "backgroundColor": "#ffd4a2",
     "parameters": {
       "style": [
         {
