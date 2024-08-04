@@ -155,4 +155,5 @@
     <string name="app.parameter.llm.description">Resolves to a response from a large language AI model, you have to separate your question like this: ${llm:random color}. The question can contain other parameters like this: ${llm:what\'s the capital of ${country}?}</string>
     <string name="app.easy_mode">Easy mode</string>
     <string name="app.advanced_mode">Advanced mode</string>
+    <string name="app.settings.easy_mode">Easy mode?</string>
 </resources>

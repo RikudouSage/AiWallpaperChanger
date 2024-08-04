@@ -19,6 +19,7 @@ public class EasyModeMainActivity extends AppCompatActivity {
 
         ActivityEasyModeMainBinding binding = ActivityEasyModeMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        setSupportActionBar(binding.toolbar);
     }
 
     private void setupExceptionLogging() {

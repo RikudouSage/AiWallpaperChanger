@@ -22,6 +22,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import cz.chrastecky.aiwallpaperchanger.R;
 import cz.chrastecky.aiwallpaperchanger.action.LiveWallpaperAction;
 import cz.chrastecky.aiwallpaperchanger.action.StaticWallpaperAction;
+import cz.chrastecky.aiwallpaperchanger.activity.easymode.EasyModeMainActivity;
 import cz.chrastecky.aiwallpaperchanger.background.LiveWallpaperService;
 import cz.chrastecky.aiwallpaperchanger.databinding.ActivitySettingsBinding;
 import cz.chrastecky.aiwallpaperchanger.helper.ContentResolverHelper;
@@ -102,8 +103,16 @@ public class SettingsActivity extends AppCompatActivity {
             }
 
             editor.putBoolean(SharedPreferencesHelper.ALLOW_LARGE_NUMERIC_VALUES, binding.allowLargeValues.isChecked());
+            editor.putString(SharedPreferencesHelper.APP_MODE, binding.enableEasyMode.isChecked() ? "easy" : "advanced");
 
             editor.apply();
+
+            if (binding.enableEasyMode.isChecked()) {
+                Intent easyModeIntent = new Intent(this, EasyModeMainActivity.class);
+                easyModeIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_TASK_ON_HOME);
+                startActivity(easyModeIntent);
+            }
+
             finish();
         });
 

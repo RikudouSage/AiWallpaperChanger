@@ -179,7 +179,8 @@ public class MainActivity extends AppCompatActivity {
 
         SharedPreferences sharedPreferences = SharedPreferencesHelper.get(this);
 
-        String mode = sharedPreferences.getString("mode", null);
+        String mode = sharedPreferences.getString(SharedPreferencesHelper.APP_MODE, null);
+//        sharedPreferences.edit().remove(SharedPreferencesHelper.APP_MODE).apply();
         if (mode == null) {
             Intent modeChooserIntent = new Intent(this, ModeChooserActivity.class);
             modeChooserIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_TASK_ON_HOME);

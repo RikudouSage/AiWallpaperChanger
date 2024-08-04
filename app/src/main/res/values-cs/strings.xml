@@ -155,4 +155,5 @@
     <string name="app.parameter.llm.description">Bude nahrazeno odpovědí velkého jazykového AI modelu, svůj dotaz musíte oddělit takto: ${llm:random color}. Dotaz může obsahovat další parametry, například: ${llm:what\'s the capital of ${country}?}</string>
     <string name="app.easy_mode">Jednoduchý režim</string>
     <string name="app.advanced_mode">Pokročilý režim</string>
+    <string name="app.settings.easy_mode">Jednoduchý režim?</string>
 </resources>
