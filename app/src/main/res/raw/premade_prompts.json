@@ -352,5 +352,55 @@
         ]
       }
     ]
+  },
+  {
+    "name": "Mountain silhouette",
+    "description": "A nice vector-like mountains",
+    "prompt": "Multiple layers of silhouette mountains, sharp edges, ${mountain_color_palette}, with heavy fog in air, vector style, horizon silhouette Landscape wallpaper, vector style background",
+    "author": "Rikudou",
+    "models": ["AlbedoBase XL (SDXL)"],
+    "customParameters": [
+      {
+        "name": "mountain_color_palette",
+        "description": "This parameter adds various modifiers to the prompt to get a different color palette based on the time of the day",
+        "expression": "${tod}",
+        "conditions": [
+          {
+            "type": "If",
+            "expression": "morning",
+            "value": "misty mountains, cold colors"
+          },
+          {
+            "type": "If",
+            "expression": "evening",
+            "value": "at sunset"
+          },
+          {
+            "type": "If",
+            "expression": "afternoon",
+            "value": "warm colors, sun high in the sky, fata morgana"
+          },
+          {
+            "type": "If",
+            "expression": "night",
+            "value": "night sky, stars"
+          },
+          {
+            "type": "If",
+            "expression": "midnight",
+            "value": "night, scary, tense, eerie, dark colors, foggy"
+          },
+          {
+            "type": "If",
+            "expression": "noon",
+            "value": "lush, green, warm colors"
+          },
+          {
+            "type": "Else",
+            "value": ""
+          }
+        ]
+      }
+    ]
   }
 ]
