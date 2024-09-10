@@ -17,10 +17,13 @@
   },
   "items": {
     "type": "object",
-    "required": ["prompt", "name", "backgroundColor"],
+    "required": ["prompt", "name", "backgroundColor", "model"],
     "additionalProperties": false,
     "properties": {
       "name": {
+        "type": "string"
+      },
+      "model": {
         "type": "string"
       },
       "prompt": {
