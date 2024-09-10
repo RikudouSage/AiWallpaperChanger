@@ -47,9 +47,21 @@ public class EasyModeMainActivity extends AppCompatActivity {
 
         List<EasyModePrompt> prompts = promptManager.getEnrichedPrompts(promptManager.getPrompts()).join();
 
+        binding.promptsWrapper.addView(emptyView());
+
         for (EasyModePrompt prompt : prompts) {
             binding.promptsWrapper.addView(createPromptLayout(prompt));
         }
+
+        binding.promptsWrapper.addView(emptyView());
+    }
+
+    @NonNull
+    private View emptyView() {
+        View emptyView = new View(this);
+        emptyView.setLayoutParams(new LinearLayout.LayoutParams(itemWidth / 2, itemHeight));
+
+        return emptyView;
     }
 
     @NonNull

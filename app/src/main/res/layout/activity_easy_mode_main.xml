@@ -41,14 +41,15 @@
                 android:paddingBottom="48dp">
 
                 <HorizontalScrollView
-                    android:id="@+id/prompts_wrapper"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    tools:paddingStart="80dp"
-                    tools:paddingEnd="80dp"
-                    android:paddingStart="@{scrollViewPadding}"
-                    android:paddingEnd="@{scrollViewPadding}"
                     >
+
+                    <LinearLayout
+                        android:id="@+id/prompts_wrapper"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal" />
 
                 </HorizontalScrollView>
             </LinearLayout>

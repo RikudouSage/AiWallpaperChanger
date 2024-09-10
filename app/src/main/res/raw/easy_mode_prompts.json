@@ -169,5 +169,14 @@
         }
       ]
     }
+  },
+  {
+    "name": "Night photo",
+    "prompt": "",
+    "backgroundColor": "#223948",
+    "model": "ICBINP XL",
+    "parameters": {
+
+    }
   }
 ]
