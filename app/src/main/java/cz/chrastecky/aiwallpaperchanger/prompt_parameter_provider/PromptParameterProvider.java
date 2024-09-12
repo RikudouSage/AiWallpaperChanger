@@ -40,7 +40,7 @@ public interface PromptParameterProvider {
             final List<String> result = new ArrayList<>();
             for (String parameter : getParameterNames(context).join()) {
                 for (final String text : texts) {
-                    if (text.contains("${" + parameter + "}")) {
+                    if (text != null && text.contains("${" + parameter + "}")) {
                         result.add(parameter);
                     }
                 }
