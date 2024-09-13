@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
+import cz.chrastecky.aiwallpaperchanger.R;
 import cz.chrastecky.annotationprocessor.InjectedPromptParameterProvider;
 
 @InjectedPromptParameterProvider
@@ -31,6 +32,6 @@ public class CelsiusTemperatureParameterProvider extends AbstractTemperaturePara
     @NonNull
     @Override
     public String getDescription(@NonNull Context context, @NonNull String parameterName) {
-        return "Returns the current temperature in Celsius including the unit.";
+        return context.getString(R.string.app_parameter_temperature);
     }
 }
