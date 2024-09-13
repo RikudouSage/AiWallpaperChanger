@@ -156,4 +156,6 @@
     <string name="app.easy_mode">Jednoduchý režim</string>
     <string name="app.advanced_mode">Pokročilý režim</string>
     <string name="app.settings.easy_mode">Jednoduchý režim?</string>
+    <string name="app.parameter.temperature">Vrací současnout teplotu v Celsiích včetně jednotky.</string>
+    <string name="app.parameter.temperature_f">Vrací současnout teplotu ve Fahrenheitech včetně jednotky.</string>
 </resources>

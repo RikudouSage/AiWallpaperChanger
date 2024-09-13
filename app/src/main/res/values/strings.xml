@@ -156,4 +156,6 @@
     <string name="app.easy_mode">Easy mode</string>
     <string name="app.advanced_mode">Advanced mode</string>
     <string name="app.settings.easy_mode">Easy mode?</string>
+    <string name="app.parameter.temperature">Returns the current temperature in Celsius including the unit.</string>
+    <string name="app.parameter.temperature_f">Returns the current temperature in Fahrenheit including the unit.</string>
 </resources>
