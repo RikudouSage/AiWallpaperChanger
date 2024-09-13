@@ -41,6 +41,13 @@ class GenerateRequestHelper {
                 hiresFix = style.hiresFix ?: request.hiresFix,
             )
         }
+
+        @JvmStatic
+        fun makeExtraSlow(request: GenerateRequest, slow: Boolean = true): GenerateRequest {
+            return request.copy(
+                extraSlowWorkers = slow,
+            )
+        }
     }
 
 }

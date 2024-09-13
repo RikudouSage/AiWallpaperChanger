@@ -155,4 +155,6 @@
     <string name="app.parameter.llm.description">Resolves to a response from a large language AI model, you have to separate your question like this: ${llm:random color}. The question can contain other parameters like this: ${llm:what\'s the capital of ${country}?}</string>
     <string name="app.parameter.temperature">Returns the current temperature in Celsius including the unit.</string>
     <string name="app.parameter.temperature_f">Returns the current temperature in Fahrenheit including the unit.</string>
+    <string name="app.settings.extra_slow_workers">Allow extra slow workers</string>
+    <string name="app.settings.extra_slow_workers.description">When enabled, even very slow workers are allowed to handle your requests. Note that this setting only applies for wallpapers generated in background and not for previews you\'re actively generating in app.</string>
 </resources>

@@ -854,7 +854,8 @@ public class MainActivity extends AppCompatActivity {
                 advanced ? cfgScale.getValue() : 7,
                 BuildConfig.NSFW_ENABLED && nsfw.isChecked(),
                 true,
-                advanced && hiresFix.isChecked()
+                advanced && hiresFix.isChecked(),
+                false
         );
 
         if (!replace) {

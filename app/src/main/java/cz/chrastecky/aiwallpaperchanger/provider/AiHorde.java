@@ -149,6 +149,8 @@ public class AiHorde implements AiImageProvider {
             requestBody.put("params", params);
             requestBody.put("models", new JSONArray(request.getModels()));
             requestBody.put("nsfw", request.getNsfw());
+            requestBody.put("extra_slow_workers", request.getExtraSlowWorkers());
+
             if (
                     BuildConfig.BILLING_ENABLED
                     && !BuildConfig.PREMIUM_API_KEY.equals(BuildConfig.ANONYMOUS_API_KEY)

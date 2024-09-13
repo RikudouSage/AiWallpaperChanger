@@ -11,6 +11,7 @@ import androidx.work.ListenableWorker;
 import androidx.work.WorkerParameters;
 
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.text.DateFormat;
@@ -76,7 +77,13 @@ public class GenerateAndSetBackgroundWorker extends ListenableWorker {
 
                 String requestJson = preferences.getString(SharedPreferencesHelper.STORED_GENERATION_PARAMETERS, "");
                 logger.debug("WorkerJob", "Request: " + requestJson);
-                GenerateRequest request = GenerateRequestHelper.parse(preferences.getString(SharedPreferencesHelper.STORED_GENERATION_PARAMETERS, ""));
+                final GenerateRequest request = GenerateRequestHelper.makeExtraSlow(
+                        GenerateRequestHelper.parse(
+                                preferences.getString(SharedPreferencesHelper.STORED_GENERATION_PARAMETERS, "")
+                        ),
+                        preferences.getBoolean(SharedPreferencesHelper.EXTRA_SLOW_WORKERS, true)
+                );
+
                 PromptReplacer.replacePrompt(getApplicationContext(), request.getPrompt(), replaced -> {
                     if (replaced == null) {
                         logger.error("WorkerJob", "Failed replacing parameters");
@@ -88,6 +95,7 @@ public class GenerateAndSetBackgroundWorker extends ListenableWorker {
                         newRequest = GenerateRequestHelper.disableNsfw(newRequest);
                     }
                     final GenerateRequest finalRequest = newRequest;
+                    logger.debug("WorkerJob", "Final request: " + new Gson().toJson(finalRequest));
 
                     AiImageProvider.OnProgress onProgress = status -> logger.debug("WorkerJob", "OnProgress: " + status.getWaitTime());
                     AiImageProvider.OnResponse<GenerationDetailWithBitmap> onResponse = response -> {
