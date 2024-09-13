@@ -153,4 +153,6 @@
     <string name="app.error.trailing_leading_whitespace">This value contains a leading or trailing whitespace, if that\'s intentional, you can ignore this warning.</string>
     <string name="app.parameter.topography.description">Sends your location to an AI which then provides a list of few topographical tags that describe the place you\'re at. Beware that your location will be shared (anonymously) with the service running the AI model (AI Horde).</string>
     <string name="app.parameter.llm.description">Resolves to a response from a large language AI model, you have to separate your question like this: ${llm:random color}. The question can contain other parameters like this: ${llm:what\'s the capital of ${country}?}</string>
+    <string name="app.parameter.temperature">Returns the current temperature in Celsius including the unit.</string>
+    <string name="app.parameter.temperature_f">Returns the current temperature in Fahrenheit including the unit.</string>
 </resources>

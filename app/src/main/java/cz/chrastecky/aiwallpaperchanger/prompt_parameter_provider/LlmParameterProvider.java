@@ -77,6 +77,9 @@ public class LlmParameterProvider implements PromptParameterProvider {
                     continue;
                 }
                 final String group = matcher.group(2);
+                if (group == null) {
+                    continue;
+                }
                 result.add("llm:" + group);
             }
 
