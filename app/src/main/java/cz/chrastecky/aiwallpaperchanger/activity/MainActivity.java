@@ -12,6 +12,7 @@ import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.text.method.LinkMovementMethod;
 import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -241,6 +242,8 @@ public class MainActivity extends AppCompatActivity {
             editor.putBoolean(SharedPreferencesHelper.NSFW_TOGGLED, isChecked);
             editor.apply();
         });
+
+        binding.joinHordeText.setMovementMethod(LinkMovementMethod.getInstance());
 
         ConstraintLayout rootView = findViewById(R.id.rootView);
         ConstraintLayout loader = findViewById(R.id.loader);
@@ -514,9 +517,15 @@ public class MainActivity extends AppCompatActivity {
 
         BillingHelper.getPurchaseStatus(this, PremiumActivity.PREMIUM_PURCHASE_NAME, status -> {
             if (!status) {
+                if (sharedPreferences.getString(SharedPreferencesHelper.API_KEY, "").trim().isEmpty()) {
+                    binding.joinHordeText.setVisibility(View.VISIBLE);
+                } else {
+                    binding.joinHordeText.setVisibility(View.GONE);
+                }
                 return;
             }
 
+            binding.joinHordeText.setVisibility(View.GONE);
             ApiKeyHelper.setDefaultApiKey(BuildConfig.PREMIUM_API_KEY);
         });
 
