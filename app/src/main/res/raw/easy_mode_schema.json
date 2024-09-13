@@ -1,0 +1,55 @@
+{
+  "type": "array",
+  "definitions": {
+    "ParameterValue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name"],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "items": {
+    "type": "object",
+    "required": ["prompt", "name", "backgroundColor", "model"],
+    "additionalProperties": false,
+    "properties": {
+      "name": {
+        "type": "string"
+      },
+      "model": {
+        "type": "string"
+      },
+      "prompt": {
+        "type": "string"
+      },
+      "featured": {
+        "type": "boolean"
+      },
+      "targetPrompt": {
+        "type": "string"
+      },
+      "backgroundColor": {
+        "type": "string"
+      },
+      "parameters": {
+        "type": "object",
+        "additionalProperties": false,
+        "patternProperties": {
+          "[a-zA-Z0-9]+": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/ParameterValue"
+            }
+          }
+        }
+      }
+    }
+  }
+}

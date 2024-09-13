@@ -40,7 +40,7 @@ public class ConfigureScheduleActivity extends AppCompatActivity {
     private void schedule() {
         Spinner timesSelect = findViewById(R.id.times_select);
 
-        SharedPreferences.Editor sharedPreferences = new SharedPreferencesHelper().get(this).edit();
+        SharedPreferences.Editor sharedPreferences = SharedPreferencesHelper.get(this).edit();
         sharedPreferences.putInt(SharedPreferencesHelper.CONFIGURED_SCHEDULE_INTERVAL, (Integer) timesSelect.getSelectedItem());
         sharedPreferences.apply();
 

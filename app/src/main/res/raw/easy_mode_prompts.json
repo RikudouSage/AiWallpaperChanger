@@ -1,0 +1,182 @@
+[
+  {
+    "name": "Terrain",
+    "prompt": "${style} ${terrain} in shades of ${color}",
+    "targetPrompt": "${prompt}, masterpiece, best quality",
+    "model": "ICBINP XL",
+    "featured": true,
+    "backgroundColor": "#ffd4a2",
+    "parameters": {
+      "style": [
+        {
+          "name": "Surreal",
+          "value": "surreal"
+        },
+        {
+          "name": "Realistic",
+          "value": "realistic"
+        },
+        {
+          "name": "A painting of a",
+          "value": "a painting of a"
+        },
+        {
+          "name": "Vector graphics of a",
+          "value": "vector graphics of a"
+        }
+      ],
+      "terrain": [
+        {
+          "name": "beach"
+        },
+        {
+          "name": "cliffs"
+        },
+        {
+          "name": "glacier"
+        },
+        {
+          "name": "salt lake"
+        },
+        {
+          "name": "canyon"
+        },
+        {
+          "name": "desert"
+        },
+        {
+          "name": "forest"
+        },
+        {
+          "name": "meadow"
+        },
+        {
+          "name": "mountains"
+        },
+        {
+          "name": "river"
+        },
+        {
+          "name": "sand dunes"
+        },
+        {
+          "name": "swamp"
+        },
+        {
+          "name": "valley"
+        },
+        {
+          "name": "volcano"
+        },
+        {
+          "name": "waterfall"
+        },
+        {
+          "name": "Arctic landscape",
+          "value": "arctic landscape"
+        },
+        {
+          "name": "alpine lake"
+        }
+      ],
+      "color": [
+        {
+          "name": "silver"
+        },
+        {
+          "name": "yellow"
+        },
+        {
+          "name": "blue"
+        },
+        {
+          "name": "green"
+        },
+        {
+          "name": "orange"
+        },
+        {
+          "name": "pink"
+        },
+        {
+          "name": "brown"
+        },
+        {
+          "name": "black"
+        },
+        {
+          "name": "white"
+        },
+        {
+          "name": "grey"
+        },
+        {
+          "name": "turquoise"
+        },
+        {
+          "name": "lavender"
+        },
+        {
+          "name": "maroon"
+        },
+        {
+          "name": "navy blue"
+        },
+        {
+          "name": "olive"
+        },
+        {
+          "name": "teal"
+        },
+        {
+          "name": "coral"
+        },
+        {
+          "name": "gold"
+        },
+        {
+          "name": "beige"
+        },
+        {
+          "name": "indigo"
+        },
+        {
+          "name": "fuchsia"
+        },
+        {
+          "name": "rust"
+        },
+        {
+          "name": "plum"
+        },
+        {
+          "name": "warm colors"
+        },
+        {
+          "name": "cool colors"
+        },
+        {
+          "name": "neutral colors"
+        },
+        {
+          "name": "pastel colors"
+        },
+        {
+          "name": "vibrant colors"
+        },
+        {
+          "name": "earthy colors"
+        }
+      ]
+    }
+  },
+  {
+    "name": "Night photo",
+    "prompt": "",
+    "backgroundColor": "#223948",
+    "model": "ICBINP XL",
+    "parameters": {
+
+    }
+  }
+]

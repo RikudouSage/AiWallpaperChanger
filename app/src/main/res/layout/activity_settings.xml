@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activity.HistoryActivity">
+    tools:context=".activity.SettingsActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/toolbar_wrapper"
@@ -125,6 +125,19 @@
                 app:layout_constraintStart_toStartOf="parent"
                 android:text="@string/app.settings.allow_large_values.description"
                 app:layout_constraintTop_toBottomOf="@+id/allow_large_values" />
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/enable_easy_mode"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="8dp"
+                android:minHeight="48dp"
+                android:text="@string/app.settings.easy_mode"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/allow_large_values_description" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 

@@ -83,7 +83,7 @@ public class PreviewActivity extends AppCompatActivity {
         Button okButton = findViewById(R.id.ok_button);
         okButton.setOnClickListener(view -> {
             logger.debug("Preview", "Looks good button clicked");
-            SharedPreferences preferences = new SharedPreferencesHelper().get(this);
+            SharedPreferences preferences = SharedPreferencesHelper.get(this);
             SharedPreferences.Editor editor = preferences.edit();
             editor.putString(SharedPreferencesHelper.STORED_GENERATION_PARAMETERS, intent.getStringExtra("generationParameters"));
             editor.apply();
