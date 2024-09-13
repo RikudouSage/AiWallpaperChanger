@@ -40,7 +40,7 @@
     <string name="app.generate.nsfw">NSFW povoleno (nahota apod.)</string>
     <string name="app.title.settings">Nastavení</string>
     <string name="app.settings.api_key">Vlastní API klíč</string>
-    <string name="app.settings.api_key_hint">Ponechte prázdné pro výchozí hodnotu</string>
+    <string name="app.settings.api_key_hint">Ponechte prázdné pro výchozí hodnotu. Nebo si <a href="https://aihorde.net/">založte účet zdarma</a>.</string>
     <string name="app.error.invalid_api_key">Zadaný API klíč je neplatný.</string>
     <string name="app.error.forbidden_request">Generování obrázku selhalo. Možná je váš požadavek je příliš složitý?</string>
     <string name="app.title.premium">Prémium</string>
@@ -157,4 +157,5 @@
     <string name="app.parameter.temperature_f">Vrací současnout teplotu ve Fahrenheitech včetně jednotky.</string>
     <string name="app.settings.extra_slow_workers">Povolit velmi pomalé workery</string>
     <string name="app.settings.extra_slow_workers.description">Je-li povoleno, budou vaše požadavky moci zpracovávat i velmi pomalí workeři. Toto se týká pouze tapet generovaných na pozadí, nikoliv náhledů, které generujete aktivně v aplikaci.</string>
+    <string name="main.join_horde">Tip: <a href="https://aihorde.net/">Vytvořte si na AI Hordě účet zdarma</a> a užívejte si vyšší prioritu než anonymní uživatelé.</string>
 </resources>

@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.method.LinkMovementMethod;
 import android.view.Menu;
 import android.view.MenuInflater;
 
@@ -43,6 +44,7 @@ public class SettingsActivity extends AppCompatActivity {
         setTitle(R.string.app_title_settings);
 
         initializeForm(binding);
+        binding.apiKeyDescription.setMovementMethod(LinkMovementMethod.getInstance());
 
         @SuppressLint("WrongConstant")
         ActivityResultLauncher<Intent> activityLauncher = registerForActivityResult(
