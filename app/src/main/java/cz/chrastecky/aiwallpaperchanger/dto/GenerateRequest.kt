@@ -15,4 +15,5 @@ data class GenerateRequest(
     val nsfw: Boolean,
     val karras: Boolean,
     val hiresFix: Boolean,
+    val extraSlowWorkers: Boolean,
 )

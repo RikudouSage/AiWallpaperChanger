@@ -102,6 +102,7 @@ public class SettingsActivity extends AppCompatActivity {
             }
 
             editor.putBoolean(SharedPreferencesHelper.ALLOW_LARGE_NUMERIC_VALUES, binding.allowLargeValues.isChecked());
+            editor.putBoolean(SharedPreferencesHelper.EXTRA_SLOW_WORKERS, binding.extraSlowWorkers.isChecked());
 
             editor.apply();
             finish();
@@ -146,6 +147,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         binding.apiKeyField.setText(preferences.getString(SharedPreferencesHelper.API_KEY, ""));
         binding.allowLargeValues.setChecked(preferences.getBoolean(SharedPreferencesHelper.ALLOW_LARGE_NUMERIC_VALUES, false));
+        binding.extraSlowWorkers.setChecked(preferences.getBoolean(SharedPreferencesHelper.EXTRA_SLOW_WORKERS, true));
 
         if (
                 preferences.contains(SharedPreferencesHelper.STORE_WALLPAPERS_URI)
