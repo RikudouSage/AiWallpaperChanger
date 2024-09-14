@@ -402,5 +402,13 @@
         ]
       }
     ]
+  },
+  {
+    "name": "Graffiti",
+    "description": "Graffiti-style painting of various animals and objects",
+    "prompt": "graffiti style {raven|crow|doberman|temple|wolf|tiger|hummingbird|city skyline|abstract geometric patterns|lush trees|flowers|eagle|mountain range|deer|koi fish|rainforest|autumn leaves}, aerosol paint, hyper realistic, street art, vibrant, urban, detailed, tag, mural",
+    "negativePrompt": "ugly, deformed, noisy, blurry, low contrast, realism, photorealistic",
+    "author": "Rikudou",
+    "models": ["AlbedoBase XL (SDXL)"]
   }
 ]
