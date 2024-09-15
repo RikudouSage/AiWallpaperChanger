@@ -41,6 +41,7 @@ public class PremiumActivity extends AppCompatActivity {
     private BillingClient billingClient;
 
     private Logger logger = new Logger(this);
+    private ActivityPremiumBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +52,7 @@ public class PremiumActivity extends AppCompatActivity {
             return;
         }
 
-        ActivityPremiumBinding binding = ActivityPremiumBinding.inflate(getLayoutInflater());
+        binding = ActivityPremiumBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         setSupportActionBar(binding.toolbar);
@@ -94,6 +95,32 @@ public class PremiumActivity extends AppCompatActivity {
         }
     }
 
+    private void populatePrice() {
+        assert billingClient != null;
+
+        final List<ProductDetails.SubscriptionOfferDetails> offers = productDetails.getSubscriptionOfferDetails();
+        if (offers == null || offers.isEmpty()) {
+            return;
+        }
+        final ProductDetails.SubscriptionOfferDetails detail = offers.get(0);
+        if (detail == null) {
+            return;
+        }
+        final List<ProductDetails.PricingPhase> phases = detail.getPricingPhases().getPricingPhaseList();
+        if (phases.isEmpty()) {
+            return;
+        }
+        final ProductDetails.PricingPhase phase = phases.get(0);
+        if (phase == null) {
+            return;
+        }
+
+        final String price = phase.getFormattedPrice();
+        runOnUiThread(() -> {
+            binding.premiumDescription.setText(getString(R.string.app_premium_description_with_price, price));
+        });
+    }
+
     private void loadPurchases() {
         ProgressBar loader = findViewById(R.id.purchase_loader);
         TextView unavailable = findViewById(R.id.billing_unavailable);
@@ -106,6 +133,7 @@ public class PremiumActivity extends AppCompatActivity {
         purchased.setVisibility(View.INVISIBLE);
 
         assert billingClient != null;
+        populatePrice();
         billingClient.queryPurchasesAsync(QueryPurchasesParams.newBuilder().setProductType(BillingClient.ProductType.SUBS).build(), (billingResult, list) -> {
             List<Purchase> purchasedIds = list.stream()
                     .filter(purchase -> purchase.getPurchaseState() == Purchase.PurchaseState.PURCHASED)
@@ -164,7 +192,9 @@ public class PremiumActivity extends AppCompatActivity {
                     .build();
             billingClient.queryProductDetailsAsync(productDetailsQuery, (billingResult, list) -> {
                 if (list.isEmpty()) {
-                    Toast.makeText(this, R.string.app_premium_unavailable, Toast.LENGTH_LONG).show();
+                    runOnUiThread(() -> {
+                        Toast.makeText(this, R.string.app_premium_unavailable, Toast.LENGTH_LONG).show();
+                    });
                     finish();
                     return;
                 }
