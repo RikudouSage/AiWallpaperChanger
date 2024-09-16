@@ -72,6 +72,9 @@ public class LlmParameterProvider implements PromptParameterProvider {
             final List<String> result = new ArrayList<>();
             final Pattern regex = Pattern.compile("\\$\\{([^{}:]+)(?::((?:[^\\${}]|\\$\\{(?:[^\\${}]+)\\})*))?\\}");
             for (final String text : texts) {
+                if (text == null) {
+                    continue;
+                }
                 final Matcher matcher = regex.matcher(text);
                 if (!matcher.find()) {
                     continue;
