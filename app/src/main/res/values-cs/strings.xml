@@ -45,7 +45,7 @@
     <string name="app.error.forbidden_request">Generování obrázku selhalo. Možná je váš požadavek je příliš složitý?</string>
     <string name="app.title.premium">Prémium</string>
     <string name="app.premium.description">Přihlášení k Prémium vám umožní přeskočit frontu, stejně jako to umožňuje vlastní api klíč s velkým množstvím kudos.\n\nV podstatě se stane tohle: Namísto abyste používalí výchozí anonymní api klíč, použijete klíč s velkým množstvím kudos, díky čemuž máte prioritu ve frontě.\n\nVýhody toho jsou:\n- Vyšší priorta (stejně jako když dodáte vlastní klíč s velkým množstvím kudos)\n- Možnost používat komplexní parametry pro generování (stejně jako když zadáte libovolný api klíč, i bez kudos)\n- Podporujete další vývoj této aplikace\n\nNutno dodat, že výhody nezahrnují:\n- Exkluzivní přístup k speciálním možnostem\n- Lepší kvalitu obrázků nad rámec toho, co je běžné bez Prémium\n\nJednoduše řečeno, Prémium není nutné, leda byste chtěli rychlé generování obrázků i ve špičce. Pokud se rozhodnete Prémium si pořídit za těchto podmínek, velice si toho vážíme!</string>
-    <string name="app.premium.description_with_price">Přihlášení k Prémium vám umožní přeskočit frontu, stejně jako to umožňuje vlastní api klíč s velkým množstvím kudos. Pomocí tlačítka níže můžete začít bezplatné zkušební období (pokud jste jej již nezačali v minulosti), které se po 3 dnech změní na placené. Zrušit jej můžete kdykoliv (včetně během bezplatného zkušebního období) ve svém Google účtu a vaše předplatné nebude po skončení současného fakturačního období obnoveno. Předplatné se platí měsíčně a stojí %s.\n\nV podstatě se stane tohle: Namísto abyste používalí výchozí anonymní api klíč, použijete klíč s velkým množstvím kudos, díky čemuž máte prioritu ve frontě.\n\nVýhody toho jsou:\n- Vyšší priorta (stejně jako když dodáte vlastní klíč s velkým množstvím kudos)\n- Možnost používat komplexní parametry pro generování (stejně jako když zadáte libovolný api klíč, i bez kudos)\n- Podporujete další vývoj této aplikace\n\nNutno dodat, že výhody nezahrnují:\n- Exkluzivní přístup k speciálním možnostem\n- Lepší kvalitu obrázků nad rámec toho, co je běžné bez Prémium\n\nJednoduše řečeno, Prémium není nutné, leda byste chtěli rychlé generování obrázků i ve špičce. Pokud se rozhodnete Prémium si pořídit za těchto podmínek, velice si toho vážíme!</string>
+    <string name="app.premium.description.with_price">Přihlášení k Prémium vám umožní přeskočit frontu, stejně jako to umožňuje vlastní api klíč s velkým množstvím kudos. Pomocí tlačítka níže můžete začít bezplatné zkušební období (pokud jste jej již nezačali v minulosti), které se po 3 dnech změní na placené. Zrušit jej můžete kdykoliv (včetně během bezplatného zkušebního období) ve svém Google účtu a vaše předplatné nebude po skončení současného fakturačního období obnoveno. Předplatné se platí měsíčně a stojí %s.\n\nV podstatě se stane tohle: Namísto abyste používalí výchozí anonymní api klíč, použijete klíč s velkým množstvím kudos, díky čemuž máte prioritu ve frontě.\n\nVýhody toho jsou:\n- Vyšší priorta (stejně jako když dodáte vlastní klíč s velkým množstvím kudos)\n- Možnost používat komplexní parametry pro generování (stejně jako když zadáte libovolný api klíč, i bez kudos)\n- Podporujete další vývoj této aplikace\n\nNutno dodat, že výhody nezahrnují:\n- Exkluzivní přístup k speciálním možnostem\n- Lepší kvalitu obrázků nad rámec toho, co je běžné bez Prémium\n\nJednoduše řečeno, Prémium není nutné, leda byste chtěli rychlé generování obrázků i ve špičce. Pokud se rozhodnete Prémium si pořídit za těchto podmínek, velice si toho vážíme!</string>
     <string name="app.premium.unavailable">Prémium není ve vaší zemi k dispozici.</string>
     <string name="app.premium.billing_unavailable">Vaše zařízení nepodporuje koupení Prémium.</string>
     <string name="app.premium.already_purchased">Prémium jste si již zakoupili, děkujeme!</string>
@@ -159,4 +159,16 @@
     <string name="app.settings.extra_slow_workers">Povolit velmi pomalé workery</string>
     <string name="app.settings.extra_slow_workers.description">Je-li povoleno, budou vaše požadavky moci zpracovávat i velmi pomalí workeři. Toto se týká pouze tapet generovaných na pozadí, nikoliv náhledů, které generujete aktivně v aplikaci.</string>
     <string name="main.join_horde">Tip: <a href="https://aihorde.net/">Vytvořte si na AI Hordě účet zdarma</a> a užívejte si vyšší prioritu než anonymní uživatelé.</string>
+    <string name="app.price.free">zdarma</string>
+    <string name="app.price.first_phase">po dobu</string>
+    <string name="app.price.other_phase.prefix">poté</string>
+    <string name="app.price.other_phase">po dobu</string>
+    <string name="app.period.day.one">dne</string>
+    <string name="app.period.day.other">dní</string>
+    <string name="app.period.month.one">měsíce</string>
+    <string name="app.period.month.other">měsíců</string>
+    <string name="app.period.year.one">roku</string>
+    <string name="app.period.year.other">let</string>
+    <string name="app.period.week.one">týdne</string>
+    <string name="app.period.week.other">týdnů</string>
 </resources>

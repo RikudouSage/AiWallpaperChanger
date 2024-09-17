@@ -159,4 +159,16 @@
     <string name="app.settings.extra_slow_workers">Allow extra slow workers</string>
     <string name="app.settings.extra_slow_workers.description">When enabled, even very slow workers are allowed to handle your requests. Note that this setting only applies for wallpapers generated in background and not for previews you\'re actively generating in app.</string>
     <string name="main.join_horde">Tip: <a href="https://aihorde.net/">Create a free account on the AI Horde</a> to get priority over anonymous users.</string>
+    <string name="app.price.free">free</string>
+    <string name="app.price.first_phase">for the first</string>
+    <string name="app.price.other_phase.prefix">then</string>
+    <string name="app.price.other_phase">for the next</string>
+    <string name="app.period.day.one">day</string>
+    <string name="app.period.day.other">days</string>
+    <string name="app.period.month.one">month</string>
+    <string name="app.period.month.other">months</string>
+    <string name="app.period.year.one">year</string>
+    <string name="app.period.year.other">years</string>
+    <string name="app.period.week.one">week</string>
+    <string name="app.period.week.other">weeks</string>
 </resources>
