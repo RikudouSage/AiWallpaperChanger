@@ -402,6 +402,8 @@ public class MainActivity extends AppCompatActivity {
                     if (error.networkResponse.statusCode == 401) {
                         Toast.makeText(this, R.string.app_error_invalid_api_key, Toast.LENGTH_LONG).show();
                     } else if (error.networkResponse.statusCode == 403) {
+//                        String errorText = new String(error.networkResponse.data, StandardCharsets.UTF_8);
+//                        logger.debug("Debug", errorText);
                         Toast.makeText(this, R.string.app_error_forbidden_request, Toast.LENGTH_LONG).show();
                     } else {
                         Toast.makeText(this, R.string.app_error_generating_failed, Toast.LENGTH_LONG).show();
@@ -413,7 +415,7 @@ public class MainActivity extends AppCompatActivity {
                 runOnUiThread(() -> {
                     rootView.setVisibility(View.VISIBLE);
                     loader.setVisibility(View.INVISIBLE);
-                    Toast.makeText(this, R.string.app_error_parameter_replacing_failed, Toast.LENGTH_LONG).show();
+//                    Toast.makeText(this, R.string.app_error_parameter_replacing_failed, Toast.LENGTH_LONG).show();
                 });
             };
 
@@ -731,7 +733,7 @@ public class MainActivity extends AppCompatActivity {
         advancedSwitch.setChecked(preferences.getBoolean(SharedPreferencesHelper.ADVANCED_OPTIONS_TOGGLED, false));
 
         stepsField.addOnChangeListener((slider, value, fromUser) -> stepsTitle.setText(getString(R.string.app_generate_steps, (int) value)));
-        stepsTitle.setText(getString(R.string.app_generate_steps, 25));
+        stepsTitle.setText(getString(R.string.app_generate_steps, 20));
 
         clipSkipField.addOnChangeListener((slider, value, fromUser) -> clipSkipTitle.setText(getString(R.string.app_generate_clip_skip, (int) value)));
         clipSkipTitle.setText(getString(R.string.app_generate_clip_skip, 1));
@@ -854,7 +856,7 @@ public class MainActivity extends AppCompatActivity {
                 negativePrompt.getText().length() > 0 ? negativePrompt.getText().toString() : null,
                 selectedModels,
                 advanced ? Sampler.valueOf((String) sampler.getSelectedItem()) : Sampler.k_dpmpp_sde,
-                advanced ? (int) steps.getValue() : 25,
+                advanced ? (int) steps.getValue() : 20,
                 advanced ? (int) clipSkip.getValue() : 1,
                 advanced && !width.getText().toString().equals("") ? Integer.parseInt(width.getText().toString()) : widthAndHeight[0],
                 advanced && !height.getText().toString().equals("") ? Integer.parseInt(height.getText().toString()) : widthAndHeight[1],
