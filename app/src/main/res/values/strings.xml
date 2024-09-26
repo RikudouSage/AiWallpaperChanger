@@ -171,4 +171,5 @@
     <string name="app.period.year.other">years</string>
     <string name="app.period.week.one">week</string>
     <string name="app.period.week.other">weeks</string>
+    <string name="app.generate.censor_nsfw">Censor NSFW?</string>
 </resources>

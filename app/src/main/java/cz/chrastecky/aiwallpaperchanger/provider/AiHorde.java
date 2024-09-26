@@ -149,6 +149,7 @@ public class AiHorde implements AiImageProvider {
             requestBody.put("params", params);
             requestBody.put("models", new JSONArray(request.getModels()));
             requestBody.put("nsfw", request.getNsfw());
+            requestBody.put("censor_nsfw", request.getCensorNsfw());
             requestBody.put("extra_slow_workers", request.getExtraSlowWorkers());
 
             if (

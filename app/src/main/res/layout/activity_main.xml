@@ -178,6 +178,18 @@
                         app:layout_constraintTop_toBottomOf="@id/model_wrapper" />
 
                     <androidx.appcompat.widget.SwitchCompat
+                        android:id="@+id/censor_nsfw_switch"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="8dp"
+                        android:minHeight="48dp"
+                        android:text="@string/app.generate.censor_nsfw"
+                        android:visibility="gone"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/nsfw_switch" />
+
+                    <androidx.appcompat.widget.SwitchCompat
                         android:id="@+id/advanced_switch"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -187,7 +199,7 @@
                         android:text="@string/app.generate.advanced_toggle"
                         android:textAlignment="viewStart"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/nsfw_switch" />
+                        app:layout_constraintTop_toBottomOf="@id/censor_nsfw_switch" />
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/advanced_settings_wrapper"

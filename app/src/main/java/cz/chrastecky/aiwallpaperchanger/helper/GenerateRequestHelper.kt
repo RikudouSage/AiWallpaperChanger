@@ -24,7 +24,7 @@ class GenerateRequestHelper {
 
         @JvmStatic
         fun disableNsfw(request: GenerateRequest): GenerateRequest {
-            return request.copy(nsfw = false);
+            return request.copy(nsfw = false, censorNsfw = true)
         }
 
         @JvmStatic
