@@ -242,6 +242,11 @@ public class MainActivity extends AppCompatActivity {
             editor.putBoolean(SharedPreferencesHelper.NSFW_TOGGLED, isChecked);
             editor.apply();
         });
+        binding.censorNsfwSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putBoolean(SharedPreferencesHelper.CENSOR_NSFW, isChecked);
+            editor.apply();
+        });
 
         binding.joinHordeText.setMovementMethod(LinkMovementMethod.getInstance());
 
@@ -690,6 +695,7 @@ public class MainActivity extends AppCompatActivity {
         TextInputEditText heightField = findViewById(R.id.height_field);
         Spinner upscalerField = findViewById(R.id.upscaler);
         SwitchCompat nsfwField = findViewById(R.id.nsfw_switch);
+        SwitchCompat censorNsfwField = findViewById(R.id.censor_nsfw_switch);
         Slider cfgScaleField = findViewById(R.id.cfg_scale);
         TextView cfgScaleTitle = findViewById(R.id.cfg_scale_title);
         SwitchCompat hiresFixField = findViewById(R.id.hires_fix_switch);
@@ -747,6 +753,8 @@ public class MainActivity extends AppCompatActivity {
         if (BuildConfig.NSFW_ENABLED) {
             nsfwField.setVisibility(View.VISIBLE);
             nsfwField.setChecked(preferences.getBoolean(SharedPreferencesHelper.NSFW_TOGGLED, false));
+            censorNsfwField.setVisibility(View.VISIBLE);
+            censorNsfwField.setChecked(preferences.getBoolean(SharedPreferencesHelper.CENSOR_NSFW, false));
         }
 
         multipleModelsSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -838,6 +846,7 @@ public class MainActivity extends AppCompatActivity {
         TextInputEditText height = findViewById(R.id.height_field);
         Spinner upscaler = findViewById(R.id.upscaler);
         SwitchCompat nsfw = findViewById(R.id.nsfw_switch);
+        SwitchCompat censorNsfw = findViewById(R.id.censor_nsfw_switch);
         Slider cfgScale = findViewById(R.id.cfg_scale);
         SwitchCompat hiresFix = findViewById(R.id.hires_fix_switch);
 
@@ -866,7 +875,8 @@ public class MainActivity extends AppCompatActivity {
                 BuildConfig.NSFW_ENABLED && nsfw.isChecked(),
                 true,
                 advanced && hiresFix.isChecked(),
-                false
+                false,
+                !BuildConfig.NSFW_ENABLED || censorNsfw.isChecked()
         );
 
         if (!replace) {

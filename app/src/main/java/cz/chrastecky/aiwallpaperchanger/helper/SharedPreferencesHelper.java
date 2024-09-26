@@ -12,6 +12,7 @@ public class SharedPreferencesHelper {
     public static final String CONFIGURED_SCHEDULE_INTERVAL = "selectedInterval";
     public static final String STORED_GENERATION_PARAMETERS = "generationParameters";
     public static final String NSFW_TOGGLED = "nsfwToggled";
+    public static final String CENSOR_NSFW = "censorNsfwToggled";
     public static final String WALLPAPER_LAST_CHANGED = "lastChanged";
     public static final String ADVANCED_OPTIONS_TOGGLED = "advanced";
     public static final String GENERATION_HISTORY = "history";
