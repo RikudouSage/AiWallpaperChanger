@@ -45,6 +45,7 @@ import cz.chrastecky.aiwallpaperchanger.dto.response.ModelType;
 import cz.chrastecky.aiwallpaperchanger.exception.ContentCensoredException;
 import cz.chrastecky.aiwallpaperchanger.exception.RetryGenerationException;
 import cz.chrastecky.aiwallpaperchanger.helper.ApiKeyHelper;
+import cz.chrastecky.aiwallpaperchanger.helper.CancellationToken;
 import cz.chrastecky.aiwallpaperchanger.helper.HashHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.Logger;
 
@@ -116,7 +117,8 @@ public class AiHorde implements AiImageProvider {
             @NonNull GenerateRequest request,
             @NonNull OnProgress onProgress,
             @NonNull OnResponse<GenerationDetailWithBitmap> onResponse,
-            @Nullable OnError onError
+            @Nullable OnError onError,
+            @Nullable CancellationToken cancellationToken
     ) {
         String prompt = request.getPrompt();
         if (request.getNegativePrompt() != null) {
@@ -172,7 +174,11 @@ public class AiHorde implements AiImageProvider {
                 requestBody.toString(),
                 generationQueued -> {
                     String id = generationQueued.getId();
-                    recursivelyCheckForStatus(id, onProgress, onResponse, onError);
+                    if (cancellationToken != null && cancellationToken.isCancelled()) {
+                        logger.debug("AiHorde", "Cancelled using cancellation token in generateImage");
+                        return;
+                    }
+                    recursivelyCheckForStatus(id, onProgress, onResponse, onError, cancellationToken);
                 },
                 volleyError -> {
                     if (volleyError.networkResponse != null) {
@@ -273,12 +279,17 @@ public class AiHorde implements AiImageProvider {
         };
     }
 
-    private JsonRequest<AsyncRequestFullStatusImage> getFullStatusRequest(String id, OnResponse<GenerationDetailImage> onResponse, OnError onError) {
+    private JsonRequest<AsyncRequestFullStatusImage> getFullStatusRequest(String id, OnResponse<GenerationDetailImage> onResponse, OnError onError, @Nullable CancellationToken cancellationToken) {
         return new JsonRequest<AsyncRequestFullStatusImage>(
                 Request.Method.GET,
                 BuildConfig.HORDE_API_URL + "/generate/status/" + id,
                 null,
                 asyncRequestFullStatus -> {
+                    if (cancellationToken != null && cancellationToken.isCancelled()) {
+                        logger.debug("AiHorde", "Cancelled using cancellation token in getFullStatusRequest");
+                        return;
+                    }
+
                     if (asyncRequestFullStatus.getGenerations().isEmpty()) {
                         onError.onError(new VolleyError(new RetryGenerationException()));
                         return;
@@ -344,17 +355,28 @@ public class AiHorde implements AiImageProvider {
         };
     }
 
-    private void recursivelyCheckForStatus(String id, OnProgress onProgress, OnResponse<GenerationDetailWithBitmap> onResponse, @Nullable OnError onError) {
+    private void recursivelyCheckForStatus(
+            String id,
+            OnProgress onProgress,
+            OnResponse<GenerationDetailWithBitmap> onResponse,
+            @Nullable OnError onError,
+            @Nullable CancellationToken cancellationToken
+    ) {
         requestQueue.add(getCheckStatusRequest(
                 id,
                 progress -> {
+                    if (cancellationToken != null && cancellationToken.isCancelled()) {
+                        logger.debug("AiHorde", "Cancelled using cancellation token in recursivelyCheckForStatus");
+                        return;
+                    }
+
                     if (!progress.getDone()) {
                         onProgress.onProgress(progress);
                         Timer timer = new Timer();
                         timer.schedule(new TimerTask() {
                             @Override
                             public void run() {
-                                AiHorde.this.recursivelyCheckForStatus(id, onProgress, onResponse, onError);
+                                AiHorde.this.recursivelyCheckForStatus(id, onProgress, onResponse, onError, cancellationToken);
                             }
                         }, 2_000);
                         return;
@@ -372,7 +394,7 @@ public class AiHorde implements AiImageProvider {
                         if (onError != null) {
                             onError.onError(error);
                         }
-                    }));
+                    }, cancellationToken));
                 },
                 error -> {
                     if (onError != null) {

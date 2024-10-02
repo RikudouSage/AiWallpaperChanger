@@ -11,6 +11,7 @@ import cz.chrastecky.aiwallpaperchanger.dto.GenerateRequest;
 import cz.chrastecky.aiwallpaperchanger.dto.response.ActiveModel;
 import cz.chrastecky.aiwallpaperchanger.dto.response.AsyncRequestStatusCheck;
 import cz.chrastecky.aiwallpaperchanger.dto.response.GenerationDetailWithBitmap;
+import cz.chrastecky.aiwallpaperchanger.helper.CancellationToken;
 
 public interface AiImageProvider {
     interface OnResponse<T> {
@@ -24,5 +25,5 @@ public interface AiImageProvider {
     }
 
     void getModels(@NonNull OnResponse<List<ActiveModel>> onResponse, @Nullable OnError onError);
-    void generateImage(@NonNull GenerateRequest request, @NonNull OnProgress onProgress, @NonNull OnResponse<GenerationDetailWithBitmap> onResponse, @Nullable OnError onError);
+    void generateImage(@NonNull GenerateRequest request, @NonNull OnProgress onProgress, @NonNull OnResponse<GenerationDetailWithBitmap> onResponse, @Nullable OnError onError, @Nullable CancellationToken cancellationToken);
 }
