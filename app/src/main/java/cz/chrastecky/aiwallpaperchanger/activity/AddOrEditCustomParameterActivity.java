@@ -243,7 +243,7 @@ public class AddOrEditCustomParameterActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 value.expression = s.toString().isEmpty() ? null : s.toString();
-                if (value.expression.startsWith(" ") || value.expression.endsWith(" ")) {
+                if (value.expression != null && (value.expression.startsWith(" ") || value.expression.endsWith(" "))) {
                     itemBinding.ifWhitespaceWarning.setVisibility(View.VISIBLE);
                 } else {
                     itemBinding.ifWhitespaceWarning.setVisibility(View.GONE);
