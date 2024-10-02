@@ -76,6 +76,7 @@ import cz.chrastecky.aiwallpaperchanger.exception.RetryGenerationException;
 import cz.chrastecky.aiwallpaperchanger.helper.AlarmManagerHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.ApiKeyHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.BillingHelper;
+import cz.chrastecky.aiwallpaperchanger.helper.CancellationToken;
 import cz.chrastecky.aiwallpaperchanger.helper.DatabaseHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.GenerateRequestHelper;
 import cz.chrastecky.aiwallpaperchanger.helper.Logger;
@@ -104,6 +105,7 @@ public class MainActivity extends AppCompatActivity {
     private AiImageProvider aiImageProvider;
     private final Logger logger = new Logger(this);
     private ActivityMainBinding binding;
+    private CancellationToken cancellationToken = new CancellationToken();
 
     private Map<String, Boolean> formElementsValidation = new HashMap<>();
 
@@ -264,6 +266,15 @@ public class MainActivity extends AppCompatActivity {
             selectStyleLauncher.launch(new Intent(this, PremadePromptsActivity.class));
         });
 
+        binding.cancelPreviewButton.setOnClickListener(button -> {
+            cancellationToken.cancel();
+            runOnUiThread(() -> {
+                rootView.setVisibility(View.VISIBLE);
+                loader.setVisibility(View.INVISIBLE);
+            });
+            cancellationToken = new CancellationToken();
+        });
+
         Button previewButton = findViewById(R.id.preview_button);
         previewButton.setOnClickListener(button -> {
             if (getCurrentFocus() != null) {
@@ -394,13 +405,13 @@ public class MainActivity extends AppCompatActivity {
             AtomicInteger censoredRetries = new AtomicInteger(3);
             onError.value = error -> {
                 if (error.getCause() instanceof RetryGenerationException) {
-                    aiImageProvider.generateImage(cachedReplacedRequest.get(), onProgress, onResponse, onError.value);
+                    aiImageProvider.generateImage(cachedReplacedRequest.get(), onProgress, onResponse, onError.value, cancellationToken);
                     return;
                 }
                 if (error.getCause() instanceof ContentCensoredException && censoredRetries.get() > 0) {
                     logger.debug("HordeError", "Request got censored, retrying");
                     censoredRetries.addAndGet(-1);
-                    aiImageProvider.generateImage(cachedReplacedRequest.get(), onProgress, onResponse, onError.value);
+                    aiImageProvider.generateImage(cachedReplacedRequest.get(), onProgress, onResponse, onError.value, cancellationToken);
                     return;
                 }
                 if (error instanceof AuthFailureError) {
@@ -436,7 +447,7 @@ public class MainActivity extends AppCompatActivity {
                     logger.debug("HordeRequestReplaced", new Gson().toJson(newRequest));
                     runOnUiThread(() -> progressText.setText(R.string.app_generate_estimated_time_pre_start));
                     cachedReplacedRequest.set(newRequest);
-                    aiImageProvider.generateImage(newRequest, onProgress, onResponse, onError.value);
+                    aiImageProvider.generateImage(newRequest, onProgress, onResponse, onError.value, cancellationToken);
                 }, () -> {
                     Toast.makeText(this, R.string.app_error_parameter_replacing_failed, Toast.LENGTH_LONG).show();
                     runOnUiThread(() -> {
@@ -705,6 +716,8 @@ public class MainActivity extends AppCompatActivity {
         TextView modelSelectedList = findViewById(R.id.model_selected_list);
         SwitchCompat karrasField = findViewById(R.id.karras_switch);
 
+        Button cancelPreviewButton = findViewById(R.id.cancel_preview_button);
+
         SharedPreferences preferences = new SharedPreferencesHelper().get(this);
         int[] widthHeight = calculateWidthAndHeight();
 
@@ -824,6 +837,7 @@ public class MainActivity extends AppCompatActivity {
 
             loader.setVisibility(View.INVISIBLE);
             rootView.setVisibility(View.VISIBLE);
+            cancelPreviewButton.setVisibility(View.VISIBLE);
         }, error -> {
             logger.error("AiHorde", "Fetching list of models failed", error);
             Toast.makeText(this, R.string.app_error_fetching_models_failed, Toast.LENGTH_LONG).show();
