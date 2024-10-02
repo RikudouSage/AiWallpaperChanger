@@ -703,6 +703,7 @@ public class MainActivity extends AppCompatActivity {
         Spinner modelField = findViewById(R.id.model_field);
         Button modelSelectButton = findViewById(R.id.model_select_button);
         TextView modelSelectedList = findViewById(R.id.model_selected_list);
+        SwitchCompat karrasField = findViewById(R.id.karras_switch);
 
         SharedPreferences preferences = new SharedPreferencesHelper().get(this);
         int[] widthHeight = calculateWidthAndHeight();
@@ -789,6 +790,7 @@ public class MainActivity extends AppCompatActivity {
             cfgScaleField.setValue((float) request.getCfgScale());
             hiresFixField.setChecked(request.getHiresFix());
             multipleModelsSwitch.setChecked(request.getModels().size() > 1);
+            karrasField.setChecked(request.getKarras());
         }
 
         aiImageProvider.getModels(response -> {
@@ -849,6 +851,7 @@ public class MainActivity extends AppCompatActivity {
         SwitchCompat censorNsfw = findViewById(R.id.censor_nsfw_switch);
         Slider cfgScale = findViewById(R.id.cfg_scale);
         SwitchCompat hiresFix = findViewById(R.id.hires_fix_switch);
+        SwitchCompat karras = findViewById(R.id.karras_switch);
 
         boolean advanced = ((SwitchCompat) findViewById(R.id.advanced_switch)).isChecked();
 
@@ -873,7 +876,7 @@ public class MainActivity extends AppCompatActivity {
                 advanced ? (selectedUpscaler.equals(noneOption) ? null : selectedUpscaler) : defaultUpscaler,
                 advanced ? cfgScale.getValue() : 7,
                 BuildConfig.NSFW_ENABLED && nsfw.isChecked(),
-                true,
+                !advanced || karras.isChecked(),
                 advanced && hiresFix.isChecked(),
                 false,
                 !BuildConfig.NSFW_ENABLED || censorNsfw.isChecked()
