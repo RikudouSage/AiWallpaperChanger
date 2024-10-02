@@ -172,4 +172,5 @@
     <string name="app.period.week.one">týdne</string>
     <string name="app.period.week.other">týdnů</string>
     <string name="app.generate.censor_nsfw">Cenzurovat NSFW?</string>
+    <string name="app.generate.karras">Karras</string>
 </resources>
