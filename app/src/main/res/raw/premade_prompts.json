@@ -410,5 +410,30 @@
     "negativePrompt": "ugly, deformed, noisy, blurry, low contrast, realism, photorealistic",
     "author": "Rikudou",
     "models": ["AlbedoBase XL (SDXL)"]
+  },
+  {
+    "name": "Artistic flower",
+    "description": "A flower that uses a large language model to create a random art style",
+    "prompt": "Ink illustration, bioluminescent {pink|blue|green|purple|red|neon red|neon pink|crimson|neon blue} flower, fabulous ${tod} forest, ${llm:give me a description of a random art style, include no other text}",
+    "author": "Rikudou, Efreak",
+    "models": ["ICBINP XL", "INCBINP XL (v2.0)", "AlbedoBase XL (SDXL)"],
+    "params": {
+      "tod": ["morning", "afternoon", "noon", "evening", "night", "midnight"],
+      "llm:give me a description of a random art style, include no other text": [
+        "Let's go with... **Zentangle**! Zentangle is a unique, meditative drawing style that emerged in the early 2000s. It involves creating intricate, repeating patterns using simple strokes and curves, typically with a pen and paper. The style is characterized by: 1. **Minimalist base lines**: The drawing starts with a series of simple lines, often in a",
+        "Let's generate a random art style! I'm going to pick... **Kintsugi** art style! Kintsugi is a traditional Japanese art form that focuses on repairing broken pottery with gold or silver lacquer, rather than discarding it. The idea is that the broken pieces are not discarded, but rather, the repair becomes a unique part of the object's history and beauty. In",
+        "Let's randomly select an art style for you to explore. After generating a random number between 1 and 10, the selected art style is: **Impressionism** Impressionist art emerged in the late 19th century, emphasizing capturing the fleeting moments of a scene and the artist's personal perception of light, color, and movement. Key characteristics include: 1. Visible brushst",
+        "A surreal, abstract expressionist painting characterized by vibrant, swirling brushstrokes that blend into one another, creating a dreamlike atmosphere with an underlying sense of chaos and movement. Bold, clashing colors are juxtaposed to evoke a feeling of emotional intensity, while the overall composition appears both chaotic and purposeful, as if the artist has channeled their deepest subconscious thoughts and desires onto the",
+        "Vibrant neon hues and geometric shapes swirl together in a mesmerizing dance across the canvas. Abstract, yet structured, the composition is a kaleidoscope of color and light. Jagged lines slice through the space, reflecting and refracting the surrounding hues, while delicate filigree details weave in and out of the design like tendrils of stardust. The overall effect is one of",
+        "Vibrant, abstract expressionist paintings with thick impasto strokes, splatters, and drips of bright, clashing colors. Distorted, geometric shapes and biomorphic forms dance across the canvas in a frenzied, energetic composition. Intense, pulsing hues of magenta, neon green, and electric blue clash against deep indigos and earthy terracottas, creating",
+        "Washed-out pastels bleed across watercolor paper, vibrant hues bleeding into one another. Whispy brushstrokes frame delicate florals and fruits, melting like a dream. Subtle shading playfully hints at three-dimensionality but the overall effect remains ethereal, as if plucked from a Renaissance-era fairy tale. The composition is soft and organic, characters' features blurring slightly",
+        "Deep crimson and burnt orange hues dominate the composition, as twisted, elongated forms writhe and coil like living vines. Jagged, organic shapes pulse with an inner light, their surfaces etched with intricate, Celtic-inspired patterns. Heavy, chunky brushstrokes and impasto texture create a tactile, almost three-dimensional effect. The artist's hand is evident in bold, expressive strokes that evoke",
+        "Gothic architecture",
+        "Abstract Expressionist painting characterized by bold, gestural brushstrokes; vibrant, clashing colors; and a sense of energy and spontaneity. Thick, impasto texture and dripping paint convey emotion and movement. Figures and forms are simplified or distorted for expressive effect, set against a dramatic, often chaotic composition. Inspiration drawn from the subconscious and primal forces of nature. Artists include Willem de",
+        "Vibrant, swirling clouds of purple and pink, delicate brushstrokes that evoke the gentle curves of a woman's face, and a sense of movement and energy that seems to dance across the canvas.",
+        "Vibrant, hand-painted digital art in a swirling, psychedelic color palette with intricate, organic shapes reminiscent of fractals and cells. Irregular forms and fluid lines evoke a sense of movement and energy, with abstracted botanical elements, like petals and tendrils, twisting around each other in a mesmerizing dance. Deep blues and purples contrast with neon pinks and yellows, creating",
+        "Fractalius:\n\nFractalius is a digital art style that uses mathematical algorithms to create intricate, self-replicating patterns reminiscent of fractals. These intricate designs often feature symmetrical, geometric shapes, and are rendered in a range of colors that blend and transition smoothly from one hue to another. The style often incorporates circular elements, spirals, and mandalas"
+      ]
+    }
   }
 ]
