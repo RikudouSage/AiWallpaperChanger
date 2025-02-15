@@ -18,8 +18,8 @@ android {
         applicationId "cz.chrastecky.aiwallpaperchanger"
         minSdk 24
         targetSdk 34
-        versionCode 71
-        versionName '1.28.1'
+        versionCode 72
+        versionName '1.29.0'
         versionNameSuffix '-'
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
