@@ -583,7 +583,7 @@ public class MainActivity extends AppCompatActivity {
                 AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
                 alarmManager.cancel(pendingIntent);
                 pendingIntent.cancel();
-                cancelButton.setVisibility(View.INVISIBLE);
+                cancelButton.setVisibility(View.GONE);
 
                 SharedPreferences.Editor sharedPreferences = new SharedPreferencesHelper().get(this).edit();
                 sharedPreferences.remove(SharedPreferencesHelper.CONFIGURED_SCHEDULE_INTERVAL);
