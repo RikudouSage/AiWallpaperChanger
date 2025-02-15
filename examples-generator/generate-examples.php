@@ -9,6 +9,8 @@ use Rikudou\AiWallpaperChanger\ExamplesGenerator\Service\ModelDeserializer;
 
 require __DIR__ . '/vendor/autoload.php';
 
+$only = $argv[1] ?? null;
+
 $validity = new DateInterval('P7D');
 $maxImages = 5;
 
@@ -36,6 +38,9 @@ $resolved = [];
 /** @var array<string, array<string>> $toCheck */
 $toCheck = [];
 foreach ($configs as $config) {
+    if ($only && $config->name !== $only) {
+        continue;
+    }
     $hash = hash('sha256', serialize($config));
     $objects = array_filter(
         $s3client->listObjectsV2([
@@ -245,8 +250,11 @@ while (count($flattenResolved($resolved)) !== count($flatToCheck)) {
     sleep(2);
 }
 
+if ($only) {
+    echo "Not generating index, only a single prompt has been generated.", PHP_EOL;
+}
 // todo make this smarter
-if ($shouldGenerateIndex) {
+else if ($shouldGenerateIndex) {
     echo "Downloading done, generating index", PHP_EOL;
     echo "===========================================", PHP_EOL;
 
