@@ -76,14 +76,13 @@ public class LlmParameterProvider implements PromptParameterProvider {
                     continue;
                 }
                 final Matcher matcher = regex.matcher(text);
-                if (!matcher.find()) {
-                    continue;
+                while (matcher.find()) {
+                    final String group = matcher.group(2);
+                    if (group == null) {
+                        continue;
+                    }
+                    result.add("llm:" + group);
                 }
-                final String group = matcher.group(2);
-                if (group == null) {
-                    continue;
-                }
-                result.add("llm:" + group);
             }
 
             future.complete(result);
