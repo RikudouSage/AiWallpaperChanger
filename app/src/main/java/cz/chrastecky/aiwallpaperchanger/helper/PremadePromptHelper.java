@@ -16,6 +16,8 @@ import java.util.Comparator;
 import java.util.stream.Collectors;
 
 import cz.chrastecky.aiwallpaperchanger.R;
+import cz.chrastecky.aiwallpaperchanger.data.AppDatabase;
+import cz.chrastecky.aiwallpaperchanger.data.entity.SavedPrompt;
 import cz.chrastecky.aiwallpaperchanger.dto.PremadePrompt;
 
 public class PremadePromptHelper {
@@ -35,5 +37,31 @@ public class PremadePromptHelper {
         return Arrays.stream(PremadePromptHelper.getPrompts(context))
                 .filter(premadePrompt -> premadePrompt.getName().equals(name))
                 .findFirst().orElse(null);
+    }
+
+    @Nullable
+    public static PremadePrompt findByNameFromDb(final Context context, @NonNull final String name) {
+        final AppDatabase database = DatabaseHelper.getDatabase(context);
+        final SavedPrompt savedPrompt = database.savedPrompts().findByName(name);
+        if (savedPrompt == null) {
+            return null;
+        }
+
+        return convertSavedPrompt(savedPrompt);
+    }
+
+    public static PremadePrompt convertSavedPrompt(@NonNull final SavedPrompt savedPrompt) {
+        return new PremadePrompt(
+                savedPrompt.name,
+                savedPrompt.prompt,
+                savedPrompt.models,
+                savedPrompt.negativePrompt,
+                savedPrompt.hiresFix,
+                null,
+                null,
+                null,
+                null,
+                true
+        );
     }
 }

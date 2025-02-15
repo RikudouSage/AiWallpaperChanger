@@ -42,6 +42,7 @@ import cz.chrastecky.aiwallpaperchanger.exception.PromptNotFoundException;
 import cz.chrastecky.aiwallpaperchanger.helper.ComposableOnClickListener;
 import cz.chrastecky.aiwallpaperchanger.helper.Logger;
 import cz.chrastecky.aiwallpaperchanger.helper.PremadePromptHelper;
+import cz.chrastecky.aiwallpaperchanger.helper.ThreadHelper;
 
 public class PremadePromptsBindingAdapters {
     private static final Map<Integer, ComposableOnClickListener> listenerMap = new HashMap<>();
@@ -58,12 +59,20 @@ public class PremadePromptsBindingAdapters {
         setOnClickListener(source, view -> target.setRotation(target.getRotation() == 180 ? 0 : 180));
     }
 
-    @BindingAdapter({"exampleImagesTarget", "exampleImagesGroupName"})
-    public static void loadExampleImages(View source, ViewGroup target, String name) {
+    @BindingAdapter({"exampleImagesTarget", "exampleImagesGroupName", "itemIgnoreImages"})
+    public static void loadExampleImages(View source, ViewGroup target, String name, Boolean ignoreImages) {
         setOnClickListener(source, view -> {
             target.removeAllViews();
+            if (ignoreImages) {
+                ThreadHelper.runInThread(
+                        () -> finalizeImageLoading((Activity) source.getContext(), target, new ArrayList<>(), name, null),
+                        source.getContext()
+                );
+                return;
+            }
+
             if (cache.containsKey(name)) {
-                finalizeImageLoading(view.getContext(), target, cache.get(name), name, null);
+                finalizeImageLoading((Activity) view.getContext(), target, cache.get(name), name, null);
                 return;
             }
             if (loading.contains(name)) {
@@ -116,7 +125,7 @@ public class PremadePromptsBindingAdapters {
                         image -> {
                             result.add(image);
                             if (result.size() == urls.size()) {
-                                finalizeImageLoading(context, group, result, name, progressBar);
+                                finalizeImageLoading((Activity) context, group, result, name, progressBar);
                             }
                         },
                         1_000_000,
@@ -136,93 +145,113 @@ public class PremadePromptsBindingAdapters {
         }));
     }
 
-    private static void finalizeImageLoading(Context context, ViewGroup group, List<Bitmap> images, String name, @Nullable ProgressBar progressBar) {
+    private static void finalizeImageLoading(Activity context, ViewGroup group, List<Bitmap> images, String name, @Nullable ProgressBar progressBar) {
         final Logger logger = new Logger(context);
 
         if (progressBar != null) {
-            group.removeView(progressBar);
+            context.runOnUiThread(() -> group.removeView(progressBar));
         }
 
-        final PremadePrompt prompt;
+        PremadePrompt prompt;
         try {
             prompt = PremadePromptHelper.findByName(context, name);
+            if (prompt == null) {
+                prompt = PremadePromptHelper.findByNameFromDb(context, name);
+            }
             if (prompt == null) {
                 throw new PromptNotFoundException();
             }
         } catch (IOException e) {
             logger.error("PremadePrompts", "Failed getting prompts", e);
-            Toast.makeText(context, R.string.app_error_unknown_style, Toast.LENGTH_LONG).show();
+            context.runOnUiThread(() -> Toast.makeText(context, R.string.app_error_unknown_style, Toast.LENGTH_LONG).show());
             return;
         } catch (PromptNotFoundException e) {
             logger.error("PremadePrompts", "Failed getting prompt " + name, e);
-            Toast.makeText(context, R.string.app_error_unknown_style, Toast.LENGTH_LONG).show();
+            context.runOnUiThread(() -> Toast.makeText(context, R.string.app_error_unknown_style, Toast.LENGTH_LONG).show());
             return;
         }
 
-        HorizontalScrollView scrollView = new HorizontalScrollView(context);
-        scrollView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        group.addView(scrollView);
+        final PremadePrompt finalizedPrompt = prompt;
 
-        LinearLayout wrapper = new LinearLayout(context);
-        wrapper.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        scrollView.addView(wrapper);
+        context.runOnUiThread(() -> {
+            HorizontalScrollView scrollView = new HorizontalScrollView(context);
+            scrollView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            group.addView(scrollView);
 
-        int dp8 = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, context.getResources().getDisplayMetrics());
+            LinearLayout wrapper = new LinearLayout(context);
+            wrapper.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            scrollView.addView(wrapper);
 
-        for (Bitmap image : images) {
-            ImageView imageView = new ImageView(context);
+            int dp8 = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, context.getResources().getDisplayMetrics());
 
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            params.setMarginEnd(dp8);
+            if (!images.isEmpty()) {
+                for (Bitmap image : images) {
+                    ImageView imageView = new ImageView(context);
 
-            imageView.setImageBitmap(image);
-            imageView.setLayoutParams(params);
-            wrapper.addView(imageView);
-        }
+                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                    params.setMarginEnd(dp8);
 
-        Button button = new Button(context);
-        LinearLayout.LayoutParams buttonParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        buttonParams.setMargins(0, dp8, 0, 0);
-        button.setLayoutParams(buttonParams);
-        button.setText(R.string.app_premade_prompts_use_style_button);
-        group.addView(button);
-        button.setOnClickListener(view -> {
-            if (!(view.getContext() instanceof Activity)) {
-                logger.error("PremadePrompts", "Context is not an activity");
-                Toast.makeText(view.getContext(), R.string.app_premade_prompts_error_setting_prompt, Toast.LENGTH_LONG).show();
-                return;
+                    imageView.setImageBitmap(image);
+                    imageView.setLayoutParams(params);
+                    wrapper.addView(imageView);
+                }
+            } else {
+                TextView promptView = new TextView(context);
+                promptView.setText(Html.fromHtml(
+                        "<b>" + context.getString(R.string.app_generate_prompt) + "</b>: " + finalizedPrompt.getPrompt(),
+                        Html.FROM_HTML_MODE_COMPACT
+                ));
+                LinearLayout.LayoutParams promptViewParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                promptViewParams.setMargins(0, 0, 0, dp8);
+                promptViewParams.setMarginStart(dp8);
+                promptView.setLayoutParams(promptViewParams);
+                promptView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
+                wrapper.addView(promptView);
             }
 
-            Intent result = new Intent();
-            result.putExtra("result", name);
+            Button button = new Button(context);
+            LinearLayout.LayoutParams buttonParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            buttonParams.setMargins(0, dp8, 0, 0);
+            button.setLayoutParams(buttonParams);
+            button.setText(R.string.app_premade_prompts_use_style_button);
+            group.addView(button);
+            button.setOnClickListener(view -> {
+                if (!(view.getContext() instanceof Activity)) {
+                    logger.error("PremadePrompts", "Context is not an activity");
+                    Toast.makeText(view.getContext(), R.string.app_premade_prompts_error_setting_prompt, Toast.LENGTH_LONG).show();
+                    return;
+                }
 
-            Activity activity = (Activity) view.getContext();
-            activity.setResult(Activity.RESULT_OK, result);
-            activity.finish();
+                Intent result = new Intent();
+                result.putExtra("result", name);
+
+                Activity activity = (Activity) view.getContext();
+                activity.setResult(Activity.RESULT_OK, result);
+                activity.finish();
+            });
+
+            if (finalizedPrompt.getDescription() != null) {
+                TextView description = new TextView(context);
+                description.setText(Html.fromHtml(context.getString(R.string.app_premade_prompt_description, finalizedPrompt.getDescription()), Html.FROM_HTML_MODE_COMPACT));
+                LinearLayout.LayoutParams descriptionParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                descriptionParams.setMargins(0, 0, 0, dp8);
+                descriptionParams.setMarginStart(dp8);
+                description.setLayoutParams(descriptionParams);
+                description.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
+                group.addView(description);
+            }
+
+            if (finalizedPrompt.getAuthor() != null) {
+                TextView author = new TextView(context);
+                author.setText(Html.fromHtml(context.getString(R.string.app_premade_prompt_author, finalizedPrompt.getAuthor()), Html.FROM_HTML_MODE_COMPACT));
+                LinearLayout.LayoutParams authorParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                authorParams.setMarginStart(dp8);
+                author.setLayoutParams(authorParams);
+                group.addView(author);
+            }
+
+            cache.put(name, images);
+            loading.remove(name);
         });
-
-        if (prompt.getDescription() != null) {
-            TextView description = new TextView(context);
-            description.setText(Html.fromHtml(context.getString(R.string.app_premade_prompt_description, prompt.getDescription()), Html.FROM_HTML_MODE_COMPACT));
-            LinearLayout.LayoutParams descriptionParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            descriptionParams.setMargins(0, 0, 0, dp8);
-            descriptionParams.setMarginStart(dp8);
-            description.setLayoutParams(descriptionParams);
-            description.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
-            group.addView(description);
-        }
-
-        if (prompt.getAuthor() != null) {
-            TextView author = new TextView(context);
-            author.setText(Html.fromHtml(context.getString(R.string.app_premade_prompt_author, prompt.getAuthor()), Html.FROM_HTML_MODE_COMPACT));
-            LinearLayout.LayoutParams authorParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            authorParams.setMarginStart(dp8);
-            author.setLayoutParams(authorParams);
-            group.addView(author);
-        }
-
-
-        cache.put(name, images);
-        loading.remove(name);
     }
 }

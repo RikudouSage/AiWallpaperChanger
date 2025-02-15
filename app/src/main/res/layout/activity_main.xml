@@ -421,7 +421,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
-                        android:orientation="horizontal"
+                        android:orientation="vertical"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/advanced_settings_wrapper">
@@ -429,11 +429,23 @@
                         <Button
                             android:id="@+id/preview_button"
                             style="@style/Widget.AppCompat.Button.Colored"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
                             android:layout_weight="1"
                             android:background="@color/md_theme_primary"
                             android:text="@string/app.generate.preview" />
+                        <Button
+                            android:id="@+id/save_prompt_button"
+                            style="@style/Widget.AppCompat.Button.Colored"
+                            android:layout_width="wrap_content"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            android:layout_marginTop="16dp"
+                            android:paddingStart="16dp"
+                            android:paddingEnd="16dp"
+                            android:background="@color/md_theme_secondary"
+                            android:layout_gravity="center_horizontal"
+                            android:text="@string/app.generate.save_prompt" />
                     </LinearLayout>
 
                     <Button

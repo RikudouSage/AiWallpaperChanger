@@ -27,6 +27,7 @@
             app:toggleButtonRotation="@{imageButton}"
             app:exampleImagesTarget="@{content}"
             app:exampleImagesGroupName="@{item.name}"
+            app:itemIgnoreImages="@{item.ignoreImages}"
             tools:text="Everchanging scene"
             />
 
@@ -44,6 +45,7 @@
             app:toggleButtonRotation="@{imageButton}"
             app:exampleImagesTarget="@{content}"
             app:exampleImagesGroupName="@{item.name}"
+            app:itemIgnoreImages="@{item.ignoreImages}"
             />
 
         <LinearLayout
