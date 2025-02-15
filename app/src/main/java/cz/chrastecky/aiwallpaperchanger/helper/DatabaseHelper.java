@@ -10,6 +10,8 @@ import cz.chrastecky.aiwallpaperchanger.data.AppDatabase;
 public class DatabaseHelper {
     @NonNull
     public static AppDatabase getDatabase(Context context) {
-        return Room.databaseBuilder(context, AppDatabase.class, "ai_wallpaper_changer").build();
+        return Room.databaseBuilder(context, AppDatabase.class, "ai_wallpaper_changer")
+                .fallbackToDestructiveMigration()
+                .build();
     }
 }

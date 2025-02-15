@@ -10,4 +10,5 @@ data class PremadePrompt(
     val description: String? = null,
     val author: String? = null,
     val customParameters: List<PremadePromptCustomParameter>? = null,
+    val ignoreImages: Boolean = false
 )

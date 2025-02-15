@@ -174,4 +174,10 @@
     <string name="app.generate.censor_nsfw">Censor NSFW?</string>
     <string name="app.generate.karras">Karras</string>
     <string name="app.parameter.moon_phase">Returns the current moon phase, will be one of: New Moon, Waxing Crescent, First Quarter, Waxing Gibbous, Full Moon, Waning Gibbous, Last Quarter, Waning Crescent</string>
+    <string name="app.title.saved_prompts">Saved prompts</string>
+    <string name="app.generate.save_prompt">Save prompt</string>
+    <string name="app.save_prompt.description">Provide the unique name for the custom prompt. If a prompt with the same name already exists, it will be overwritten.</string>
+    <string name="app.save_prompt.name">Prompt name</string>
+    <string name="app.error.field_empty">The field cannot be empty</string>
+    <string name="app.save_prompt.success">The prompt has been successfully saved</string>
 </resources>

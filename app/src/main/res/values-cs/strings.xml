@@ -174,4 +174,10 @@
     <string name="app.generate.censor_nsfw">Cenzurovat NSFW?</string>
     <string name="app.generate.karras">Karras</string>
     <string name="app.parameter.moon_phase">Vrací současnou fázi měsíce, možné hodnoty: New Moon, Waxing Crescent, First Quarter, Waxing Gibbous, Full Moon, Waning Gibbous, Last Quarter, Waning Crescent</string>
+    <string name="app.title.saved_prompts">Uložené prompty</string>
+    <string name="app.generate.save_prompt">Uložit prompt</string>
+    <string name="app.save_prompt.description">Zadejte unikátní jméno pro váš prompt. Pokud prompt stejného jména již existuje, bude přepsán.</string>
+    <string name="app.save_prompt.name">Název promptu</string>
+    <string name="app.error.field_empty">Toto pole nemůže být prázdné</string>
+    <string name="app.save_prompt.success">Prompt byl úspěšně uložen</string>
 </resources>

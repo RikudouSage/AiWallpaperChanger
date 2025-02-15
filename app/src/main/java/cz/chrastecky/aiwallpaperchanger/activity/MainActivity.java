@@ -1,5 +1,7 @@
 package cz.chrastecky.aiwallpaperchanger.activity;
 
+import static android.widget.Toast.LENGTH_LONG;
+
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -21,12 +23,15 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.ColorRes;
+import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -61,6 +66,7 @@ import cz.chrastecky.aiwallpaperchanger.R;
 import cz.chrastecky.aiwallpaperchanger.data.AppDatabase;
 import cz.chrastecky.aiwallpaperchanger.data.entity.CustomParameter;
 import cz.chrastecky.aiwallpaperchanger.data.entity.CustomParameterValue;
+import cz.chrastecky.aiwallpaperchanger.data.entity.SavedPrompt;
 import cz.chrastecky.aiwallpaperchanger.data.relation.CustomParameterWithValues;
 import cz.chrastecky.aiwallpaperchanger.databinding.ActivityMainBinding;
 import cz.chrastecky.aiwallpaperchanger.dto.GenerateRequest;
@@ -106,8 +112,9 @@ public class MainActivity extends AppCompatActivity {
     private final Logger logger = new Logger(this);
     private ActivityMainBinding binding;
     private CancellationToken cancellationToken = new CancellationToken();
+    private String currentStyleName = null;
 
-    private Map<String, Boolean> formElementsValidation = new HashMap<>();
+    private final Map<String, Boolean> formElementsValidation = new HashMap<>();
 
     private List<String> selectedModels = new ArrayList<>();
     private List<String> allModels = new ArrayList<>();
@@ -119,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
                 if (result.getResultCode() != RESULT_OK) {
-                    Toast.makeText(this, R.string.app_select_models_selecting_failed, Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, R.string.app_select_models_selecting_failed, LENGTH_LONG).show();
                     return;
                 }
 
@@ -138,25 +145,34 @@ public class MainActivity extends AppCompatActivity {
 
                 Intent data = result.getData();
                 String styleName = data.getStringExtra("result");
+                currentStyleName = styleName;
 
-                try {
-                    PremadePrompt prompt = PremadePromptHelper.findByName(this, styleName);
-                    if (prompt == null) {
-                        logger.error("AiWallpaperChanger", "Prompt with name " + styleName + "is null");
-                        Toast.makeText(this, R.string.app_premade_prompts_failed_getting, Toast.LENGTH_LONG).show();
-                        return;
+                ThreadHelper.runInThread(() -> {
+                    try {
+                        PremadePrompt prompt = PremadePromptHelper.findByName(this, styleName);
+                        if (prompt == null) {
+                            prompt = PremadePromptHelper.findByNameFromDb(this, styleName);
+                        }
+                        if (prompt == null) {
+                            logger.error("AiWallpaperChanger", "Prompt with name " + styleName + "is null");
+                            runOnUiThread(() -> Toast.makeText(this, R.string.app_premade_prompts_failed_getting, LENGTH_LONG).show());
+                            return;
+                        }
+
+                        final PremadePrompt finalPrompt = prompt;
+                        runOnUiThread(() -> {
+                            createGenerateRequest(request -> {
+                                request = GenerateRequestHelper.withStyle(request, finalPrompt);
+                                initializeForm(request);
+                                Toast.makeText(this, R.string.app_generate_style_successfully_set, LENGTH_LONG).show();
+                            });
+                            createCustomParameters(finalPrompt);
+                        });
+                    } catch (IOException e) {
+                        logger.error("AiWallpaperChanger", "Failed getting prompts", e);
+                        runOnUiThread(() -> Toast.makeText(this, R.string.app_premade_prompts_failed_getting, LENGTH_LONG).show());
                     }
-
-                    createGenerateRequest(request -> {
-                        request = GenerateRequestHelper.withStyle(request, prompt);
-                        initializeForm(request);
-                        Toast.makeText(this, R.string.app_generate_style_successfully_set, Toast.LENGTH_LONG).show();
-                    });
-                    createCustomParameters(prompt);
-                } catch (IOException e) {
-                    logger.error("AiWallpaperChanger", "Failed getting prompts", e);
-                    Toast.makeText(this, R.string.app_premade_prompts_failed_getting, Toast.LENGTH_LONG).show();
-                }
+                }, this);
             }
     );
 
@@ -164,7 +180,7 @@ public class MainActivity extends AppCompatActivity {
             new ActivityResultContracts.RequestMultiplePermissions(),
             isGranted -> {
                 if (isGranted.containsValue(false)) {
-                    Toast.makeText(this, R.string.app_error_missing_permissions, Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, R.string.app_error_missing_permissions, LENGTH_LONG).show();
                     return;
                 }
 
@@ -228,7 +244,7 @@ public class MainActivity extends AppCompatActivity {
                     Intent intent = WallpaperFileHelper.getShareIntent(this, tempFile);
                     startActivity(intent);
                 } catch (IOException e) {
-                    Toast.makeText(this, R.string.app_error_create_tmp_file, Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, R.string.app_error_create_tmp_file, LENGTH_LONG).show();
                     return true;
                 }
 
@@ -273,6 +289,64 @@ public class MainActivity extends AppCompatActivity {
                 loader.setVisibility(View.INVISIBLE);
             });
             cancellationToken = new CancellationToken();
+        });
+
+        binding.savePromptButton.setOnClickListener(button -> {
+            View dialogView = getLayoutInflater().inflate(R.layout.dialog_save_prompt, null);
+            EditText nameInputField = dialogView.findViewById(R.id.name_input);
+            if (currentStyleName != null) {
+                nameInputField.setText(currentStyleName);
+            }
+
+            AlertDialog dialog = new AlertDialog.Builder(this)
+                    .setTitle(R.string.app_generate_save_prompt)
+                    .setView(dialogView)
+                    .setCancelable(true)
+                    .setPositiveButton(R.string.app_save, null)
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .create()
+            ;
+
+            dialog.show();
+
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
+                final String name = nameInputField.getText().toString().trim();
+                if (name.isEmpty()) {
+                    nameInputField.setError(getString(R.string.app_error_field_empty));
+                    return;
+                }
+
+                createGenerateRequest(createdRequest -> {
+                    final SavedPrompt savedPrompt = new SavedPrompt(
+                        name,
+                        createdRequest.getPrompt(),
+                        createdRequest.getModels()
+                    );
+                    if (createdRequest.getNegativePrompt() != null) {
+                        savedPrompt.negativePrompt = createdRequest.getNegativePrompt();
+                    }
+
+                    if (binding.advancedSwitch.isChecked()) {
+                        savedPrompt.sampler = createdRequest.getSampler();
+                        savedPrompt.karras = createdRequest.getKarras();
+                        savedPrompt.steps = createdRequest.getSteps();
+                        savedPrompt.clipSkip = createdRequest.getClipSkip();
+                        savedPrompt.width = createdRequest.getWidth();
+                        savedPrompt.height = createdRequest.getHeight();
+                        savedPrompt.upscaler = createdRequest.getUpscaler();
+                        savedPrompt.cfgScale = createdRequest.getCfgScale();
+                        savedPrompt.hiresFix = createdRequest.getHiresFix();
+                    }
+
+                    ThreadHelper.runInThread(() -> {
+                        AppDatabase database = DatabaseHelper.getDatabase(this);
+                        database.savedPrompts().createOrUpdate(savedPrompt);
+                    }, this);
+
+                    Toast.makeText(this, R.string.app_save_prompt_success, LENGTH_LONG).show();
+                    dialog.dismiss();
+                }, null, false);
+            });
         });
 
         Button previewButton = findViewById(R.id.preview_button);
@@ -375,7 +449,7 @@ public class MainActivity extends AppCompatActivity {
                     if (!imageFile.exists()) {
                         logger.error("Main", "The image does not exist even after saving it");
                         runOnUiThread(() -> {
-                            Toast.makeText(this, R.string.app_error_create_tmp_file, Toast.LENGTH_LONG).show();
+                            Toast.makeText(this, R.string.app_error_create_tmp_file, LENGTH_LONG).show();
                             rootView.setVisibility(View.VISIBLE);
                             loader.setVisibility(View.INVISIBLE);
                         });
@@ -392,7 +466,7 @@ public class MainActivity extends AppCompatActivity {
                     intent.putExtra("model", response.getDetail().getModel());
                     startActivity(intent);
                 } catch (IOException e) {
-                    Toast.makeText(this, R.string.app_error_create_tmp_file, Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, R.string.app_error_create_tmp_file, LENGTH_LONG).show();
                 }
 
                 runOnUiThread(() -> {
@@ -416,16 +490,16 @@ public class MainActivity extends AppCompatActivity {
                 }
                 if (error instanceof AuthFailureError) {
                     if (error.networkResponse.statusCode == 401) {
-                        Toast.makeText(this, R.string.app_error_invalid_api_key, Toast.LENGTH_LONG).show();
+                        Toast.makeText(this, R.string.app_error_invalid_api_key, LENGTH_LONG).show();
                     } else if (error.networkResponse.statusCode == 403) {
 //                        String errorText = new String(error.networkResponse.data, StandardCharsets.UTF_8);
 //                        logger.debug("Debug", errorText);
-                        Toast.makeText(this, R.string.app_error_forbidden_request, Toast.LENGTH_LONG).show();
+                        Toast.makeText(this, R.string.app_error_forbidden_request, LENGTH_LONG).show();
                     } else {
-                        Toast.makeText(this, R.string.app_error_generating_failed, Toast.LENGTH_LONG).show();
+                        Toast.makeText(this, R.string.app_error_generating_failed, LENGTH_LONG).show();
                     }
                 } else {
-                    Toast.makeText(this, R.string.app_error_generating_failed, Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, R.string.app_error_generating_failed, LENGTH_LONG).show();
                 }
 
                 runOnUiThread(() -> {
@@ -449,7 +523,7 @@ public class MainActivity extends AppCompatActivity {
                     cachedReplacedRequest.set(newRequest);
                     aiImageProvider.generateImage(newRequest, onProgress, onResponse, onError.value, cancellationToken);
                 }, () -> {
-                    Toast.makeText(this, R.string.app_error_parameter_replacing_failed, Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, R.string.app_error_parameter_replacing_failed, LENGTH_LONG).show();
                     runOnUiThread(() -> {
                         rootView.setVisibility(View.VISIBLE);
                         loader.setVisibility(View.INVISIBLE);
@@ -517,7 +591,7 @@ public class MainActivity extends AppCompatActivity {
 
                 ShortcutManagerHelper.hideShortcuts(this);
 
-                Toast.makeText(this, R.string.app_succes_cancelled, Toast.LENGTH_LONG).show();
+                Toast.makeText(this, R.string.app_succes_cancelled, LENGTH_LONG).show();
             });
             cancelButton.setVisibility(View.VISIBLE);
             ShortcutManagerHelper.createShortcuts(this);
@@ -617,14 +691,18 @@ public class MainActivity extends AppCompatActivity {
 
     private void validate() {
         Button previewButton = findViewById(R.id.preview_button);
+        Button saveButton = findViewById(R.id.save_prompt_button);
+
         for (String key : formElementsValidation.keySet()) {
             if (!formElementsValidation.get(key)) {
                 setButtonEnabled(previewButton, false);
+                setButtonEnabled(saveButton, false);
                 return;
             }
         }
 
         setButtonEnabled(previewButton, true);
+        setButtonEnabled(saveButton, true, R.color.md_theme_secondary, R.color.md_theme_onSecondary);
     }
 
     private void initializeValidations() {
@@ -840,7 +918,7 @@ public class MainActivity extends AppCompatActivity {
             cancelPreviewButton.setVisibility(View.VISIBLE);
         }, error -> {
             logger.error("AiHorde", "Fetching list of models failed", error);
-            Toast.makeText(this, R.string.app_error_fetching_models_failed, Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.app_error_fetching_models_failed, LENGTH_LONG).show();
         });
     }
 
@@ -914,9 +992,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setButtonEnabled(Button button, boolean enabled) {
+        setButtonEnabled(button, enabled, R.color.md_theme_primary, R.color.md_theme_onPrimary);
+    }
+
+    private void setButtonEnabled(Button button, boolean enabled, @DrawableRes int enabledColor, @ColorRes int enabledTextColor) {
         button.setEnabled(enabled);
-        button.setBackgroundResource(enabled ? R.color.md_theme_primary : android.R.color.darker_gray);
-        button.setTextColor(getResources().getColor(enabled ? R.color.md_theme_onPrimary : android.R.color.black, null));
+        button.setBackgroundResource(enabled ? enabledColor : android.R.color.darker_gray);
+        button.setTextColor(getResources().getColor(enabled ? enabledTextColor : android.R.color.black, null));
     }
 
     private void setupExceptionLogging() {
