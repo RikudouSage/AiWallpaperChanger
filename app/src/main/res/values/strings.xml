@@ -173,4 +173,5 @@
     <string name="app.period.week.other">weeks</string>
     <string name="app.generate.censor_nsfw">Censor NSFW?</string>
     <string name="app.generate.karras">Karras</string>
+    <string name="app.parameter.moon_phase">Returns the current moon phase, will be one of: New Moon, Waxing Crescent, First Quarter, Waxing Gibbous, Full Moon, Waning Gibbous, Last Quarter, Waning Crescent</string>
 </resources>

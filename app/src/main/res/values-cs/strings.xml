@@ -173,4 +173,5 @@
     <string name="app.period.week.other">týdnů</string>
     <string name="app.generate.censor_nsfw">Cenzurovat NSFW?</string>
     <string name="app.generate.karras">Karras</string>
+    <string name="app.parameter.moon_phase">Vrací současnou fázi měsíce, možné hodnoty: New Moon, Waxing Crescent, First Quarter, Waxing Gibbous, Full Moon, Waning Gibbous, Last Quarter, Waning Crescent</string>
 </resources>
