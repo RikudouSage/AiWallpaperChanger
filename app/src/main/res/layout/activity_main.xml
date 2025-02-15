@@ -446,7 +446,7 @@
                         android:background="@android:color/darker_gray"
                         android:text="@string/app.generate.cancel_schedule"
                         android:textColor="@android:color/black"
-                        android:visibility="invisible"
+                        android:visibility="gone"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/submit_button_wrapper" />
