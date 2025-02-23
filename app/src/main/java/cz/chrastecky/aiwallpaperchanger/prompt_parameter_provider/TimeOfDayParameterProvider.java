@@ -21,28 +21,33 @@ public class TimeOfDayParameterProvider implements PromptParameterProvider {
         return CompletableFuture.completedFuture(Collections.singletonList("tod"));
     }
 
-    @NonNull
-    @Override
-    public CompletableFuture<String> getValue(@NonNull final Context context, @NonNull String parameterName) {
-        final Calendar calendar = Calendar.getInstance();
-        final int hour = calendar.get(Calendar.HOUR_OF_DAY);
-        final String result;
+@NonNull
+@Override
+public CompletableFuture<String> getValue(@NonNull final Context context, @NonNull String parameterName) {
+    final Calendar calendar = Calendar.getInstance();
+    final int hour = calendar.get(Calendar.HOUR_OF_DAY);
+    final String result;
 
-        if (hour == 0) {
-            result = "midnight";
-        } else if (hour >= 21 || hour <= 4) {
-            result = "night";
-        } else if (hour < 12) {
-            result = "morning";
-        } else if (hour == 12) {
-            result = "noon";
-        } else if (hour < 17) {
-            result = "afternoon";
-        } else {
-            result = "evening";
-        }
-        return CompletableFuture.completedFuture(result);
+    if (hour == 0) {
+        result = "midnight";
+    } else if (hour >= 21 && hour < 23) {
+        result = "night";
+    } else if (hour >= 4 && hour < 6) {
+        result = "dawn";
+    } else if (hour >= 6 && hour < 12) {
+        result = "morning";
+    } else if (hour == 12) {
+        result = "noon";
+    } else if (hour > 12 && hour < 17) {
+        result = "afternoon";
+    } else if (hour >= 17 && hour < 20) {
+        result = "evening";
+    } else {
+        result = "dusk";
     }
+
+    return CompletableFuture.completedFuture(result);
+}
 
     @NonNull
     @Override
